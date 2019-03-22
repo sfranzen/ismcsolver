@@ -1,0 +1,32 @@
+
+#include "../include/sosolver.h"
+#include "game.h"
+#include <chrono>
+#include <iostream>
+
+int main(int /*argc*/, char **/*argv*/)
+{
+    using namespace std;
+    using namespace std::chrono;
+
+    Game g {8};
+    const unsigned iters {1000};
+    ISMCTS::SOSolver<int> solver {iters};
+    duration<double> t;
+    unsigned iter_count {0};
+
+    while (!g.validMoves().empty()) {
+        const auto t0 = high_resolution_clock::now();
+        const auto move = solver(g);
+        const auto t1 = high_resolution_clock::now();
+        g.doMove(move);
+        t += t1 - t0;
+        iter_count += iters;
+    }
+
+    const auto time_us = duration_cast<microseconds>(t).count();
+    cout << g.getResult(0) << endl << g << endl;
+    cout << "Time taken: " << time_us << " microseconds" << endl;
+    cout << "Per iteration: " << double(time_us) / iter_count << endl;
+    return 0;
+}
