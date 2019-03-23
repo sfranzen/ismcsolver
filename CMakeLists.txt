@@ -1,19 +1,20 @@
+# Copyright (C) 2019 Steven Franzen <sfranzen85@gmail.com>
+# This file is subject to the terms of the MIT License; see the LICENSE file in
+# the root directory of this distribution.
+
 project(ismcsolver)
 
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0)
 
-find_package(ECM 1.0.0 REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-include(ECMInstallIcons)
-include(KDECompilerSettings NO_POLICY_SCOPE)
-include(FeatureSummary)
-
-feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
+set(headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/game.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/node.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/sosolver.h
+)
 
 add_library(ismcsolver INTERFACE)
-target_include_directories(ismcsolver INTERFACE include/)
+target_include_directories(ismcsolver INTERFACE include)
+target_sources(ismcsolver INTERFACE ${headers})
+install(FILES ${headers} DESTINATION include)
 
 add_subdirectory(test)
