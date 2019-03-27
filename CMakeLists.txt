@@ -11,7 +11,9 @@ find_package(Threads REQUIRED)
 set(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/include/game.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/node.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/solverbase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/sosolver.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/execution.h
 )
 
 add_subdirectory(test)
