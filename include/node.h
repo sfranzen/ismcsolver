@@ -33,7 +33,7 @@ public:
 
     const Move &move() const { return m_move; }
     Node *parent() const { return m_parent; }
-    int visits() const { return m_visits; }
+    unsigned int visits() const { return m_visits; }
     const List &children() const { return m_children; }
 
     Node *addChild(Move move, int player)
