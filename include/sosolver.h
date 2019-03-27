@@ -6,54 +6,36 @@
 #ifndef ISMCTS_SOSOLVER_H
 #define ISMCTS_SOSOLVER_H
 
+#include "solverbase.h"
 #include "game.h"
 #include "node.h"
 
 #include <memory>
 #include <vector>
-#include <random>
+#include <thread>
+#include <map>
 
 namespace ISMCTS
 {
+// Unique classes representing parallelisation policies
+class Sequential {};
+class RootParallel {};
 
-/// Single observer information set Monte Carlo tree search solver class.
-template<class Move> class SOSolver
+/// Common base class for single observer solvers
+template<class Move>
+class SOSolverBase : public SolverBase<Move>
 {
 public:
-    /**
-     * Constructor.
-     *
-     * @param iterMax Sets the number of simulations performed for each search.
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7.
-     */
-    explicit SOSolver(std::size_t iterMax = 1000, double exploration = 0.7)
-        : m_iterMax {iterMax}
-        , m_exploration {std::max(exploration, 0.0)}
-    {}
-
-    virtual ~SOSolver() {}
-
-    /**
-     * Search operator.
-     *
-     * @return The most promising move from the given state.
-     */
-    Move operator()(const Game<Move> &rootState) const
-    {
-        Node<Move> root;
-        for (std::size_t i {0}; i < m_iterMax; ++i)
-            search(&root, rootState);
-        const auto &rootList = root.children();
-        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end());
-        return mostVisited->move();
-    }
+    using SolverBase<Move>::SolverBase;
 
 protected:
-    const std::size_t m_iterMax;
-    const double m_exploration;
+    void iterate(std::size_t number, Node<Move> &root, const Game<Move> &state) const
+    {
+        for (std::size_t i {0}; i < number; ++i)
+            search(&root, state);
+    }
 
-    /// Traverse a single sequence of moves.
+    /// Traverse a single sequence of moves
     void search(Node<Move> *rootNode, const Game<Move> &rootState) const
     {
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
@@ -74,7 +56,7 @@ protected:
     {
         auto validMoves = state->validMoves();
         while (!selectNode(node, validMoves)) {
-            node = node->ucbSelectChild(validMoves, m_exploration);
+            node = node->ucbSelectChild(validMoves, this->m_exploration);
             state->doMove(node->move());
             validMoves = state->validMoves();
         }
@@ -95,7 +77,7 @@ protected:
     {
         const auto untriedMoves = node->untriedMoves(state->validMoves());
         if (!untriedMoves.empty()) {
-            const auto move = randMove(untriedMoves);
+            const auto move = SOSolverBase::randMove(untriedMoves);
             state->doMove(move);
             node = node->addChild(move, state->currentPlayer());
         }
@@ -111,7 +93,7 @@ protected:
     {
         auto moves = state->validMoves();
         while (!moves.empty()) {
-            state->doMove(randMove(moves));
+            state->doMove(SOSolverBase::randMove(moves));
             moves = state->validMoves();
         }
     }
@@ -128,12 +110,74 @@ protected:
             node = node->parent();
         }
     }
+};
 
-    static const Move &randMove(const std::vector<Move> &moves) {
-        static std::random_device rd;
-        static std::mt19937 rng {rd()};
-        std::uniform_int_distribution<std::size_t> dist {0, moves.size() - 1};
-        return moves[dist(rng)];
+// Partial specialisations for each execution policy
+template<class Move, class ExecutionPolicy = Sequential>
+class SOSolver {};
+
+/// Sequential single observer solver
+template<class Move>
+class SOSolver<Move, Sequential> : public SOSolverBase<Move>
+{
+public:
+    using SOSolverBase<Move>::SOSolverBase;
+
+    virtual Move operator()(const Game<Move> &rootState) const override
+    {
+        Node<Move> root;
+        this->iterate(this->m_iterMax, root, rootState);
+        const auto &rootList = root.children();
+        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end());
+        return mostVisited->move();
+    }
+};
+
+/// Single observer solver with root parallelisation
+template<class Move>
+class SOSolver<Move, RootParallel> : public SOSolverBase<Move>
+{
+public:
+    using SOSolverBase<Move>::SOSolverBase;
+
+    virtual Move operator()(const Game<Move> &rootState) const override
+    {
+        const auto numThreads = std::thread::hardware_concurrency();
+        std::vector<std::thread> threads(numThreads);
+        std::vector<Node<Move>> trees(numThreads);
+
+        for (std::size_t t = 0; t < numThreads; ++t)
+            threads[t] = std::thread(&SOSolver::iterate, this, this->m_iterMax / numThreads, std::ref(trees[t]), std::ref(rootState));
+        for (auto &t : threads)
+            t.join();
+
+        const auto results = compileVisitCounts(trees);
+        using pair = typename VisitMap::value_type;
+        const auto &mostVisited = *max_element(results.begin(), results.end(), [](const pair &a, const pair &b){
+            return a.second < b.second;
+        });
+        return mostVisited.first;
+    }
+
+private:
+    using VisitMap = std::map<Move, unsigned int>;
+
+    // Map each unique move to its total number of visits
+    static VisitMap compileVisitCounts(const std::vector<Node<Move>> &trees)
+    {
+        VisitMap results;
+        for (auto &root : trees) {
+            if (root == trees.front())
+                for (auto &node : root.children())
+                    results.emplace(node->move(), node->visits());
+            else
+                for (auto &node : root.children()) {
+                    const auto result = results.emplace(node->move(), node->visits());
+                    if (!result.second)
+                        (*result.first).second += node->visits();
+                }
+        }
+        return results;
     }
 };
 

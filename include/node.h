@@ -83,9 +83,9 @@ public:
         return child < m_children.end() ? child->get() : nullptr;
     }
 
-    friend bool operator<(const Ptr &a, const Ptr &b)
+    friend bool operator==(const Node &a, const Node &b)
     {
-        return a->m_visits < b->m_visits;
+        return a.m_playerJustMoved == b.m_playerJustMoved && a.m_move == b.m_move;
     }
 
 private:

@@ -15,7 +15,7 @@ int main(int /*argc*/, char **/*argv*/)
 
     Game g {8};
     const unsigned iters {1000};
-    ISMCTS::SOSolver<int> solver {iters};
+    ISMCTS::SOSolver<int, ISMCTS::RootParallel> solver {iters};
     duration<double> t;
     unsigned iter_count {0};
 

@@ -6,15 +6,18 @@ project(ismcsolver)
 
 cmake_minimum_required(VERSION 3.1.0)
 
+find_package(Threads REQUIRED)
+
 set(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/include/game.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/node.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/sosolver.h
 )
 
+add_subdirectory(test)
+
 add_library(ismcsolver INTERFACE)
+target_link_libraries(ismcsolver INTERFACE Threads::Threads)
 target_include_directories(ismcsolver INTERFACE include)
 target_sources(ismcsolver INTERFACE ${headers})
 install(FILES ${headers} DESTINATION include)
-
-add_subdirectory(test)
