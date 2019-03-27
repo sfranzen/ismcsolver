@@ -51,12 +51,11 @@ public:
 
     std::vector<Move> untriedMoves(const std::vector<Move> &legalMoves) const
     {
-        using namespace std;
-        vector<Move> tried(m_children.size()), untried;
-        transform(m_children.begin(), m_children.end(), tried.begin(), [](const Ptr &a){ return a->m_move; });
+        std::vector<Move> tried(m_children.size()), untried;
+        std::transform(m_children.begin(), m_children.end(), tried.begin(), [](const Ptr &a){ return a->m_move; });
         untried.reserve(legalMoves.size());
-        copy_if(legalMoves.begin(), legalMoves.end(), back_inserter(untried), [&](const Move &m){
-            return find(tried.begin(), tried.end(), m) == tried.end();
+        std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](const Move &m){
+            return std::find(tried.begin(), tried.end(), m) == tried.end();
         });
         return untried;
     }
