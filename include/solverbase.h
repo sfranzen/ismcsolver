@@ -7,6 +7,7 @@
 #define ISMCTS_SOLVERBASE_H
 
 #include "game.h"
+#include "node.h"
 #include <random>
 
 namespace ISMCTS
@@ -54,6 +55,12 @@ protected:
             state->doMove(randMove(moves));
             moves = state->validMoves();
         }
+    }
+
+    // Whether to select this node given available moves
+    static bool selectNode(const Node<Move> *node, const std::vector<Move> &moves)
+    {
+        return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
     static const Move &randMove(const std::vector<Move> &moves)

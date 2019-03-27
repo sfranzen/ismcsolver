@@ -52,16 +52,11 @@ protected:
     void select(Node<Move> *&node, Game<Move> *state) const
     {
         auto validMoves = state->validMoves();
-        while (!selectNode(node, validMoves)) {
+        while (!SolverBase<Move>::selectNode(node, validMoves)) {
             node = node->ucbSelectChild(validMoves, this->m_exploration);
             state->doMove(node->move());
             validMoves = state->validMoves();
         }
-    }
-
-    static bool selectNode(const Node<Move> *node, const std::vector<Move> &moves)
-    {
-        return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
     /**
