@@ -41,6 +41,21 @@ protected:
     const std::size_t m_iterMax;
     const double m_exploration;
 
+    /**
+     * Simulation stage
+     *
+     * Continue performing random available moves from this state until the end
+     * of the game.
+     */
+    static void simulate(Game<Move> *state)
+    {
+        auto moves = state->validMoves();
+        while (!moves.empty()) {
+            state->doMove(randMove(moves));
+            moves = state->validMoves();
+        }
+    }
+
     static const Move &randMove(const std::vector<Move> &moves)
     {
         thread_local static std::random_device rd;

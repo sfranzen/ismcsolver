@@ -39,7 +39,7 @@ protected:
         auto statePtr = randomState.get();
         select(rootNode, statePtr);
         expand(rootNode, statePtr);
-        simulate(statePtr);
+        SolverBase<Move>::simulate(statePtr);
         backPropagate(rootNode, statePtr);
     }
 
@@ -77,21 +77,6 @@ protected:
             const auto move = SOSolverBase::randMove(untriedMoves);
             state->doMove(move);
             node = node->addChild(move, state->currentPlayer());
-        }
-    }
-
-    /**
-     * Simulation stage
-     *
-     * Continue performing random available moves from this state until the end
-     * of the game.
-     */
-    static void simulate(Game<Move> *state)
-    {
-        auto moves = state->validMoves();
-        while (!moves.empty()) {
-            state->doMove(SOSolverBase::randMove(moves));
-            moves = state->validMoves();
         }
     }
 
