@@ -11,7 +11,8 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <math.h>
+# include <math.h>
+# include <iostream>
 
 namespace ISMCTS
 {
@@ -80,11 +81,6 @@ public:
     {
         const auto child = std::find_if(m_children.begin(), m_children.end(), [&](const Ptr &c){ return c->m_move == move; });
         return child < m_children.end() ? child->get() : nullptr;
-    }
-
-    friend bool operator==(const Node &a, const Node &b)
-    {
-        return a.m_playerJustMoved == b.m_playerJustMoved && a.m_move == b.m_move;
     }
 
 private:

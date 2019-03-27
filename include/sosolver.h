@@ -163,16 +163,14 @@ private:
     static VisitMap compileVisitCounts(const std::vector<Node<Move>> &trees)
     {
         VisitMap results;
-        for (auto &root : trees) {
-            if (root == trees.front())
-                for (auto &node : root.children())
-                    results.emplace(node->move(), node->visits());
-            else
-                for (auto &node : root.children()) {
-                    const auto result = results.emplace(node->move(), node->visits());
-                    if (!result.second)
-                        (*result.first).second += node->visits();
-                }
+        for (auto &node : trees.front().children())
+            results.emplace(node->move(), node->visits());
+        for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
+            for (auto &node : t->children()) {
+                const auto result = results.emplace(node->move(), node->visits());
+                if (!result.second)
+                    (*result.first).second += node->visits();
+            }
         }
         return results;
     }
