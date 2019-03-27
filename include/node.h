@@ -11,8 +11,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
-# include <math.h>
-# include <iostream>
+#include <math.h>
 
 namespace ISMCTS
 {
