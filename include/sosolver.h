@@ -125,7 +125,10 @@ public:
         Node<Move> root;
         this->iterate(this->m_iterMax, root, rootState);
         const auto &rootList = root.children();
-        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end());
+        using value = typename Node<Move>::Ptr;
+        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end(), [](const value &a, const value &b){
+            return a->visits() < b->visits();
+        });
         return mostVisited->move();
     }
 };
