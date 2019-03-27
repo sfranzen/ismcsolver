@@ -9,6 +9,7 @@
 #include "solverbase.h"
 #include "game.h"
 #include "node.h"
+#include "execution.h"
 
 #include <memory>
 #include <vector>
@@ -17,10 +18,6 @@
 
 namespace ISMCTS
 {
-// Unique classes representing parallelisation policies
-class Sequential {};
-class RootParallel {};
-
 /// Common base class for single observer solvers
 template<class Move>
 class SOSolverBase : public SolverBase<Move>
