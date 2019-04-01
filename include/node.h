@@ -76,10 +76,10 @@ public:
         return *std::max_element(legalChildren.begin(), legalChildren.end(), compareUCB);
     }
 
-    Node *selectChild(const Move &move) const
+    Node *findOrAddChild(const Move &move, int player)
     {
-        const auto child = std::find_if(m_children.begin(), m_children.end(), [&](const Ptr &c){ return c->m_move == move; });
-        return child < m_children.end() ? child->get() : nullptr;
+        const auto childPos = std::find_if(m_children.begin(), m_children.end(), [&](const Ptr &node){ return node->m_move == move; });
+        return childPos < m_children.end() ? childPos->get() : addChild(move, player);
     }
 
 private:
