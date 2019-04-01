@@ -3,7 +3,8 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include "../include/sosolver.h"
+#include <sosolver.h>
+#include <mosolver.h>
 #include "game.h"
 #include <chrono>
 #include <iostream>
@@ -13,9 +14,9 @@ int main(int /*argc*/, char **/*argv*/)
     using namespace std;
     using namespace std::chrono;
 
-    Game g {8};
-    const unsigned iters {1000};
-    ISMCTS::SOSolver<int, ISMCTS::RootParallel> solver {iters};
+    Game g {3};
+    const unsigned iters {500};
+    ISMCTS::MOSolver<int> solver {iters};
     duration<double> t;
     unsigned iter_count {0};
 
