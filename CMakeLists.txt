@@ -13,6 +13,7 @@ set(headers
     ${CMAKE_CURRENT_SOURCE_DIR}/include/node.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/solverbase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/sosolver.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/mosolver.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/execution.h
 )
 
