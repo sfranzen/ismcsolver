@@ -12,6 +12,9 @@
 #include <vector>
 #include <algorithm>
 #include <math.h>
+#include <ostream>
+#include <sstream>
+#include <iomanip>
 
 namespace ISMCTS
 {
@@ -82,6 +85,23 @@ public:
         return childPos < m_children.end() ? childPos->get() : addChild(move, player);
     }
 
+    /// Returns a string containing information about this node, in the format
+    /// "[M:(move) by (player), S/V/A: (score)/(visits)/(available)]".
+    operator std::string() const
+    {
+        std::ostringstream oss;
+        oss << "[M:" << m_move << " by " << m_playerJustMoved << ", S/V/A: ";
+        oss << std::fixed << std::setprecision(1) << m_score << "/" << m_visits << "/" << m_available << "]";
+        return oss.str();
+    }
+
+    /// Writes the structure and node statistics of the (sub)tree starting at
+    /// the given node to the given output stream.
+    friend std::ostream &operator<<(std::ostream &out, const Node &node)
+    {
+        return out << node.treeToString();
+    }
+
 private:
     Node *m_parent;
     List m_children;
@@ -94,6 +114,22 @@ private:
     double ucbScore(double exploration) const
     {
         return m_score / double(m_visits) + exploration * std::sqrt(std::log(m_available) / m_visits);
+    }
+
+    std::string treeToString(unsigned int indent = 0) const
+    {
+        std::string s {indentSelf(indent)};
+        for (auto &c : m_children)
+            s += c->treeToString(indent + 1);
+        return s;
+    }
+
+    std::string indentSelf(unsigned int indent) const
+    {
+        std::string s {"\n"};
+        for (unsigned int i = 0; i < indent; ++i)
+            s += "| ";
+        return s += *this;
     }
 };
 
