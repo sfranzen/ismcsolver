@@ -35,5 +35,13 @@ The total number of iterations performed per search may be dictated, for example
 ### SO- and MO-ISMCTS
 These are two variants of the algorithm, respectively Single-Observer and Multiple-Observer. The former, as its name implies, observes the game from only one perspective: that of the player conducting the search. It only builds a tree for that player and treats all opponent moves as fully observable. While that is indeed the case in many games, some additionally feature actions that are hidden from the other players. MO-ISMCTS, implemented in `ISMCTS::MOSolver`, is intended for such games; it builds a tree for each player to model the game played from different perspectives.
 
+### Multithreading
+A search can of course be conducted in a single thread, but several approaches for parallel searching also exist. At present, this library provides the most straightforward method of root parallelisation. It creates a separate tree (or set of trees) for each system thread and divides the iterations over the threads. The statistics from the root of each tree are then combined to find the overall best move.
+
+This is implemented using the `std::thread` class and can be used by providing the optional second `ExecutionPolicy` parameter to either class template. Template specialisations are provided for two policies, defined in [execution.h](include/execution.h): `ISMCTS::Sequential` (the default) and `ISMCTS::RootParallel`. For example, the following instantiates a parallel `MOSolver` for a two player game where `int` represents a move:
+```cpp
+ISMCTS::MOSolver<int, ISMCTS::RootParallel> solver {2};
+```
+
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
