@@ -51,11 +51,11 @@ protected:
      */
     void select(Node<Move> *&node, Game<Move> *state) const
     {
-        auto validMoves = state->validMoves();
-        while (!SolverBase<Move>::selectNode(node, validMoves)) {
+        const auto validMoves = state->validMoves();
+        if (!SolverBase<Move>::selectNode(node, validMoves)) {
             node = node->ucbSelectChild(validMoves, this->m_exploration);
             state->doMove(node->move());
-            validMoves = state->validMoves();
+            select(node, state);
         }
     }
 
@@ -70,8 +70,8 @@ protected:
         const auto untriedMoves = node->untriedMoves(state->validMoves());
         if (!untriedMoves.empty()) {
             const auto move = SOSolverBase::randMove(untriedMoves);
-            state->doMove(move);
             node = node->addChild(move, state->currentPlayer());
+            state->doMove(move);
         }
     }
 };
