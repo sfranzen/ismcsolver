@@ -4,15 +4,36 @@ ismcsolver provides a C++ implementation of information set Monte Carlo tree sea
 This implementation uses C++ class templates to apply the algorithm to a generic type of game using a generic type of move. At the moment it adheres to the C++11 standard.
 
 ## Usage
-You can either install the header files or just copy them into your project sources. Your game (or engine) class should implement the abstract interface `ISMCTS::Game<Move>`, replacing the template parameter `Move` with the data type (or class) representing a player's move. Then all that is needed is to instantiate a solver for the AI player(s), e.g.
+You can either install the header files or just copy them into your project sources. Your game (or engine) class should implement the abstract interface `ISMCTS::Game<Move>`, replacing the template parameter `Move` with the data type (or class) representing a player's move. The library provides two solver class templates, `ISMCTS::SOSolver<Move>` and `ISMCTS::MOSolver<Move>`. Their differences are explained below, but they should be instantiated with the same `Move` type to obtain an object that can select moves for the AI player(s), e.g.
 ```cpp
+#include <sosolver.h>
+// ...
 void MyGame::doAIMove()
 {
     ISMCTS::SOSolver<MyMove> solver;
-    this->doMove(solver(this));
+    this->doMove(solver(*this));
 }
 ```
 A simple working example game (tic tac toe) is included [here](test).
+
+## The algorithm
+The following is only a short summary of how ISMCTS works. For the full technical details, see the paper [Information Set Monte Carlo Tree Search](https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf) by Peter I. Cowling, Edward J. Powley and Daniel Whitehouse.
+
+### Introduction 
+Most importantly, the "information set" part of ISMCTS refers to the set of all possible game states consistent with a given player's observation of a game so far. In a typical card game, for example, it contains the permutations of the cards possibly held by the player's opponents, given the game's rules and the sequence of cards already played. The algorithm works by taking random samples from this set, called determinisations, to gradually build an information tree using regular Monte Carlo searches:
+
+0. *Determinise*;
+1. *Select:* Using a selection algorithm, choose a sequence of moves from the root of the tree until either a node with unexplored moves is reached or the game ends;
+2. *Expand:* If there are unexplored moves, choose one at random and create a new node for it;
+3. *Simulate:* Continue applying random moves from this state until the game ends;
+4. *Backpropagate:* Update the tree by incrementing the visit counter and adding the score for the given player to this final node and each of its parents.
+
+Successive iterations of these steps result in sequences of moves that are initially random, but increasingly become shaped by the availability of moves in different determinisations as well as the selection algorithm. Different selection algorithms are possible, but this library for now uses the UCB (Upper Confidence Bound) algorithm also used by the authors of ISMCTS.
+
+The total number of iterations performed per search may be dictated, for example, by the available computational budget or a desired player strength. Upon finishing the search, the move corresponding to the most visited child node of the root of the resulting tree is selected as the most promising move.
+
+### SO- and MO-ISMCTS
+These are two variants of the algorithm, respectively Single-Observer and Multiple-Observer. The former, as its name implies, observes the game from only one perspective: that of the player conducting the search. It only builds a tree for that player and treats all opponent moves as fully observable. While that is indeed the case in many games, some additionally feature actions that are hidden from the other players. MO-ISMCTS, implemented in `ISMCTS::MOSolver`, is intended for such games; it builds a tree for each player to model the game played from different perspectives.
 
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
