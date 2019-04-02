@@ -46,18 +46,15 @@ protected:
      */
     void select(std::vector<Node<Move>*> &nodes, Game<Move> *state) const
     {
-        bool selected = false;
-        while (!selected) {
-            const auto validMoves = state->validMoves();
-            const auto player = state->currentPlayer();
-            const auto &targetNode = nodes[player];
-            selected = SolverBase<Move>::selectNode(targetNode, validMoves);
-            if (!selected) {
-                const auto selection = targetNode->ucbSelectChild(validMoves, this->m_exploration);
-                for (auto &node : nodes)
-                    node = node->findOrAddChild(selection->move(), player);
-                state->doMove(selection->move());
-            }
+        const auto validMoves = state->validMoves();
+        const auto player = state->currentPlayer();
+        const auto &targetNode = nodes[player];
+        if (!SolverBase<Move>::selectNode(targetNode, validMoves)) {
+            const auto selection = targetNode->ucbSelectChild(validMoves, this->m_exploration);
+            for (auto &node : nodes)
+                node = node->findOrAddChild(selection->move(), player);
+            state->doMove(selection->move());
+            select(nodes, state);
         }
     }
 
