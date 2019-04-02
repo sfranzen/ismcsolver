@@ -16,7 +16,7 @@ int main(int /*argc*/, char **/*argv*/)
 
     Game g {3};
     const unsigned iters {500};
-    ISMCTS::MOSolver<int> solver {iters};
+    ISMCTS::MOSolver<int> solver {2, iters};
     duration<double> t;
     unsigned iter_count {0};
 

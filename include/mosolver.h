@@ -17,14 +17,19 @@
 
 namespace ISMCTS
 {
-
+/// Common base class for multiple observer solvers
 template<class Move>
 class MOSolverBase : public SolverBase<Move>
 {
 public:
-    using SolverBase<Move>::SolverBase;
+    MOSolverBase(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
+        : SolverBase<Move>{iterMax, exploration}
+        , m_numPlayers{numPlayers}
+    {}
 
 protected:
+    std::size_t m_numPlayers;
+
     /// Traverse a single sequence of moves
     void search(std::vector<Node<Move>> &trees, const Game<Move> &rootState) const
     {
@@ -104,7 +109,7 @@ public:
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
-        std::vector<Node<Move>> trees(2);
+        std::vector<Node<Move>> trees(this->m_numPlayers);
 
         for (std::size_t i {0}; i < this->m_iterMax; ++i) {
             std::cout << "starting iteration " << i << "\n";
