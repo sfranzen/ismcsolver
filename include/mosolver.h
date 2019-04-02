@@ -81,18 +81,10 @@ protected:
         }
     }
 
-    /**
-     * Backpropagation stage
-     *
-     * Propagate game result back up to the root of each tree.
-     */
     static void backPropagate(std::vector<Node<Move>*> &nodes, const Game<Move> *state)
     {
         for (auto node : nodes)
-            while (node) {
-                node->update(state);
-                node = node->parent();
-            }
+            SolverBase<Move>::backPropagate(node, state);
     }
 };
 

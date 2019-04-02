@@ -40,7 +40,7 @@ protected:
         select(rootNode, statePtr);
         expand(rootNode, statePtr);
         SolverBase<Move>::simulate(statePtr);
-        backPropagate(rootNode, statePtr);
+        SolverBase<Move>::backPropagate(rootNode, statePtr);
     }
 
     /**
@@ -72,19 +72,6 @@ protected:
             const auto move = SOSolverBase::randMove(untriedMoves);
             state->doMove(move);
             node = node->addChild(move, state->currentPlayer());
-        }
-    }
-
-    /**
-     * Backpropagation stage
-     *
-     * Update the node statistics using the rewards from the terminal state.
-     */
-    static void backPropagate(Node<Move> *&node, const Game<Move> *state)
-    {
-        while (node) {
-            node->update(state);
-            node = node->parent();
         }
     }
 };

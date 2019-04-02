@@ -57,6 +57,20 @@ protected:
         }
     }
 
+    /**
+     * Backpropagation stage
+     *
+     * Traverse back to the root from the given node, updating the statistics of
+     * all visited nodes with the result of the finished game state.
+     */
+    static void backPropagate(Node<Move> *node, const Game<Move> *state)
+    {
+        while (node) {
+            node->update(state);
+            node = node->parent();
+        }
+    }
+
     // Whether to select this node given available moves
     static bool selectNode(const Node<Move> *node, const std::vector<Move> &moves)
     {
