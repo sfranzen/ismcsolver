@@ -39,7 +39,7 @@ public:
     unsigned int visits() const { return m_visits; }
     const List &children() const { return m_children; }
 
-    Node *addChild(Move move, int player)
+    Node *addChild(const Move &move, int player)
     {
         m_children.emplace_back(Ptr(new Node(this, move, player)));
         return m_children.back().get();
