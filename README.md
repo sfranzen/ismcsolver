@@ -19,7 +19,6 @@ A simple working example game (tic tac toe) is included [here](test).
 ## The algorithm
 The following is only a short summary of how ISMCTS works. For the full technical details, see the paper [Information Set Monte Carlo Tree Search](https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf) by Peter I. Cowling, Edward J. Powley and Daniel Whitehouse.
 
-### Introduction 
 Most importantly, the "information set" part of ISMCTS refers to the set of all possible game states consistent with a given player's observation of a game so far. In a typical card game, for example, it contains the permutations of the cards possibly held by the player's opponents, given the game's rules and the sequence of cards already played. The algorithm works by taking random samples from this set, called determinisations, to gradually build an information tree using regular Monte Carlo searches:
 
 0. *Determinise*;
@@ -32,11 +31,14 @@ Successive iterations of these steps result in sequences of moves that are initi
 
 The total number of iterations performed per search may be dictated, for example, by the available computational budget or a desired player strength. Upon finishing the search, the move corresponding to the most visited child node of the root of the resulting tree is selected as the most promising move.
 
+## Features
+The basic algorithm can be applied, modified and executed in different ways. This section lists what is currently implemented.
+
 ### SO- and MO-ISMCTS
-These are two variants of the algorithm, respectively Single-Observer and Multiple-Observer. The former, as its name implies, observes the game from only one perspective: that of the player conducting the search. It only builds a tree for that player and treats all opponent moves as fully observable. While that is indeed the case in many games, some additionally feature actions that are hidden from the other players. MO-ISMCTS, implemented in `ISMCTS::MOSolver`, is intended for such games; it builds a tree for each player to model the game played from different perspectives.
+These are two variants of the algorithm, respectively Single-Observer and Multiple-Observer. The former is implemented in `ISMCTS::SOSolver` and, as its name implies, observes the game from only one perspective: that of the player conducting the search. It only builds a tree for that player and treats all opponent moves as fully observable. While that is indeed the case in many games, some additionally feature actions that are hidden from the other players. MO-ISMCTS, implemented in `ISMCTS::MOSolver`, is intended for such games; it builds a tree for each player to model the presence of this extra hidden information.
 
 ### Multithreading
-A search can of course be conducted in a single thread, but several approaches for parallel searching also exist. At present, this library provides the most straightforward method of root parallelisation. It creates a separate tree (or set of trees) for each system thread and divides the iterations over the threads. The statistics from the root of each tree are then combined to find the overall best move.
+Several approaches to parallel tree searching exist, see e.g. [Parallelization of Information Set Monte Carlo Tree Search](https://www-users.cs.york.ac.uk/~nsephton/papers/wcci2014-ismcts-parallelization.pdf) by Nick Sephton and the authors of ISMCTS. At present, this library provides the most straightforward method of root parallelisation. It distributes the iterations over the system threads, with each thread searching a separate tree. The statistics from the root of each tree are then combined to find the overall best move. This method is very fast as it avoids synchronisation issues and the additional work is limited to a single layer of nodes in each tree.
 
 This is implemented using the `std::thread` class and can be used by providing the optional second `ExecutionPolicy` parameter to either class template. Template specialisations are provided for two policies, defined in [execution.h](include/execution.h): `ISMCTS::Sequential` (the default) and `ISMCTS::RootParallel`. For example, the following instantiates a parallel `MOSolver` for a two player game where `int` represents a move:
 ```cpp
