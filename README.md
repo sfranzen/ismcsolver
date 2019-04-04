@@ -14,7 +14,7 @@ void MyGame::doAIMove()
     this->doMove(solver(*this));
 }
 ```
-A simple working example game (tic tac toe) is included [here](test).
+A simple card game (Knockout Whist) is included [here](test), based on the example Python implementation available [here](https://gist.github.com/kjlubick/8ea239ede6a026a61f4d). Its main purpose is to test the compilation and functioning of the library code, but it also serves as an example implementation of the `ISMCTS::Game<Move>` interface.
 
 ## The algorithm
 The following is only a short summary of how ISMCTS works. For the full technical details, see the paper [Information Set Monte Carlo Tree Search](https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf) by Peter I. Cowling, Edward J. Powley and Daniel Whitehouse.
