@@ -9,12 +9,14 @@
 #include <ostream>
 
 struct Card {
-    enum Rank : char {
+    enum Rank : int {
         Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
     };
-    enum Suit : char {
+    enum Suit : int {
         Clubs = 0, Diamonds, Hearts, Spades
     };
+
+    Card() = default;
 
     Rank rank;
     Suit suit;
@@ -28,13 +30,13 @@ struct Card {
     {
         return !(*this == other);
     }
-};
 
-std::ostream &operator<<(std::ostream &out, Card card)
-{
-    static const std::string ranks {"xx23456789TJQKA"};
-    static const std::string suits {"CDHS"};
-    return out << ranks.at(card.rank) << suits.at(card.suit);
-}
+    friend std::ostream &operator<<(std::ostream &out, Card card)
+    {
+        static const std::string ranks {"xx23456789TJQKA"};
+        static const std::string suits {"CDHS"};
+        return out << ranks.at(card.rank) << suits.at(card.suit);
+    }
+};
 
 #endif // CARD_H
