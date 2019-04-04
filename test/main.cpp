@@ -5,7 +5,9 @@
  */
 #include <sosolver.h>
 #include <mosolver.h>
-#include "game.h"
+#include "knockoutwhist.h"
+#include "card.h"
+
 #include <chrono>
 #include <iostream>
 
@@ -14,23 +16,23 @@ int main(int /*argc*/, char **/*argv*/)
     using namespace std;
     using namespace std::chrono;
 
-    Game g {3};
+    KnockoutWhist game {3};
     const unsigned iters {500};
-    ISMCTS::MOSolver<int,ISMCTS::RootParallel> solver {2, iters};
+    ISMCTS::SOSolver<Card> solver {iters};
     duration<double> t;
     unsigned iter_count {0};
 
-    while (!g.validMoves().empty()) {
+    while (!game.validMoves().empty()) {
+        std::cout << game << "\n";
         const auto t0 = high_resolution_clock::now();
-        const auto move = solver(g);
+        const auto move = solver(game);
         const auto t1 = high_resolution_clock::now();
-        g.doMove(move);
+        game.doMove(move);
         t += t1 - t0;
         iter_count += iters;
     }
 
     const auto time_us = duration_cast<microseconds>(t).count();
-    cout << g.getResult(0) << endl << g << endl;
     cout << "Time taken: " << time_us << " microseconds" << endl;
     cout << "Per iteration: " << double(time_us) / iter_count << endl;
     return 0;
