@@ -31,6 +31,11 @@ struct Card {
         return !(*this == other);
     }
 
+    explicit operator int() const
+    {
+        return rank + 13 * suit;
+    }
+
     friend std::ostream &operator<<(std::ostream &out, Card card)
     {
         static const std::string ranks {"xx23456789TJQKA"};
@@ -38,5 +43,10 @@ struct Card {
         return out << ranks.at(card.rank) << suits.at(card.suit);
     }
 };
+
+inline bool operator<(const Card &a, const Card &b)
+{
+    return int(a) < int(b);
+}
 
 #endif // CARD_H
