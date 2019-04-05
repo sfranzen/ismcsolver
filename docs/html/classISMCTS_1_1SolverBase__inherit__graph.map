@@ -1,0 +1,9 @@
+<map id="ISMCTS::SolverBase&lt; Move &gt;" name="ISMCTS::SolverBase&lt; Move &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="5,104,159,145"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolverBase.html" title="Common base class for multiple observer solvers." alt="" coords="207,71,381,112"/>
+<area shape="rect" id="node5" href="$classISMCTS_1_1SOSolverBase.html" title="Common base class for single observer solvers." alt="" coords="208,136,380,177"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html" title="Multiple observer solver with root parallelisation." alt="" coords="429,5,621,47"/>
+<area shape="rect" id="node4" href="$classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver." alt="" coords="429,71,621,112"/>
+<area shape="rect" id="node6" href="$classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html" title="Single observer solver with root parallelisation." alt="" coords="430,136,621,177"/>
+<area shape="rect" id="node7" href="$classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver." alt="" coords="430,201,621,243"/>
+</map>
