@@ -9,6 +9,7 @@
 #include "game.h"
 #include "node.h"
 #include <random>
+#include <chrono>
 
 namespace ISMCTS
 {
@@ -25,8 +26,16 @@ public:
      *      It must be positive; the authors of the algorithm suggest 0.7.
      */
     explicit SolverBase(std::size_t iterMax = 1000, double exploration = 0.7)
-        : m_iterMax {iterMax}
-        , m_exploration {std::max(exploration, 0.0)}
+        : m_iterMax{iterMax}
+        , m_time{0}
+        , m_exploration{std::max(exploration, 0.0)}
+    {}
+
+    /// Alternative constructor for solvers with time-limited execution.
+    explicit SolverBase(std::chrono::duration<double> time, double exploration = 0.7)
+        : m_iterMax{0}
+        , m_time{time}
+        , m_exploration{std::max(exploration, 0.0)}
     {}
 
     virtual ~SolverBase() {}
@@ -40,6 +49,7 @@ public:
 
 protected:
     const std::size_t m_iterMax;
+    const std::chrono::duration<double> m_time;
     const double m_exploration;
 
     /**

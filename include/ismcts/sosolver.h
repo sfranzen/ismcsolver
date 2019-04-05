@@ -15,6 +15,7 @@
 #include <vector>
 #include <thread>
 #include <map>
+#include <chrono>
 
 namespace ISMCTS
 {
@@ -26,10 +27,20 @@ public:
     using SolverBase<Move>::SolverBase;
 
 protected:
-    void iterate(std::size_t number, Node<Move> &root, const Game<Move> &state) const
+    void iterate(Node<Move> &root, const Game<Move> &state) const
     {
-        for (std::size_t i {0}; i < number; ++i)
-            search(&root, state);
+        if (this->m_iterMax > 0) {
+            for (std::size_t i {0}; i < this->m_iterMax; ++i)
+                search(&root, state);
+        } else {
+            auto duration = this->m_time;
+            while (duration.count() > 0) {
+                using namespace std::chrono;
+                const auto start = high_resolution_clock::now();
+                search(&root, state);
+                duration -= high_resolution_clock::now() - start;
+            }
+        }
     }
 
     /// Traverse a single sequence of moves
@@ -90,7 +101,7 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         Node<Move> root;
-        this->iterate(this->m_iterMax, root, rootState);
+        this->iterate(root, rootState);
         const auto &rootList = root.children();
         using value = typename Node<Move>::Ptr;
         const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end(), [](const value &a, const value &b){
@@ -107,6 +118,10 @@ class SOSolver<Move, RootParallel> : public SOSolverBase<Move>
 public:
     using SOSolverBase<Move>::SOSolverBase;
 
+    explicit SOSolver(std::size_t iterMax = 1000, double exploration = 0.7)
+        : SOSolverBase<Move>{iterMax / std::thread::hardware_concurrency(), exploration}
+    {}
+
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         const auto numThreads = std::thread::hardware_concurrency();
@@ -114,7 +129,7 @@ public:
         std::vector<Node<Move>> trees(numThreads);
 
         for (std::size_t t = 0; t < numThreads; ++t)
-            threads[t] = std::thread(&SOSolver::iterate, this, this->m_iterMax / numThreads, std::ref(trees[t]), std::ref(rootState));
+            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(trees[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 

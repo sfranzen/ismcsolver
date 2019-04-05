@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <vector>
-#include <iostream>
+#include <chrono>
 
 namespace ISMCTS
 {
@@ -22,25 +22,35 @@ template<class Move>
 class MOSolverBase : public SolverBase<Move>
 {
 public:
-    MOSolverBase(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
+    explicit MOSolverBase(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
         : SolverBase<Move>{iterMax, exploration}
+        , m_numPlayers{numPlayers}
+    {}
+
+    explicit MOSolverBase(std::size_t numPlayers, std::chrono::duration<double> time, double exploration = 0.7)
+        : SolverBase<Move>{time, exploration}
         , m_numPlayers{numPlayers}
     {}
 
 protected:
     using RootList = std::vector<Node<Move>>;
     using NodePtrList = std::vector<Node<Move>*>;
+
     std::size_t m_numPlayers;
 
-    void iterate(std::size_t number, RootList &trees, const Game<Move> &state) const
+    void iterate(RootList &trees, const Game<Move> &state) const
     {
-        for (std::size_t i {0}; i < number; ++i) {
-            std::cout << "starting iteration " << i << "\n";
-            search(trees, state);
-            std::cout << "iteration completed; player trees: ";
-            for (const auto &tree : trees)
-                std::cout << tree;
-            std::cout << std::endl;
+        if (this->m_iterMax > 0) {
+            for (std::size_t i {0}; i < this->m_iterMax; ++i)
+                search(trees, state);
+        } else {
+            auto duration = this->m_time;
+            while (duration.count() > 0) {
+                using namespace std::chrono;
+                const auto start = high_resolution_clock::now();
+                search(trees, state);
+                duration -= high_resolution_clock::now() - start;
+            }
         }
     }
 
@@ -117,7 +127,7 @@ public:
     {
         std::vector<Node<Move>> trees(this->m_numPlayers);
 
-        this->iterate(this->m_iterMax, trees, rootState);
+        this->iterate(trees, rootState);
 
         const auto &rootList = trees.at(rootState.currentPlayer()).children();
         using value = typename Node<Move>::Ptr;
@@ -135,6 +145,10 @@ class MOSolver<Move, RootParallel> : public MOSolverBase<Move>
 public:
     using MOSolverBase<Move>::MOSolverBase;
 
+    explicit MOSolver(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
+        : MOSolverBase<Move>{numPlayers, iterMax / std::thread::hardware_concurrency(), exploration}
+    {}
+
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         const auto numThreads = std::thread::hardware_concurrency();
@@ -144,7 +158,7 @@ public:
             set = RootList(this->m_numPlayers);
 
         for (std::size_t t = 0; t < numThreads; ++t)
-            threads[t] = std::thread(&MOSolver::iterate, this, this->m_iterMax / numThreads, std::ref(treeSets[t]), std::ref(rootState));
+            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(treeSets[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
