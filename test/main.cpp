@@ -48,9 +48,9 @@ int main(int /*argc*/, char **/*argv*/)
     using namespace std;
     using namespace std::chrono;
 
-    const unsigned numGames {10000};
-    const unsigned numIters {100};
-    ISMCTS::SOSolver<Card> solver {numIters};
+    const unsigned numGames {100};
+    const unsigned numIters {1};
+    ISMCTS::SOSolver<Card,ISMCTS::RootParallel> solver {milliseconds(5)};
     unsigned score {0};
     unsigned totalCalls {0};
     duration<double> t;

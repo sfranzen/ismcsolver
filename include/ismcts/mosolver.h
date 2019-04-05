@@ -22,8 +22,8 @@ template<class Move>
 class MOSolverBase : public SolverBase<Move>
 {
 public:
-    explicit MOSolverBase(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
-        : SolverBase<Move>{iterMax, exploration}
+    explicit MOSolverBase(std::size_t numPlayers, std::size_t iterationCount = 1000, double exploration = 0.7)
+        : SolverBase<Move>{iterationCount, exploration}
         , m_numPlayers{numPlayers}
     {}
 
@@ -40,11 +40,11 @@ protected:
 
     void iterate(RootList &trees, const Game<Move> &state) const
     {
-        if (this->m_iterMax > 0) {
-            for (std::size_t i {0}; i < this->m_iterMax; ++i)
+        if (this->m_iterCount > 0) {
+            for (std::size_t i {0}; i < this->m_iterCount; ++i)
                 search(trees, state);
         } else {
-            auto duration = this->m_time;
+            auto duration = this->m_iterTime;
             while (duration.count() > 0) {
                 using namespace std::chrono;
                 const auto start = high_resolution_clock::now();

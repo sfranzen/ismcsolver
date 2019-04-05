@@ -29,11 +29,11 @@ public:
 protected:
     void iterate(Node<Move> &root, const Game<Move> &state) const
     {
-        if (this->m_iterMax > 0) {
-            for (std::size_t i {0}; i < this->m_iterMax; ++i)
+        if (this->m_iterCount > 0) {
+            for (std::size_t i {0}; i < this->m_iterCount; ++i)
                 search(&root, state);
         } else {
-            auto duration = this->m_time;
+            auto duration = this->m_iterTime;
             while (duration.count() > 0) {
                 using namespace std::chrono;
                 const auto start = high_resolution_clock::now();
@@ -118,8 +118,8 @@ class SOSolver<Move, RootParallel> : public SOSolverBase<Move>
 public:
     using SOSolverBase<Move>::SOSolverBase;
 
-    explicit SOSolver(std::size_t iterMax = 1000, double exploration = 0.7)
-        : SOSolverBase<Move>{iterMax / std::thread::hardware_concurrency(), exploration}
+    explicit SOSolver(std::size_t iterationCount = 1000, double exploration = 0.7)
+        : SOSolverBase<Move>{iterationCount / std::thread::hardware_concurrency(), exploration}
     {}
 
     virtual Move operator()(const Game<Move> &rootState) const override

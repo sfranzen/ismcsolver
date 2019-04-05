@@ -19,24 +19,32 @@ class SolverBase
 {
 public:
     /**
-     * Constructor.
+     * Constructs a solver that will iterate the given number of times per
+     * search operation.
      *
-     * @param iterMax Sets the number of simulations performed for each search.
      * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
      */
-    explicit SolverBase(std::size_t iterMax = 1000, double exploration = 0.7)
-        : m_iterMax{iterMax}
-        , m_time{0}
-        , m_exploration{std::max(exploration, 0.0)}
-    {}
+    explicit SolverBase(std::size_t iterationCount = 1000, double exploration = 0.7)
+    {
+        setIterationCount(iterationCount);
+        setExplorationBias(exploration);
+    }
 
-    /// Alternative constructor for solvers with time-limited execution.
+    /**
+     * Constructs a solver that will iterate for the given duration per search
+     * operation.
+     *
+     * @param exploration Sets the algorithm's bias towards unexplored moves.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
+     */
     explicit SolverBase(std::chrono::duration<double> time, double exploration = 0.7)
-        : m_iterMax{0}
-        , m_time{time}
-        , m_exploration{std::max(exploration, 0.0)}
-    {}
+    {
+        setIterationTime(time);
+        setExplorationBias(exploration);
+    }
 
     virtual ~SolverBase() {}
 
@@ -47,10 +55,30 @@ public:
      */
     virtual Move operator()(const Game<Move> &rootState) const = 0;
 
+    /// Sets the solver to use a fixed number of iterations in future searches.
+    void setIterationCount(std::size_t count)
+    {
+        m_iterCount = count;
+        m_iterTime = std::chrono::duration<double>::zero();
+    }
+
+    /// Sets the solver to iterate for a fixed time in future searches.
+    void setIterationTime(std::chrono::duration<double> time)
+    {
+        m_iterTime = time;
+        m_iterCount = 0;
+    }
+
+    /// Sets the exploration bias of future searches.
+    void setExplorationBias(double exploration)
+    {
+        m_exploration = std::max(exploration, 0.0);
+    }
+
 protected:
-    const std::size_t m_iterMax;
-    const std::chrono::duration<double> m_time;
-    const double m_exploration;
+    std::size_t m_iterCount;
+    std::chrono::duration<double> m_iterTime;
+    double m_exploration;
 
     /**
      * Simulation stage
