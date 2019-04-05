@@ -45,5 +45,18 @@ This is implemented using the `std::thread` class and can be used by providing t
 ISMCTS::MOSolver<int, ISMCTS::RootParallel> solver {2};
 ```
 
+### Time-limited execution
+Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other a `std::chrono::duration<double>` instead letting it search for the given length of time. Both the mode of operation and the length of the search can be changed after instantiation. A duration can be created using any of the convenience typedefs in [`std::chrono`](https://en.cppreference.com/w/cpp/header/chrono), e.g.:
+
+```cpp
+using namespace std::chrono;
+ISMCTS::SOSolver<int> solver {milliseconds(5)};
+```
+or even shorter with literal operators, since C++14:
+```cpp
+using namespace std::chrono_literals;
+ISMCTS::SOSolver<int> solver {5ms};
+```
+
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
