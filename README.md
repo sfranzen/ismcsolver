@@ -6,7 +6,7 @@ This implementation uses C++ class templates to apply the algorithm to a generic
 ## Usage
 You can either install the header files or just copy them into your project sources. Your game (or engine) class should implement the abstract interface `ISMCTS::Game<Move>`, replacing the template parameter `Move` with the data type (or class) representing a player's move. The library provides two solver class templates, `ISMCTS::SOSolver<Move>` and `ISMCTS::MOSolver<Move>`. Their differences are explained below, but they should be instantiated with the same `Move` type to obtain an object that can select moves for the AI player(s), e.g.
 ```cpp
-#include <sosolver.h>
+#include <ismcts/sosolver.h>
 // ...
 void MyGame::doAIMove()
 {
