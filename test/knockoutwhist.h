@@ -6,7 +6,7 @@
 #ifndef KNOCKOUTWHIST_H
 #define KNOCKOUTWHIST_H
 
-#include <game.h>
+#include <ismcts/game.h>
 #include "card.h"
 
 #include <vector>

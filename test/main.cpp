@@ -3,8 +3,8 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include <sosolver.h>
-#include <mosolver.h>
+#include <ismcts/sosolver.h>
+#include <ismcts/mosolver.h>
 #include "knockoutwhist.h"
 #include "card.h"
 

@@ -8,13 +8,14 @@ cmake_minimum_required(VERSION 3.1.0)
 
 find_package(Threads REQUIRED)
 
+set(include_dir ${CMAKE_CURRENT_SOURCE_DIR}/include/ismcts)
 set(headers
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/game.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/node.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/solverbase.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/sosolver.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/mosolver.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/execution.h
+    ${include_dir}/game.h
+    ${include_dir}/node.h
+    ${include_dir}/solverbase.h
+    ${include_dir}/sosolver.h
+    ${include_dir}/mosolver.h
+    ${include_dir}/execution.h
 )
 
 add_subdirectory(test)
