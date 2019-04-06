@@ -61,11 +61,10 @@ protected:
         NodePtrList roots(trees.size());
         std::transform(trees.begin(), trees.end(), roots.begin(), [](Node<Move> &n){ return &n; });
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
-        auto statePtr = randomState.get();
-        select(roots, statePtr);
-        expand(roots, statePtr);
-        SolverBase<Move>::simulate(statePtr);
-        backPropagate(roots, statePtr);
+        select(roots, *randomState);
+        expand(roots, *randomState);
+        SolverBase<Move>::simulate(*randomState);
+        backPropagate(roots, *randomState);
     }
 
     /**
@@ -74,16 +73,16 @@ protected:
      * Descend all trees until a node is reached that has unexplored moves, or
      * is a terminal node (no more moves available).
      */
-    void select(NodePtrList &nodes, Game<Move> *state) const
+    void select(NodePtrList &nodes, Game<Move> &state) const
     {
-        const auto validMoves = state->validMoves();
-        const auto player = state->currentPlayer();
+        const auto validMoves = state.validMoves();
+        const auto player = state.currentPlayer();
         const auto &targetNode = nodes[player];
         if (!SolverBase<Move>::selectNode(targetNode, validMoves)) {
             const auto selection = targetNode->ucbSelectChild(validMoves, this->m_exploration);
             for (auto &node : nodes)
                 node = node->findOrAddChild(selection->move(), player);
-            state->doMove(selection->move());
+            state.doMove(selection->move());
             select(nodes, state);
         }
     }
@@ -94,19 +93,19 @@ protected:
      * Choose a random unexplored move, add it to the children of all current
      * nodes and select these new nodes.
      */
-    static void expand(NodePtrList &nodes, Game<Move> *state)
+    static void expand(NodePtrList &nodes, Game<Move> &state)
     {
-        const auto player = state->currentPlayer();
-        const auto untriedMoves = nodes[player]->untriedMoves(state->validMoves());
+        const auto player = state.currentPlayer();
+        const auto untriedMoves = nodes[player]->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
             const auto move = SolverBase<Move>::randMove(untriedMoves);
             for (auto &node : nodes)
                 node = node->findOrAddChild(move, player);
-            state->doMove(move);
+            state.doMove(move);
         }
     }
 
-    static void backPropagate(NodePtrList &nodes, const Game<Move> *state)
+    static void backPropagate(NodePtrList &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
             SolverBase<Move>::backPropagate(node, state);

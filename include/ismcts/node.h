@@ -45,11 +45,11 @@ public:
         return m_children.back().get();
     }
 
-    void update(const Game<Move> *terminalState)
+    void update(const Game<Move> &terminalState)
     {
         ++m_visits;
         if (m_playerJustMoved != -1)
-            m_score += terminalState->getResult(m_playerJustMoved);
+            m_score += terminalState.getResult(m_playerJustMoved);
     }
 
     std::vector<Move> untriedMoves(const std::vector<Move> &legalMoves) const

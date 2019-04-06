@@ -88,12 +88,12 @@ protected:
      * Continue performing random available moves from this state until the end
      * of the game.
      */
-    static void simulate(Game<Move> *state)
+    static void simulate(Game<Move> &state)
     {
-        auto moves = state->validMoves();
-        while (!moves.empty()) {
-            state->doMove(randMove(moves));
-            moves = state->validMoves();
+        const auto moves = state.validMoves();
+        if (!moves.empty()) {
+            state.doMove(randMove(moves));
+            simulate(state);
         }
     }
 
@@ -103,7 +103,7 @@ protected:
      * Traverse back to the root from the given node, updating the statistics of
      * all visited nodes with the result of the finished game state.
      */
-    static void backPropagate(Node<Move> *node, const Game<Move> *state)
+    static void backPropagate(Node<Move> *node, const Game<Move> &state)
     {
         while (node) {
             node->update(state);

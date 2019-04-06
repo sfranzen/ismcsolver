@@ -46,11 +46,10 @@ protected:
     void search(Node<Move> *rootNode, const Game<Move> &rootState) const
     {
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
-        auto statePtr = randomState.get();
-        select(rootNode, statePtr);
-        expand(rootNode, statePtr);
-        SolverBase<Move>::simulate(statePtr);
-        SolverBase<Move>::backPropagate(rootNode, statePtr);
+        select(rootNode, *randomState);
+        expand(rootNode, *randomState);
+        SolverBase<Move>::simulate(*randomState);
+        SolverBase<Move>::backPropagate(rootNode, *randomState);
     }
 
     /**
@@ -59,12 +58,12 @@ protected:
      * Descend the tree until a node is reached that has unexplored moves, or
      * is a terminal node (no more moves available).
      */
-    void select(Node<Move> *&node, Game<Move> *state) const
+    void select(Node<Move> *&node, Game<Move> &state) const
     {
-        const auto validMoves = state->validMoves();
+        const auto validMoves = state.validMoves();
         if (!SolverBase<Move>::selectNode(node, validMoves)) {
             node = node->ucbSelectChild(validMoves, this->m_exploration);
-            state->doMove(node->move());
+            state.doMove(node->move());
             select(node, state);
         }
     }
@@ -75,13 +74,13 @@ protected:
      * Choose a random unexplored move, add it to the children of the current
      * node and select this new node.
      */
-    static void expand(Node<Move> *&node, Game<Move> *state)
+    static void expand(Node<Move> *&node, Game<Move> &state)
     {
-        const auto untriedMoves = node->untriedMoves(state->validMoves());
+        const auto untriedMoves = node->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
             const auto move = SOSolverBase::randMove(untriedMoves);
-            node = node->addChild(move, state->currentPlayer());
-            state->doMove(move);
+            node = node->addChild(move, state.currentPlayer());
+            state.doMove(move);
         }
     }
 };
