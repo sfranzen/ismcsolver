@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <vector>
+#include <thread>
 #include <chrono>
 
 namespace ISMCTS
@@ -118,7 +119,7 @@ class MOSolver {};
 
 /// Sequential multiple observer solver
 template<class Move>
-class MOSolver<Move, Sequential> : public MOSolverBase<Move>
+class MOSolver<Move, Sequential> : public MOSolverBase<Move>, public Sequential
 {
 public:
     using MOSolverBase<Move>::MOSolverBase;
@@ -127,13 +128,13 @@ public:
     {
         std::vector<Node<Move>> trees(this->m_numPlayers);
         this->iterate(trees, rootState);
-        return MOSolver::bestMove(trees[rootState.currentPlayer()]);
+        return bestMove(trees[rootState.currentPlayer()]);
     }
 };
 
 /// Multiple observer solver with root parallelisation
 template<class Move>
-class MOSolver<Move, RootParallel> : public MOSolverBase<Move>
+class MOSolver<Move, RootParallel> : public MOSolverBase<Move>, public RootParallel
 {
 public:
     using MOSolverBase<Move>::MOSolverBase;
@@ -156,40 +157,15 @@ public:
             t.join();
 
         // Gather results for the current player from each thread
-        NodePtrList currentPlayerTrees(numThreads);
+        RootList currentPlayerTrees(numThreads);
         std::transform(treeSets.begin(), treeSets.end(), currentPlayerTrees.begin(), [&](RootList &set){
-            return &set.at(rootState.currentPlayer());
+            return std::move(set[rootState.currentPlayer()]);
         });
-        const auto results = compileVisitCounts(currentPlayerTrees);
-        using pair = typename VisitMap::value_type;
-        const auto &mostVisited = *max_element(results.begin(), results.end(), [](const pair &a, const pair &b){
-            return a.second < b.second;
-        });
-        return mostVisited.first;
+        return bestMove(currentPlayerTrees);
     }
 
 protected:
     using typename MOSolverBase<Move>::RootList;
-    using typename MOSolverBase<Move>::NodePtrList;
-
-private:
-    using VisitMap = std::map<Move, unsigned int>;
-
-    // Map each unique move to its total number of visits
-    static VisitMap compileVisitCounts(const NodePtrList &trees)
-    {
-        VisitMap results;
-        for (auto &node : trees.front()->children())
-            results.emplace(node->move(), node->visits());
-        for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
-            for (auto &node : (*t)->children()) {
-                const auto result = results.emplace(node->move(), node->visits());
-                if (!result.second)
-                    (*result.first).second += node->visits();
-            }
-        }
-        return results;
-    }
 };
 
 }

@@ -8,8 +8,10 @@
 
 #include "game.h"
 #include "node.h"
+
 #include <random>
 #include <chrono>
+#include <vector>
 
 namespace ISMCTS
 {
@@ -109,20 +111,10 @@ protected:
         }
     }
 
-    // Whether to select this node given available moves
+    /// Whether to select this node given available moves
     static bool selectNode(const Node<Move> *node, const std::vector<Move> &moves)
     {
         return moves.empty() || !node->untriedMoves(moves).empty();
-    }
-
-    static const Move &bestMove(const Node<Move> &node)
-    {
-        const auto &children = node.children();
-        using value = typename Node<Move>::Ptr;
-        const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const value &a, const value &b){
-            return a->visits() < b->visits();
-        });
-        return mostVisited->move();
     }
 
     static const Move &randMove(const std::vector<Move> &moves)

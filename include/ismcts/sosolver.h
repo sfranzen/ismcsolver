@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 #include <thread>
-#include <map>
 #include <chrono>
 
 namespace ISMCTS
@@ -93,7 +92,7 @@ class SOSolver {};
 
 /// Sequential single observer solver
 template<class Move>
-class SOSolver<Move, Sequential> : public SOSolverBase<Move>
+class SOSolver<Move, Sequential> : public SOSolverBase<Move>, public Sequential
 {
 public:
     using SOSolverBase<Move>::SOSolverBase;
@@ -102,13 +101,13 @@ public:
     {
         Node<Move> root;
         this->iterate(root, rootState);
-        return SOSolver::bestMove(root);
+        return bestMove(root);
     }
 };
 
 /// Single observer solver with root parallelisation
 template<class Move>
-class SOSolver<Move, RootParallel> : public SOSolverBase<Move>
+class SOSolver<Move, RootParallel> : public SOSolverBase<Move>, public RootParallel
 {
 public:
     using SOSolverBase<Move>::SOSolverBase;
@@ -128,31 +127,7 @@ public:
         for (auto &t : threads)
             t.join();
 
-        const auto results = compileVisitCounts(trees);
-        using pair = typename VisitMap::value_type;
-        const auto &mostVisited = *max_element(results.begin(), results.end(), [](const pair &a, const pair &b){
-            return a.second < b.second;
-        });
-        return mostVisited.first;
-    }
-
-private:
-    using VisitMap = std::map<Move, unsigned int>;
-
-    // Map each unique move to its total number of visits
-    static VisitMap compileVisitCounts(const std::vector<Node<Move>> &trees)
-    {
-        VisitMap results;
-        for (auto &node : trees.front().children())
-            results.emplace(node->move(), node->visits());
-        for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
-            for (auto &node : t->children()) {
-                const auto result = results.emplace(node->move(), node->visits());
-                if (!result.second)
-                    (*result.first).second += node->visits();
-            }
-        }
-        return results;
+        return bestMove(trees);
     }
 };
 
