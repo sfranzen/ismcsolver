@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ismcsolver: ismcsolver</title>
+<title>ismcsolver: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,6 +45,7 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -59,13 +60,13 @@ $(function() {
 </iframe>
 </div>
 
-</div><!-- top -->
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">ismcsolver </div>  </div>
+<div class="title">ismcsolver Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>ismcsolver provides a C++ implementation of information set Monte Carlo tree search (ISMCTS) algorithms. Monte Carlo tree search is a (game) AI decision making algorithm noted for its applicability to many different games of perfect information, requiring no domain-specific knowledge and only little information about a game's state. ISMCTS is an elegant extension of this technique to imperfect information games, where not all information is visible to all players, possibly combined with factors of randomness.</p>
+<div class="textblock"><h1>ismcsolver</h1>
+<p>ismcsolver provides a C++ implementation of information set Monte Carlo tree search (ISMCTS) algorithms. Monte Carlo tree search is a (game) AI decision making algorithm noted for its applicability to many different games of perfect information, requiring no domain-specific knowledge and only little information about a game's state. ISMCTS is an elegant extension of this technique to imperfect information games, where not all information is visible to all players, possibly combined with factors of randomness.</p>
 <p>This implementation uses C++ class templates to apply the algorithm to a generic type of game using a generic type of move. At the moment it adheres to the C++11 standard.</p>
 <h2>Usage</h2>
 <p>You can either install the header files or just copy them into your project sources. Your game (or engine) class should implement the abstract interface <code><a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>&lt;Move&gt;</code>, replacing the template parameter <code>Move</code> with the data type (or class) representing a player's move. The library provides two solver class templates, <code><a class="el" href="classISMCTS_1_1SOSolver.html">ISMCTS::SOSolver</a>&lt;Move&gt;</code> and <code><a class="el" href="classISMCTS_1_1MOSolver.html">ISMCTS::MOSolver</a>&lt;Move&gt;</code>. Their differences are explained below, but they should be instantiated with the same <code>Move</code> type to obtain an object that can select moves for the AI player(s), e.g. </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;ismcts/sosolver.h&gt;</span></div><div class="line"><span class="comment">// ...</span></div><div class="line"><span class="keywordtype">void</span> MyGame::doAIMove()</div><div class="line">{</div><div class="line">    <a class="code" href="classISMCTS_1_1SOSolver.html">ISMCTS::SOSolver&lt;MyMove&gt;</a> solver;</div><div class="line">    this-&gt;doMove(solver(*<span class="keyword">this</span>));</div><div class="line">}</div></div><!-- fragment --><p> A simple card game (Knockout Whist) is included [here](test), based on the example Python implementation available <a href="https://gist.github.com/kjlubick/8ea239ede6a026a61f4d">here</a>. Its main purpose is to test the compilation and functioning of the library code, but it also serves as an example implementation of the <code><a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>&lt;Move&gt;</code> interface.</p>
