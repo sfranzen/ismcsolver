@@ -88,11 +88,11 @@ protected:
      * Continue performing random available moves from this state until the end
      * of the game.
      */
-    static void simulate(Game<Move> &state)
+    void simulate(Game<Move> &state) const
     {
         const auto moves = state.validMoves();
         if (!moves.empty()) {
-            state.doMove(randMove(moves));
+            state.doMove(this->randomMove(moves));
             simulate(state);
         }
     }
@@ -117,12 +117,16 @@ protected:
         return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
-    static const Move &randMove(const std::vector<Move> &moves)
+    const Move &randomMove(const std::vector<Move> &moves) const
     {
-        thread_local static std::random_device rd;
-        thread_local static std::mt19937 rng {rd()};
         std::uniform_int_distribution<std::size_t> dist {0, moves.size() - 1};
-        return moves[dist(rng)];
+        return moves[dist(urng())];
+    }
+
+    virtual std::mt19937 &urng() const
+    {
+        thread_local static std::mt19937 urng {std::random_device{}()};
+        return urng;
     }
 };
 

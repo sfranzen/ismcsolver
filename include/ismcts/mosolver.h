@@ -63,7 +63,7 @@ protected:
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
         select(roots, *randomState);
         expand(roots, *randomState);
-        SolverBase<Move>::simulate(*randomState);
+        this->simulate(*randomState);
         backPropagate(roots, *randomState);
     }
 
@@ -93,12 +93,12 @@ protected:
      * Choose a random unexplored move, add it to the children of all current
      * nodes and select these new nodes.
      */
-    static void expand(NodePtrList &nodes, Game<Move> &state)
+    void expand(NodePtrList &nodes, Game<Move> &state) const
     {
         const auto player = state.currentPlayer();
         const auto untriedMoves = nodes[player]->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
-            const auto move = SolverBase<Move>::randMove(untriedMoves);
+            const auto move = this->randomMove(untriedMoves);
             for (auto &node : nodes)
                 node = node->findOrAddChild(move, player);
             state.doMove(move);
