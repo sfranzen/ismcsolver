@@ -16,7 +16,7 @@ namespace
 const unsigned DeckSize {52};
 
 std::mt19937 &urng() {
-    static thread_local std::mt19937 urng {std::random_device{}()};
+    static thread_local std::mt19937 urng;
     return urng;
 }
 }
