@@ -115,6 +115,16 @@ protected:
         return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
+    static const Move &bestMove(const Node<Move> &node)
+    {
+        const auto &children = node.children();
+        using value = typename Node<Move>::Ptr;
+        const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const value &a, const value &b){
+            return a->visits() < b->visits();
+        });
+        return mostVisited->move();
+    }
+
     static const Move &randMove(const std::vector<Move> &moves)
     {
         thread_local static std::random_device rd;

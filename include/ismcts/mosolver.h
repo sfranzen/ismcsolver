@@ -126,15 +126,8 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<Node<Move>> trees(this->m_numPlayers);
-
         this->iterate(trees, rootState);
-
-        const auto &rootList = trees.at(rootState.currentPlayer()).children();
-        using value = typename Node<Move>::Ptr;
-        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end(), [](const value &a, const value &b){
-            return a->visits() < b->visits();
-        });
-        return mostVisited->move();
+        return MOSolver::bestMove(trees[rootState.currentPlayer()]);
     }
 };
 

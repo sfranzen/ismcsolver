@@ -102,12 +102,7 @@ public:
     {
         Node<Move> root;
         this->iterate(root, rootState);
-        const auto &rootList = root.children();
-        using value = typename Node<Move>::Ptr;
-        const auto &mostVisited = *std::max_element(rootList.begin(), rootList.end(), [](const value &a, const value &b){
-            return a->visits() < b->visits();
-        });
-        return mostVisited->move();
+        return SOSolver::bestMove(root);
     }
 };
 
