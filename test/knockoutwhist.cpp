@@ -6,7 +6,6 @@
 #include "knockoutwhist.h"
 
 #include <algorithm>
-#include <random>
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -14,11 +13,6 @@
 namespace
 {
 const unsigned DeckSize {52};
-
-std::mt19937 &urng() {
-    static thread_local std::mt19937 urng;
-    return urng;
-}
 }
 
 KnockoutWhist::KnockoutWhist(unsigned players)
@@ -43,7 +37,7 @@ KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(unsigned observer) const
         const auto &hand = m_playerCards[p];
         unseenCards.insert(unseenCards.end(), hand.begin(), hand.end());
     }
-    std::shuffle(unseenCards.begin(), unseenCards.end(), urng());
+    std::shuffle(unseenCards.begin(), unseenCards.end(), m_urng);
     auto u = unseenCards.begin();
     for (auto p : m_players) {
         if (p == observer)
@@ -141,7 +135,7 @@ void KnockoutWhist::deal()
 {
     std::vector<int> indices(DeckSize);
     std::iota(indices.begin(), indices.end(), 0);
-    std::shuffle(indices.begin(), indices.end(), urng());
+    std::shuffle(indices.begin(), indices.end(), m_urng);
     auto i = indices.cend();
     for (auto p : m_players) {
         auto &hand = m_playerCards[p];
@@ -152,7 +146,7 @@ void KnockoutWhist::deal()
     }
     // Choose random trump suit
     std::uniform_int_distribution<> randInt {0, 3};
-    m_trumpSuit = Card::Suit(randInt(urng()));
+    m_trumpSuit = Card::Suit(randInt(m_urng));
 }
 
 std::ostream& operator<<(std::ostream &out, const KnockoutWhist &g)
