@@ -10,7 +10,7 @@
 
 struct Card {
     enum Rank : int {
-        Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
+        Two = 0, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace
     };
     enum Suit : int {
         Clubs = 0, Diamonds, Hearts, Spades
@@ -36,11 +36,17 @@ struct Card {
         return rank + 13 * suit;
     }
 
+    operator std::string() const
+    {
+        static const std::string ranks {"23456789TJQKA"};
+        static const std::string suits {"CDHS"};
+        std::string s {ranks.at(rank)};
+        return s + suits.at(suit);
+    }
+
     friend std::ostream &operator<<(std::ostream &out, Card card)
     {
-        static const std::string ranks {"xx23456789TJQKA"};
-        static const std::string suits {"CDHS"};
-        return out << ranks.at(card.rank) << suits.at(card.suit);
+        return out << std::string(card);
     }
 };
 

@@ -141,7 +141,7 @@ void KnockoutWhist::deal()
         auto &hand = m_playerCards[p];
         std::generate_n(std::back_inserter(hand), m_tricksLeft, [&]() -> Card {
             --i;
-            return {Card::Rank(*i % 13 + 2), Card::Suit(*i % 4)};
+            return {Card::Rank(*i % 13), Card::Suit(*i % 4)};
         });
     }
     // Choose random trump suit
