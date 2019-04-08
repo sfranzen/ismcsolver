@@ -15,6 +15,11 @@
 
 using namespace std::chrono;
 
+namespace
+{
+
+const unsigned int numGames {100};
+
 class GameRunner
 {
 public:
@@ -65,9 +70,9 @@ private:
     }
 };
 
-static const unsigned int numGames {100};
+} // namespace
 
-TEMPLATE_PRODUCT_TEST_CASE("Fixed iterations benchmark", "[SOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Fixed iteration count", "[SOSolver]",
                            ISMCTS::SOSolver, (Card, (Card, ISMCTS::RootParallel)))
 {
     TestType solver {100};
@@ -75,7 +80,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Fixed iterations benchmark", "[SOSolver]",
     REQUIRE_NOTHROW(g.run());
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Fixed iterations benchmark", "[MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Fixed iteration count", "[MOSolver]",
                            ISMCTS::MOSolver, (Card, (Card, ISMCTS::RootParallel)))
 {
     TestType solver {2, 100};
