@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <iterator>
+#include <exception>
 
 namespace
 {
@@ -53,7 +54,11 @@ void KnockoutWhist::doMove(const Card move)
 {
     m_currentTrick.emplace_back(m_player, move);
     auto &hand = m_playerCards[m_player];
-    hand.erase(std::find(hand.begin(), hand.end(), move));
+    const auto pos = std::find(hand.begin(), hand.end(), move);
+    if (pos < hand.end())
+        hand.erase(pos);
+    else
+        throw std::out_of_range("pos");
     m_player = nextPlayer();
     if (m_currentTrick.size() == m_players.size())
         finishTrick();
