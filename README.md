@@ -21,22 +21,29 @@ A simple card game (Knockout Whist) is included [here](test), based on the examp
 [MO]: include/ismcts/mosolver.h
 [py]: https://gist.github.com/kjlubick/8ea239ede6a026a61f4d
 
-## The algorithm
-The following is only a short summary of how ISMCTS works. For the full technical details, see the article [Information Set Monte Carlo Tree Search][ISMCTS] by Peter I. Cowling, Edward J. Powley and Daniel Whitehouse.
+## Type requirements
+The type `Move` specified for the game and sequential solver templates must be a *[TrivialType]* that is *[EqualityComparable]*. Solvers with root parallelisation use a `std::map` to evaluate visit counts, so the `Move` must additionally be *[LessThanComparable]*.
 
-Most importantly, the "information set" part of ISMCTS refers to the set of all possible game states consistent with a given player's observation of a game so far. In a typical card game, for example, it contains the permutations of the cards possibly held by the player's opponents, given the game's rules and the sequence of cards already played. The algorithm works by taking random samples from this set, called determinisations, to gradually build an information tree using regular Monte Carlo searches:
+[TrivialType]: https://en.cppreference.com/w/cpp/named_req/TrivialType
+[EqualityComparable]: https://en.cppreference.com/w/cpp/named_req/EqualityComparable
+[LessThanComparable]: https://en.cppreference.com/w/cpp/named_req/LessThanComparable
 
-0. *Determinise*;
-1. *Select:* Using a selection algorithm, choose a sequence of moves from the root of the tree until either a node with unexplored moves is reached or the game ends;
-2. *Expand:* If there are unexplored moves, choose one at random and create a new node for it;
-3. *Simulate:* Continue applying random moves from this state until the game ends;
-4. *Backpropagate:* Update the tree by incrementing the visit counter and adding the score for the given player to this final node and each of its parents.
-
-Successive iterations of these steps result in sequences of moves that are initially random, but increasingly become shaped by the availability of moves in different determinisations as well as the selection algorithm. Different selection algorithms are possible, but this library for now uses the UCB (Upper Confidence Bound) algorithm also used by the authors of ISMCTS.
-
-The total number of iterations performed per search may be dictated, for example, by the available computational budget or a desired player strength. Upon finishing the search, the move corresponding to the most visited child node of the root of the resulting tree is selected as the most promising move.
-
-[ISMCTS]: https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf
+## About random numbers
+Game implementations will need a source of random numbers. Because `std::rand` does not guarantee a good quality sequence and may not be thread safe, modern code should use the `<random>` header. The objects representing generator engines are large, so the following is a good way of providing one to your class:
+```cpp
+#include <random>
+// definition as member of MyGame, could be const or static
+std::mt19937 &MyGame::prng()
+{
+    static thread_local std::mt19937 prng {std::random_device{}()};
+    return prng;
+}
+```
+This sets up one pseudorandom Mersenne Twister engine per thread, seeded with random numbers from a non-deterministic source if available. It can be used for shuffling, e.g. `std::shuffle(cards.begin(), cards.end(), prng());`. Single numbers on (closed) intervals should be generated using one of the available distributions:
+```cpp
+std::uniform_int_distribution<> singleDie {1, 6};
+auto result = singleDie(prng());
+```
 
 ## Features
 The basic algorithm can be applied, modified and executed in different ways. This section lists what is currently implemented.
@@ -55,7 +62,7 @@ ISMCTS::MOSolver<int, ISMCTS::RootParallel> solver {2};
 [par]: https://www-users.cs.york.ac.uk/~nsephton/papers/wcci2014-ismcts-parallelization.pdf
 
 ### Time-limited execution
-Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other a `std::chrono::duration<double>` instead letting it search for the given length of time. Both the mode of operation and the length of the search can be changed after instantiation. A duration can be created using any of the convenience typedefs in [`std::chrono`][chrono], e.g.:
+Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other instead letting it search for a fixed length of time (a `std::chrono::duration<double>`). Both the mode of operation and the length of the search can be changed after instantiation. A duration can be created using any of the convenience typedefs in [`std::chrono`][chrono], e.g.:
 
 ```cpp
 using namespace std::chrono;
@@ -67,6 +74,23 @@ using namespace std::chrono_literals;
 ISMCTS::SOSolver<int> solver {5ms};
 ```
 [chrono]: https://en.cppreference.com/w/cpp/header/chrono
+
+## The algorithm
+The following is only a short summary of how ISMCTS works. For the full technical details, see the article [Information Set Monte Carlo Tree Search][ISMCTS] by Peter I. Cowling, Edward J. Powley and Daniel Whitehouse.
+
+Most importantly, the "information set" part of ISMCTS refers to the set of all possible game states consistent with a given player's observation of a game so far. In a typical card game, for example, it contains the permutations of the cards possibly held by the player's opponents, given the game's rules and the sequence of cards already played. The algorithm works by taking random samples from this set, called determinisations, to gradually build an information tree using regular Monte Carlo searches:
+
+0. *Determinise*;
+1. *Select:* Using a selection algorithm, choose a sequence of moves from the root of the tree until either a node with unexplored moves is reached or the game ends;
+2. *Expand:* If there are unexplored moves, choose one at random and create a new node for it;
+3. *Simulate:* Continue applying random moves from this state until the game ends;
+4. *Backpropagate:* Update the tree by incrementing the visit counter and adding the score for the given player to this final node and each of its parents.
+
+Successive iterations of these steps result in sequences of moves that are initially random, but increasingly become shaped by the availability of moves in different determinisations as well as the selection algorithm. Different selection algorithms are possible, but this library for now uses the UCB (Upper Confidence Bound) algorithm also used by the authors of ISMCTS.
+
+The total number of iterations performed per search may be dictated, for example, by the available computational budget or a desired player strength. Upon finishing the search, the move corresponding to the most visited child node of the root of the resulting tree is selected as the most promising move.
+
+[ISMCTS]: https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf
 
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
