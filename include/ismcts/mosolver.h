@@ -19,17 +19,35 @@
 namespace ISMCTS
 {
 /// Common base class for multiple observer solvers
-template<class Move>
-class MOSolverBase : public SolverBase<Move>
+template<class Move, class ExecutionPolicy>
+class MOSolverBase : public SolverBase<Move>, public ExecutionPolicy
 {
 public:
+    /**
+     * Constructs a solver for a game with the given number of players that will
+     * iterate the given number of times per search operation.
+     *
+     * @param exploration Sets the algorithm's bias towards unexplored moves.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
+     */
     explicit MOSolverBase(std::size_t numPlayers, std::size_t iterationCount = 1000, double exploration = 0.7)
-        : SolverBase<Move>{iterationCount, exploration}
+        : SolverBase<Move>{exploration}
+        , ExecutionPolicy(iterationCount)
         , m_numPlayers{numPlayers}
     {}
 
-    explicit MOSolverBase(std::size_t numPlayers, std::chrono::duration<double> time, double exploration = 0.7)
-        : SolverBase<Move>{time, exploration}
+    /**
+     * Constructs a solver for a game with the given number of players that will
+     * iterate for the given duration per search operation.
+     *
+     * @param exploration Sets the algorithm's bias towards unexplored moves.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
+     */
+    explicit MOSolverBase(std::size_t numPlayers, std::chrono::duration<double> iterationTime, double exploration = 0.7)
+        : SolverBase<Move>{exploration}
+        , ExecutionPolicy(iterationTime)
         , m_numPlayers{numPlayers}
     {}
 
@@ -41,11 +59,12 @@ protected:
 
     void iterate(RootList &trees, const Game<Move> &state) const
     {
-        if (this->m_iterCount > 0) {
-            for (std::size_t i {0}; i < this->m_iterCount; ++i)
+        const auto iterations = this->iterationCount();
+        if (iterations > 0) {
+            for (std::size_t i {0}; i < iterations; ++i)
                 search(trees, state);
         } else {
-            auto duration = this->m_iterTime;
+            auto duration = this->iterationTime();
             while (duration.count() > 0) {
                 using namespace std::chrono;
                 const auto start = high_resolution_clock::now();
@@ -118,53 +137,49 @@ class MOSolver {};
 
 /// Sequential multiple observer solver
 template<class Move>
-class MOSolver<Move, Sequential> : public MOSolverBase<Move>, public Sequential
+class MOSolver<Move, Sequential> : public MOSolverBase<Move,Sequential>
 {
 public:
-    using MOSolverBase<Move>::MOSolverBase;
+    using MOSolverBase<Move,Sequential>::MOSolverBase;
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<Node<Move>> trees(this->m_numPlayers);
         this->iterate(trees, rootState);
-        return bestMove(trees[rootState.currentPlayer()]);
+        return this->bestMove(trees[rootState.currentPlayer()]);
     }
 };
 
 /// Multiple observer solver with root parallelisation
 template<class Move>
-class MOSolver<Move, RootParallel> : public MOSolverBase<Move>, public RootParallel
+class MOSolver<Move, RootParallel> : public MOSolverBase<Move,RootParallel>
 {
 public:
-    using MOSolverBase<Move>::MOSolverBase;
-
-    explicit MOSolver(std::size_t numPlayers, std::size_t iterMax = 1000, double exploration = 0.7)
-        : MOSolverBase<Move>{numPlayers, iterMax / std::thread::hardware_concurrency(), exploration}
-    {}
+    using MOSolverBase<Move,RootParallel>::MOSolverBase;
+    using RootParallel::numThreads;
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
-        const auto numThreads = std::thread::hardware_concurrency();
-        std::vector<std::thread> threads(numThreads);
-        std::vector<RootList> treeSets(numThreads);
+        std::vector<std::thread> threads(numThreads());
+        std::vector<RootList> treeSets(numThreads());
         for (auto &set : treeSets)
             set = RootList(this->m_numPlayers);
 
-        for (std::size_t t = 0; t < numThreads; ++t)
+        for (std::size_t t = 0; t < numThreads(); ++t)
             threads[t] = std::thread(&MOSolver::iterate, this, std::ref(treeSets[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
         // Gather results for the current player from each thread
-        RootList currentPlayerTrees(numThreads);
+        RootList currentPlayerTrees(numThreads());
         std::transform(treeSets.begin(), treeSets.end(), currentPlayerTrees.begin(), [&](RootList &set){
             return std::move(set[rootState.currentPlayer()]);
         });
-        return bestMove(currentPlayerTrees);
+        return this->bestMove(currentPlayerTrees);
     }
 
 protected:
-    using typename MOSolverBase<Move>::RootList;
+    using typename MOSolverBase<Move,RootParallel>::RootList;
 };
 
 }

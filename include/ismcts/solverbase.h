@@ -10,45 +10,20 @@
 #include "node.h"
 
 #include <random>
-#include <chrono>
 #include <vector>
 
 namespace ISMCTS
 {
-// Interface shared by all algorithms
+/// Interface shared by all algorithms
 template<class Move>
 class SolverBase
 {
 public:
-    /**
-     * Constructs a solver that will iterate the given number of times per
-     * search operation.
-     *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
-     */
-    explicit SolverBase(std::size_t iterationCount = 1000, double exploration = 0.7)
-    {
-        setIterationCount(iterationCount);
-        setExplorationBias(exploration);
-    }
+    explicit SolverBase(double exploration = 0.7)
+        : m_exploration{exploration}
+    {}
 
-    /**
-     * Constructs a solver that will iterate for the given duration per search
-     * operation.
-     *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
-     */
-    explicit SolverBase(std::chrono::duration<double> time, double exploration = 0.7)
-    {
-        setIterationTime(time);
-        setExplorationBias(exploration);
-    }
-
-    virtual ~SolverBase() {}
+    virtual ~SolverBase() = default;
 
     /**
      * Search operator.
@@ -57,20 +32,6 @@ public:
      */
     virtual Move operator()(const Game<Move> &rootState) const = 0;
 
-    /// Sets the solver to use a fixed number of iterations in future searches.
-    void setIterationCount(std::size_t count)
-    {
-        m_iterCount = count;
-        m_iterTime = std::chrono::duration<double>::zero();
-    }
-
-    /// Sets the solver to iterate for a fixed time in future searches.
-    void setIterationTime(std::chrono::duration<double> time)
-    {
-        m_iterTime = time;
-        m_iterCount = 0;
-    }
-
     /// Sets the exploration bias of future searches.
     void setExplorationBias(double exploration)
     {
@@ -78,8 +39,6 @@ public:
     }
 
 protected:
-    std::size_t m_iterCount;
-    std::chrono::duration<double> m_iterTime;
     double m_exploration;
 
     /**

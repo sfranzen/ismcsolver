@@ -19,20 +19,45 @@
 namespace ISMCTS
 {
 /// Common base class for single observer solvers
-template<class Move>
-class SOSolverBase : public SolverBase<Move>
+template<class Move, class ExecutionPolicy>
+class SOSolverBase : public SolverBase<Move>, public ExecutionPolicy
 {
 public:
-    using SolverBase<Move>::SolverBase;
+    /**
+     * Constructs a solver that will iterate the given number of times per
+     * search operation.
+     *
+     * @param exploration Sets the algorithm's bias towards unexplored moves.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
+     */
+    explicit SOSolverBase(std::size_t iterationCount = 1000, double exploration = 0.7)
+        : SolverBase<Move>{exploration}
+        , ExecutionPolicy{iterationCount}
+    {}
+
+    /**
+     * Constructs a solver that will iterate for the given duration per search
+     * operation.
+     *
+     * @param exploration Sets the algorithm's bias towards unexplored moves.
+     *      It must be positive; the authors of the algorithm suggest 0.7 for
+     *      a game that reports result values on the interval [0,1].
+     */
+    explicit SOSolverBase(std::chrono::duration<double> iterationTime, double exploration = 0.7)
+        : SolverBase<Move>{exploration}
+        , ExecutionPolicy{iterationTime}
+    {}
 
 protected:
     void iterate(Node<Move> &root, const Game<Move> &state) const
     {
-        if (this->m_iterCount > 0) {
-            for (std::size_t i {0}; i < this->m_iterCount; ++i)
+        const auto iterations = this->iterationCount();
+        if (iterations > 0) {
+            for (std::size_t i {0}; i < iterations; ++i)
                 search(&root, state);
         } else {
-            auto duration = this->m_iterTime;
+            auto duration = this->iterationTime();
             while (duration.count() > 0) {
                 using namespace std::chrono;
                 const auto start = high_resolution_clock::now();
@@ -91,42 +116,38 @@ class SOSolver {};
 
 /// Sequential single observer solver
 template<class Move>
-class SOSolver<Move, Sequential> : public SOSolverBase<Move>, public Sequential
+class SOSolver<Move,Sequential> : public SOSolverBase<Move,Sequential>
 {
 public:
-    using SOSolverBase<Move>::SOSolverBase;
+    using SOSolverBase<Move,Sequential>::SOSolverBase;
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         Node<Move> root;
         this->iterate(root, rootState);
-        return bestMove(root);
+        return this->bestMove(root);
     }
 };
 
 /// Single observer solver with root parallelisation
 template<class Move>
-class SOSolver<Move, RootParallel> : public SOSolverBase<Move>, public RootParallel
+class SOSolver<Move,RootParallel> : public SOSolverBase<Move,RootParallel>
 {
 public:
-    using SOSolverBase<Move>::SOSolverBase;
-
-    explicit SOSolver(std::size_t iterationCount = 1000, double exploration = 0.7)
-        : SOSolverBase<Move>{iterationCount / std::thread::hardware_concurrency(), exploration}
-    {}
+    using SOSolverBase<Move,RootParallel>::SOSolverBase;
+    using RootParallel::numThreads;
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
-        const auto numThreads = std::thread::hardware_concurrency();
-        std::vector<std::thread> threads(numThreads);
-        std::vector<Node<Move>> trees(numThreads);
+        std::vector<std::thread> threads(numThreads());
+        std::vector<Node<Move>> trees(numThreads());
 
-        for (std::size_t t = 0; t < numThreads; ++t)
+        for (std::size_t t = 0; t < numThreads(); ++t)
             threads[t] = std::thread(&SOSolver::iterate, this, std::ref(trees[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
-        return bestMove(trees);
+        return this->bestMove(trees);
     }
 };
 
