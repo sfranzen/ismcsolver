@@ -11,16 +11,21 @@ if(BUILD_TESTING)
     # Precompile Catch2 to limit compilation times
     add_library(testmain OBJECT main.cpp)
 
+    set(game_src knockoutwhist.cpp)
     set(testlibs testmain ismcsolver)
 
-    add_executable(benchmark benchmark.cpp knockoutwhist.cpp)
+    add_executable(benchmark benchmark.cpp ${game_src})
     target_link_libraries(benchmark ${testlibs})
 
-    add_executable(gametest gametest.cpp knockoutwhist.cpp)
+    add_executable(gametest gametest.cpp ${game_src})
     target_link_libraries(gametest ${testlibs})
     catch_discover_tests(gametest)
 
-    add_executable(solvertest solvertest.cpp knockoutwhist.cpp)
+    add_executable(nodetest nodetest.cpp ${game_src})
+    target_link_libraries(nodetest ${testlibs})
+    catch_discover_tests(nodetest)
+
+    add_executable(solvertest solvertest.cpp ${game_src})
     target_link_libraries(solvertest ${testlibs})
     catch_discover_tests(solvertest)
 endif()
