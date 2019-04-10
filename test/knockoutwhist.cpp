@@ -17,7 +17,8 @@ const unsigned DeckSize {52};
 }
 
 KnockoutWhist::KnockoutWhist(unsigned players)
-    : m_tricksLeft{7}
+    : m_urng{5489ul}
+    , m_tricksLeft{7}
     , m_numPlayers{std::min(std::max(players, 2u), 7u)}
     , m_player{0}
 {
