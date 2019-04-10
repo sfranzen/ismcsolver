@@ -1,7 +1,4 @@
 language: cpp
-compiler:
-  - clang
-  - gcc
 dist: xenial
 script: 
   - mkdir build
@@ -12,5 +9,5 @@ script:
 matrix:
   include:
     - compiler: gcc
-      env: CC="g++ -std=c++11"
+      env: CXX="g++ -std=c++11"
     - compiler: clang
