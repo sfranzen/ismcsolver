@@ -51,7 +51,7 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   else()
     target_link_libraries(coverage_config INTERFACE --coverage)
   endif()
-endif(CODE_COVERAGE)
+endif()
 
 if(DOXYGEN_FOUND)
     set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
