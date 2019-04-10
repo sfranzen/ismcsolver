@@ -19,4 +19,8 @@ if(BUILD_TESTING)
     add_executable(gametest gametest.cpp knockoutwhist.cpp)
     target_link_libraries(gametest ${testlibs})
     catch_discover_tests(gametest)
+
+    add_executable(solvertest solvertest.cpp knockoutwhist.cpp)
+    target_link_libraries(solvertest ${testlibs})
+    catch_discover_tests(solvertest)
 endif()
