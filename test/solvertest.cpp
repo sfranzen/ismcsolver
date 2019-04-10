@@ -11,13 +11,13 @@
 namespace
 {
 
-using namespace std::chrono_literals;
+using namespace std::chrono;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
 const unsigned int numPlayers {2};
 const unsigned int iterationCount {10};
-const auto iterationTime {5ms};
+const auto iterationTime {milliseconds(5)};
 
 // Solver with default player number for ease of testing
 template<class Move, class ExecutionPolicy = Sequential>
