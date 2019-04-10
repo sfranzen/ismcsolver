@@ -2,5 +2,5 @@ language: cpp
 compiler:
   - clang
   - gcc
-dist: trusty
+dist: xenial
 script: mkdir build && cd build && cmake .. && make && make test
