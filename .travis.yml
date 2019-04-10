@@ -2,7 +2,5 @@ language: cpp
 compiler:
   - clang
   - gcc
-os:
-  - linux
-script:
-  - mkdir build && cd build && cmake .. && make && make test
+dist: trusty
+script: mkdir build && cd build && cmake .. && make && make test
