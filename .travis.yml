@@ -9,8 +9,8 @@ script:
   - cmake ..
   - make && make test
   
-  matrix:
-    include:
-      - compiler: gcc
-        env: CC="g++ -std=c++11"
-      - compiler: clang
+matrix:
+  include:
+    - compiler: gcc
+      env: CC="g++ -std=c++11"
+    - compiler: clang
