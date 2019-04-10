@@ -1,5 +1,0 @@
-<map id="ISMCTS::SOSolver&lt; Move, RootParallel &gt;" name="ISMCTS::SOSolver&lt; Move, RootParallel &gt;">
-<area shape="rect" id="node1" title="Single observer solver with root parallelisation." alt="" coords="5,184,196,225"/>
-<area shape="rect" id="node2" href="$classISMCTS_1_1SOSolverBase.html" title="Common base class for single observer solvers." alt="" coords="15,95,187,136"/>
-<area shape="rect" id="node3" href="$classISMCTS_1_1SolverBase.html" title=" " alt="" coords="24,5,177,47"/>
-</map>

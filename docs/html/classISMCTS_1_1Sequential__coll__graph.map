@@ -1,0 +1,4 @@
+<map id="ISMCTS::Sequential" name="ISMCTS::Sequential">
+<area shape="rect" id="node1" title="All iterations are executed by a single thread on a single tree." alt="" coords="21,80,167,107"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="5,5,183,32"/>
+</map>

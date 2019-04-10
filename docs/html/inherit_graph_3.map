@@ -1,0 +1,16 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="5,177,183,203"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolverBase.html" title="Common base class for multiple observer solvers." alt="" coords="435,201,617,243"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1RootParallel.html" title=" " alt="" coords="231,286,387,313"/>
+<area shape="rect" id="node8" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="235,67,382,94"/>
+<area shape="rect" id="node13" href="$classISMCTS_1_1SOSolverBase.html" title="Common base class for single observer solvers." alt="" coords="435,136,617,177"/>
+<area shape="rect" id="node4" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="439,332,613,373"/>
+<area shape="rect" id="node6" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="440,267,612,308"/>
+<area shape="rect" id="node5" href="$classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html" title="Multiple observer solver with root parallelisation." alt="" coords="665,332,857,373"/>
+<area shape="rect" id="node7" href="$classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html" title="Single observer solver with root parallelisation." alt="" coords="666,267,857,308"/>
+<area shape="rect" id="node9" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="439,71,613,112"/>
+<area shape="rect" id="node11" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="440,5,612,47"/>
+<area shape="rect" id="node10" href="$classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver." alt="" coords="665,71,857,112"/>
+<area shape="rect" id="node12" href="$classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver." alt="" coords="666,5,857,47"/>
+<area shape="rect" id="node14" href="$classISMCTS_1_1SolverBase.html" title="Interface shared by all algorithms." alt="" coords="232,169,385,211"/>
+</map>

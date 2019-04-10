@@ -1,0 +1,8 @@
+<map id="ISMCTS::RootParallel" name="ISMCTS::RootParallel">
+<area shape="rect" id="node1" title=" " alt="" coords="231,46,387,73"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="435,5,609,47"/>
+<area shape="rect" id="node5" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="436,71,608,112"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="5,46,183,73"/>
+<area shape="rect" id="node4" href="$classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html" title="Multiple observer solver with root parallelisation." alt="" coords="657,5,849,47"/>
+<area shape="rect" id="node6" href="$classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html" title="Single observer solver with root parallelisation." alt="" coords="658,71,849,112"/>
+</map>

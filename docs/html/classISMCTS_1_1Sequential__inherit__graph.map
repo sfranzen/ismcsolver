@@ -1,0 +1,8 @@
+<map id="ISMCTS::Sequential" name="ISMCTS::Sequential">
+<area shape="rect" id="node1" title="All iterations are executed by a single thread on a single tree." alt="" coords="136,80,283,107"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="23,155,198,196"/>
+<area shape="rect" id="node5" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="226,155,398,196"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="121,5,298,32"/>
+<area shape="rect" id="node4" href="$classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver." alt="" coords="5,244,197,285"/>
+<area shape="rect" id="node6" href="$classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver." alt="" coords="222,244,413,285"/>
+</map>
