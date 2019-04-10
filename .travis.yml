@@ -6,5 +6,4 @@ compiler:
 script: 
   - mkdir build && cd build
   - cmake ..
-  - if [[ $CXX = g++ ]]; then export CXX="g++ -std=c++11"; fi
   - make && make test
