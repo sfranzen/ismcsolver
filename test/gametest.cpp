@@ -26,10 +26,19 @@ void doValidMove(ISMCTS::Game<Card> &game)
 
 }
 
+TEST_CASE("Check RNG")
+{
+    std::mt19937 rng;
+
+    CHECK(rng.default_seed == 5489);
+    for (int i = 0; i < 9999; ++i)
+        rng();
+    REQUIRE(rng() == 4123659995);
+}
+
 TEST_CASE("Game is created in a predictable state", "[KnockoutWhist]")
 {
     KnockoutWhist game {2};
-    REQUIRE(std::mt19937::default_seed == 5489);
     static const std::vector<std::string> expectedMoves {"8D", "TS", "5H", "9H", "2H", "JC", "QD"};
 
     CHECK(game.currentPlayer() == 0);
