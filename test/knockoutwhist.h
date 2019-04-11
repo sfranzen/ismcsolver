@@ -23,7 +23,7 @@ public:
     virtual double getResult(unsigned player) const override;
     friend std::ostream &operator<<(std::ostream &out, const KnockoutWhist &g);
 
-private:
+protected:
     using Player = unsigned;
     using Hand = std::vector<Card>;
     using Play = std::pair<Player,Card>;

@@ -12,12 +12,37 @@
 namespace
 {
 
-std::vector<std::string> movesToStrings(const std::vector<Card> &moves)
+// Game with two players having known cards
+struct MockGame : public KnockoutWhist
 {
-    std::vector<std::string> strings(moves.size());
-    std::transform(moves.begin(), moves.end(), strings.begin(), [](Card c){ return c; });
-    return strings;
-}
+    MockGame() : KnockoutWhist {2}
+    {
+        initialDeal();
+    }
+
+    void initialDeal()
+    {
+        m_trumpSuit = Card::Diamonds;
+        m_playerCards[0] = {
+            {Card::Eight, Card::Diamonds},
+            {Card::Ten, Card::Spades},
+            {Card::Five, Card::Hearts},
+            {Card::Nine, Card::Hearts},
+            {Card::Two, Card::Hearts},
+            {Card::Jack, Card::Clubs},
+            {Card::Queen, Card::Diamonds}
+        };
+        m_playerCards[1] = {
+            {Card::Ten, Card::Clubs},
+            {Card::Seven, Card::Clubs},
+            {Card::Jack, Card::Spades},
+            {Card::Three, Card::Diamonds},
+            {Card::King, Card::Clubs},
+            {Card::Ace, Card::Diamonds},
+            {Card::Seven, Card::Hearts}
+        };
+    }
+};
 
 void doValidMove(ISMCTS::Game<Card> &game)
 {
@@ -26,27 +51,17 @@ void doValidMove(ISMCTS::Game<Card> &game)
 
 }
 
-TEST_CASE("Game is created in a predictable state", "[KnockoutWhist]")
+TEST_CASE("Game instantiates correctly", "[KnockoutWhist]")
 {
     KnockoutWhist game {2};
-    static const std::vector<std::string> expectedMoves {"8D", "TS", "5H", "9H", "2H", "JC", "QD"};
 
     CHECK(game.currentPlayer() == 0);
-
-    SECTION("First game has expected list of initial moves") {
-        REQUIRE(movesToStrings(game.validMoves()) == expectedMoves);
-    }
-
-    SECTION("Next game has same initial valid moves") {
-        REQUIRE(movesToStrings(game.validMoves()) == expectedMoves);
-    }
+    REQUIRE(game.validMoves().size() == 7);
 }
 
-// The game starts with Diamonds being the trump suit and the following player
-// cards: P0 [8D,TS,5H,9H,2H,JC,QD], P1 [TC,7C,JS,3D,KC,AD,7H]
 TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
 {
-    KnockoutWhist game {2};
+    MockGame game;
 
     SECTION("Valid move is accepted") {
         REQUIRE_NOTHROW(doValidMove(game));
@@ -97,17 +112,15 @@ TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
 
 TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
 {
-    KnockoutWhist game {2};
+    MockGame game;
+    // Maximum number of turns is nPlayers * (7 + 6 + ... + 1)
+    const unsigned int maxTurns {56};
     unsigned int turn {0};
-    const unsigned int correctTurnCount {44};
 
-    while (!game.validMoves().empty() && turn < correctTurnCount) {
-        doValidMove(game);
+    while (!game.validMoves().empty() && turn < maxTurns) {
+        CHECK_NOTHROW(doValidMove(game));
         ++turn;
     }
 
-    CHECK(turn == correctTurnCount);
     REQUIRE(game.validMoves().empty());
-    CHECK(game.getResult(0) == 1);
-    CHECK(game.getResult(1) == 0);
 }
