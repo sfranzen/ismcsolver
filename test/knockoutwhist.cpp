@@ -10,10 +10,17 @@
 #include <string>
 #include <iterator>
 #include <exception>
+#include <random>
 
 namespace
 {
-const unsigned DeckSize {52};
+
+inline std::mt19937 &prng()
+{
+    static thread_local std::mt19937 prng;
+    return prng;
+}
+
 }
 
 KnockoutWhist::KnockoutWhist(unsigned players)
@@ -21,6 +28,8 @@ KnockoutWhist::KnockoutWhist(unsigned players)
     , m_numPlayers{std::min(std::max(players, 2u), 7u)}
     , m_player{0}
 {
+    for (auto i = s_deckSize; i > 0; --i)
+        m_deck[i] = {Card::Rank(i % 13), Card::Suit(i % 4)};
     m_players.resize(m_numPlayers);
     std::iota(m_players.begin(), m_players.end(), 0);
     m_playerCards.resize(m_numPlayers);
@@ -31,14 +40,14 @@ KnockoutWhist::KnockoutWhist(unsigned players)
 KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(unsigned observer) const
 {
     auto clone = new KnockoutWhist(*this);
-    Hand unseenCards;
+    Hand unseenCards = m_unknownCards;
     for (auto p : m_players) {
         if (p == observer)
             continue;
         const auto &hand = m_playerCards[p];
         unseenCards.insert(unseenCards.end(), hand.begin(), hand.end());
     }
-    std::shuffle(unseenCards.begin(), unseenCards.end(), m_urng);
+    std::shuffle(unseenCards.begin(), unseenCards.end(), prng());
     auto u = unseenCards.begin();
     for (auto p : m_players) {
         if (p == observer)
@@ -135,23 +144,24 @@ unsigned KnockoutWhist::currentPlayer() const
     return m_player;
 }
 
-// Deal cards by generating them from a random permutation of integers
 void KnockoutWhist::deal()
 {
-    std::vector<int> indices(DeckSize);
-    std::iota(indices.begin(), indices.end(), 0);
-    std::shuffle(indices.begin(), indices.end(), m_urng);
-    auto i = indices.cend();
+    std::shuffle(m_deck.begin(), m_deck.end(), prng());
+
+    auto pos = m_deck.begin();
     for (auto p : m_players) {
         auto &hand = m_playerCards[p];
-        std::generate_n(std::back_inserter(hand), m_tricksLeft, [&]() -> Card {
-            --i;
-            return {Card::Rank(*i % 13), Card::Suit(*i % 4)};
-        });
+        std::copy_n(pos, m_tricksLeft, std::back_inserter(hand));
+        pos += m_tricksLeft;
     }
+
+    // The rest of the cards are unknown to all players
+    m_unknownCards.clear();
+    std::copy(pos, m_deck.end(), std::back_inserter(m_unknownCards));
+
     // Choose random trump suit
     std::uniform_int_distribution<> randInt {0, 3};
-    m_trumpSuit = Card::Suit(randInt(m_urng));
+    m_trumpSuit = Card::Suit(randInt(prng()));
 }
 
 std::ostream& operator<<(std::ostream &out, const KnockoutWhist &g)

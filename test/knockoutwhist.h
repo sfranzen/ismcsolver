@@ -10,7 +10,6 @@
 #include "card.h"
 
 #include <vector>
-#include <random>
 
 class KnockoutWhist : public ISMCTS::Game<Card>
 {
@@ -28,7 +27,9 @@ protected:
     using Hand = std::vector<Card>;
     using Play = std::pair<Player,Card>;
 
-    mutable std::mt19937 m_urng;
+    const static unsigned int s_deckSize {52};
+    std::vector<Card> m_deck {s_deckSize};
+    std::vector<Card> m_unknownCards;
     std::vector<Player> m_players;
     std::vector<Hand> m_playerCards;
     std::vector<Play> m_currentTrick;
