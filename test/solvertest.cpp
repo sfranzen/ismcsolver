@@ -4,7 +4,8 @@
  * the root directory of this distribution.
  */
 #include "catch.hpp"
-#include "mocksolvers.h"
+#include <ismcts/sosolver.h>
+#include "defaultmosolver.h"
 #include "knockoutwhist.h"
 #include <vector>
 
@@ -22,7 +23,7 @@ const auto iterationTime {milliseconds(5)};
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
-    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
 {
     SECTION("By iteration count") {
         TestType solver {iterationCount};
@@ -38,7 +39,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
-    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
 
@@ -59,7 +60,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
-    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
 {
     KnockoutWhist game {numPlayers};
     TestType solver {iterationCount};

@@ -4,7 +4,8 @@
  * the root directory of this distribution.
  */
 #include "catch.hpp"
-#include "mocksolvers.h"
+#include <ismcts/sosolver.h>
+#include "defaultmosolver.h"
 #include "knockoutwhist.h"
 #include "card.h"
 
@@ -15,13 +16,14 @@ namespace
 {
 
 using namespace std::chrono;
+using namespace ISMCTS;
 const unsigned int numGames {10};
 const unsigned int iterationCount {2000};
 
 class GameRunner
 {
 public:
-    GameRunner(ISMCTS::SolverBase<Card> &solver, unsigned int numGames)
+    GameRunner(SolverBase<Card> &solver, unsigned int numGames)
         : solver{solver}, numGames{numGames}
     {}
 
@@ -33,7 +35,7 @@ public:
     }
 
 private:
-    ISMCTS::SolverBase<Card> &solver;
+    SolverBase<Card> &solver;
     unsigned int numGames {100};
     unsigned int score {0};
     unsigned int numCalls {0};
@@ -71,7 +73,7 @@ private:
 } // namespace
 
 TEMPLATE_PRODUCT_TEST_CASE("Fixed iteration count", "[SOSolver][MOSolver]",
-                           (MockSOSolver, MockMOSolver), (Card, (Card, ISMCTS::RootParallel)))
+                           (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
     GameRunner g(solver, numGames);
