@@ -28,25 +28,21 @@ target_include_directories(ismcsolver INTERFACE include)
 target_sources(ismcsolver INTERFACE ${headers})
 install(FILES ${headers} DESTINATION include)
 
-
 # Tests
-option (BUILD_TESTING ON)
+option(BUILD_TESTING ON)
+
 if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
     enable_testing()
     add_subdirectory(test)
 endif()
 
 # Code coverage
+option(CODE_COVERAGE "Enable coverage reporting" OFF)
 add_library(coverage_config INTERFACE)
 
-option(CODE_COVERAGE "Enable coverage reporting" OFF)
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  # Add required flags (GCC & LLVM/Clang)
-  target_compile_options(coverage_config INTERFACE
-    -O0        # no optimization
-    -g         # generate debug info
-    --coverage # sets all required flags
-  )
+  # Set debug + coverage
+  target_compile_options(coverage_config INTERFACE -O0 -g --coverage)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
     target_link_options(coverage_config INTERFACE --coverage)
   else()
@@ -54,6 +50,7 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   endif()
 endif()
 
+# Documentation
 if(DOXYGEN_FOUND)
     set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/docs)
