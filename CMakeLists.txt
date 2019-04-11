@@ -22,6 +22,7 @@ set(headers
 )
 
 add_library(ismcsolver INTERFACE)
+target_compile_features(ismcsolver INTERFACE cxx_std_11)
 target_link_libraries(ismcsolver INTERFACE Threads::Threads)
 target_include_directories(ismcsolver INTERFACE include)
 target_sources(ismcsolver INTERFACE ${headers})
