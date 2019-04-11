@@ -15,7 +15,7 @@ struct DefaultMOSolver : public ISMCTS::MOSolver<Move,ExecutionPolicy>
 {
     using ISMCTS::MOSolver<Move,ExecutionPolicy>::MOSolver;
 
-    DefaultMOSolver(std::size_t iterationCount)
+    DefaultMOSolver(std::size_t iterationCount = 1000)
         : ISMCTS::MOSolver<Move,ExecutionPolicy>{2, iterationCount}
     {}
 

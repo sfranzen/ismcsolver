@@ -62,11 +62,15 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
 TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
     (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
 {
+    static unsigned int calls = 0;
     KnockoutWhist game {numPlayers};
-    TestType solver {iterationCount};
     const auto validMoves = game.validMoves();
     Card move;
 
-    CHECK_NOTHROW([&](){ move = solver(game); }());
-    REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
+    auto solver = GENERATE(TestType{iterationCount}, TestType{iterationTime});
+    SECTION(calls % 2 == 0 ? "By iteration count" : "By iteration time") {
+        CHECK_NOTHROW([&](){ move = solver(game); }());
+        REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
+    }
+    ++calls;
 }
