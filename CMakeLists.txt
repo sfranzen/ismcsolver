@@ -53,6 +53,8 @@ endif()
 # Documentation
 if(DOXYGEN_FOUND)
     set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
+    set(DOXYGEN_BRIEF_MEMBER_DESC NO)
+    set(DOXYGEN_ALWAYS_DETAILED_SEC YES)
     set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/docs)
     doxygen_add_docs(docs ${headers} docs/main.md)
 endif()

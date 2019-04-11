@@ -86,9 +86,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Ptr</b> = std::uniqu
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acdd180c1d1f3a0ceacef290c3efe56f7"><td class="memItemLeft" align="right" valign="top">virtual Ptr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Game.html#acdd180c1d1f3a0ceacef290c3efe56f7">cloneAndRandomise</a> (unsigned int observer) const =0</td></tr>
 <tr class="separator:acdd180c1d1f3a0ceacef290c3efe56f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fb83f559317a6ca0db0eded8df1197f"><td class="memItemLeft" align="right" valign="top"><a id="a0fb83f559317a6ca0db0eded8df1197f"></a>
-virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Game.html#a0fb83f559317a6ca0db0eded8df1197f">currentPlayer</a> () const =0</td></tr>
-<tr class="memdesc:a0fb83f559317a6ca0db0eded8df1197f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The player making a move from this state. <br /></td></tr>
+<tr class="memitem:a0fb83f559317a6ca0db0eded8df1197f"><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Game.html#a0fb83f559317a6ca0db0eded8df1197f">currentPlayer</a> () const =0</td></tr>
 <tr class="separator:a0fb83f559317a6ca0db0eded8df1197f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a076e0466294eae43d234b3c6f1fd5826"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; Move &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Game.html#a076e0466294eae43d234b3c6f1fd5826">validMoves</a> () const =0</td></tr>
 <tr class="separator:a076e0466294eae43d234b3c6f1fd5826"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,6 +128,35 @@ template&lt;class Move&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Constructs a copy of the game state, with the information unknown to the observer player randomised. </p>
+
+</div>
+</div>
+<a id="a0fb83f559317a6ca0db0eded8df1197f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fb83f559317a6ca0db0eded8df1197f">&#9670;&nbsp;</a></span>currentPlayer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual unsigned int <a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>&lt; Move &gt;::currentPlayer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The player making a move from this state. </p>
 
 </div>
 </div>

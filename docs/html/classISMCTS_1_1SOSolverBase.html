@@ -74,9 +74,6 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Common base class for single observer solvers.  
- <a href="classISMCTS_1_1SOSolverBase.html#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="sosolver_8h_source.html">sosolver.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ISMCTS::SOSolverBase&lt; Move, ExecutionPolicy &gt;:</div>
@@ -111,9 +108,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abf382b56dcdf9f1d7571e39886af62b3 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e2e42374b8ca4454ce59f086597ec13 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">virtual Move&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a8e2e42374b8ca4454ce59f086597ec13">operator()</a> (const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;rootState) const =0</td></tr>
 <tr class="separator:a8e2e42374b8ca4454ce59f086597ec13 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5462c3f61b14ec1fa40d7d88127ded4 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top"><a id="aa5462c3f61b14ec1fa40d7d88127ded4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#aa5462c3f61b14ec1fa40d7d88127ded4">setExplorationBias</a> (double exploration)</td></tr>
-<tr class="memdesc:aa5462c3f61b14ec1fa40d7d88127ded4 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the exploration bias of future searches. <br /></td></tr>
+<tr class="memitem:aa5462c3f61b14ec1fa40d7d88127ded4 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#aa5462c3f61b14ec1fa40d7d88127ded4">setExplorationBias</a> (double exploration)</td></tr>
 <tr class="separator:aa5462c3f61b14ec1fa40d7d88127ded4 inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classISMCTS_1_1ExecutionPolicy"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classISMCTS_1_1ExecutionPolicy')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classISMCTS_1_1ExecutionPolicy.html">ISMCTS::ExecutionPolicy</a></td></tr>
 <tr class="memitem:a3a5cdf79d524d39443125d59b439dc3d inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a3a5cdf79d524d39443125d59b439dc3d"></a>
@@ -122,25 +117,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a8aa5e8e91e839286b789a9b3d4968739 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a8aa5e8e91e839286b789a9b3d4968739"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ExecutionPolicy</b> (Duration <a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a0541c9b12dd9a4416e3c4cb5781271fa">iterationTime</a>, unsigned int <a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a4ccb8d23e23d49d51544795a9aeab9be">numThreads</a>=1)</td></tr>
 <tr class="separator:a8aa5e8e91e839286b789a9b3d4968739 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1aa509899f11225b7ee3d7e9852d8ab1 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a1aa509899f11225b7ee3d7e9852d8ab1"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a1aa509899f11225b7ee3d7e9852d8ab1">iterationCount</a> () const</td></tr>
-<tr class="memdesc:a1aa509899f11225b7ee3d7e9852d8ab1 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return number of iterations to perform per search. <br /></td></tr>
+<tr class="memitem:a1aa509899f11225b7ee3d7e9852d8ab1 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a1aa509899f11225b7ee3d7e9852d8ab1">iterationCount</a> () const</td></tr>
 <tr class="separator:a1aa509899f11225b7ee3d7e9852d8ab1 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3c602ff448ef787644bdfdbad0919d8 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="ae3c602ff448ef787644bdfdbad0919d8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#ae3c602ff448ef787644bdfdbad0919d8">setIterationCount</a> (std::size_t count)</td></tr>
-<tr class="memdesc:ae3c602ff448ef787644bdfdbad0919d8 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set policy to a fixed number of iterations. <br /></td></tr>
+<tr class="memitem:ae3c602ff448ef787644bdfdbad0919d8 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#ae3c602ff448ef787644bdfdbad0919d8">setIterationCount</a> (std::size_t count)</td></tr>
 <tr class="separator:ae3c602ff448ef787644bdfdbad0919d8 inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0541c9b12dd9a4416e3c4cb5781271fa inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a0541c9b12dd9a4416e3c4cb5781271fa"></a>
-Duration&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a0541c9b12dd9a4416e3c4cb5781271fa">iterationTime</a> () const</td></tr>
-<tr class="memdesc:a0541c9b12dd9a4416e3c4cb5781271fa inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the time each search should take. <br /></td></tr>
+<tr class="memitem:a0541c9b12dd9a4416e3c4cb5781271fa inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top">Duration&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a0541c9b12dd9a4416e3c4cb5781271fa">iterationTime</a> () const</td></tr>
 <tr class="separator:a0541c9b12dd9a4416e3c4cb5781271fa inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56f6c33414faa34441381f14b12862ed inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a56f6c33414faa34441381f14b12862ed"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a56f6c33414faa34441381f14b12862ed">setIterationTime</a> (Duration time)</td></tr>
-<tr class="memdesc:a56f6c33414faa34441381f14b12862ed inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set policy to a fixed length of time. <br /></td></tr>
+<tr class="memitem:a56f6c33414faa34441381f14b12862ed inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a56f6c33414faa34441381f14b12862ed">setIterationTime</a> (Duration time)</td></tr>
 <tr class="separator:a56f6c33414faa34441381f14b12862ed inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ccb8d23e23d49d51544795a9aeab9be inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="a4ccb8d23e23d49d51544795a9aeab9be"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a4ccb8d23e23d49d51544795a9aeab9be">numThreads</a> () const</td></tr>
-<tr class="memdesc:a4ccb8d23e23d49d51544795a9aeab9be inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return number of execution threads. <br /></td></tr>
+<tr class="memitem:a4ccb8d23e23d49d51544795a9aeab9be inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1ExecutionPolicy.html#a4ccb8d23e23d49d51544795a9aeab9be">numThreads</a> () const</td></tr>
 <tr class="separator:a4ccb8d23e23d49d51544795a9aeab9be inherit pub_methods_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -148,9 +133,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab0dbe61d2052c00f879ce03300b612d8"><td class="memItemLeft" align="right" valign="top"><a id="ab0dbe61d2052c00f879ce03300b612d8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>iterate</b> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; &amp;root, const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state) const</td></tr>
 <tr class="separator:ab0dbe61d2052c00f879ce03300b612d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c7264e9c784d91ea9be4b7c1d86a2eb"><td class="memItemLeft" align="right" valign="top"><a id="a2c7264e9c784d91ea9be4b7c1d86a2eb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SOSolverBase.html#a2c7264e9c784d91ea9be4b7c1d86a2eb">search</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *rootNode, const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;rootState) const</td></tr>
-<tr class="memdesc:a2c7264e9c784d91ea9be4b7c1d86a2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traverse a single sequence of moves. <br /></td></tr>
+<tr class="memitem:a2c7264e9c784d91ea9be4b7c1d86a2eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SOSolverBase.html#a2c7264e9c784d91ea9be4b7c1d86a2eb">search</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *rootNode, const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;rootState) const</td></tr>
 <tr class="separator:a2c7264e9c784d91ea9be4b7c1d86a2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9730370ed570657d86428bbac98a5008"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SOSolverBase.html#a9730370ed570657d86428bbac98a5008">select</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&amp;node, <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state) const</td></tr>
 <tr class="separator:a9730370ed570657d86428bbac98a5008"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,9 +158,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Duration</b> = std::
 <tr class="inherit_header pro_static_methods_classISMCTS_1_1SolverBase"><td colspan="2" onclick="javascript:toggleInherit('pro_static_methods_classISMCTS_1_1SolverBase')"><img src="closed.png" alt="-"/>&#160;Static Protected Member Functions inherited from <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase&lt; Move &gt;</a></td></tr>
 <tr class="memitem:a71a04f072bf6d79d8cb12dc86f9f260c inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a71a04f072bf6d79d8cb12dc86f9f260c">backPropagate</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state)</td></tr>
 <tr class="separator:a71a04f072bf6d79d8cb12dc86f9f260c inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c6f3793ea9a304608e4d4e1e8f01fea inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top"><a id="a1c6f3793ea9a304608e4d4e1e8f01fea"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a1c6f3793ea9a304608e4d4e1e8f01fea">selectNode</a> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const std::vector&lt; Move &gt; &amp;moves)</td></tr>
-<tr class="memdesc:a1c6f3793ea9a304608e4d4e1e8f01fea inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to select this node given available moves. <br /></td></tr>
+<tr class="memitem:a1c6f3793ea9a304608e4d4e1e8f01fea inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a1c6f3793ea9a304608e4d4e1e8f01fea">selectNode</a> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const std::vector&lt; Move &gt; &amp;moves)</td></tr>
 <tr class="separator:a1c6f3793ea9a304608e4d4e1e8f01fea inherit pro_static_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classISMCTS_1_1SolverBase"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classISMCTS_1_1SolverBase')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase&lt; Move &gt;</a></td></tr>
 <tr class="memitem:ad490fdc8e1970d9792cef2990af7a282 inherit pro_attribs_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top"><a id="ad490fdc8e1970d9792cef2990af7a282"></a>
@@ -318,6 +299,46 @@ template&lt;class Move, class ExecutionPolicy&gt; </div>
 </div><div class="memdoc">
 <p>Expansion stage</p>
 <p>Choose a random unexplored move, add it to the children of the current node and select this new node. </p>
+
+</div>
+</div>
+<a id="a2c7264e9c784d91ea9be4b7c1d86a2eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c7264e9c784d91ea9be4b7c1d86a2eb">&#9670;&nbsp;</a></span>search()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move, class ExecutionPolicy&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classISMCTS_1_1SOSolverBase.html">ISMCTS::SOSolverBase</a>&lt; Move, <a class="el" href="classISMCTS_1_1ExecutionPolicy.html">ExecutionPolicy</a> &gt;::search </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
+          <td class="paramname"><em>rootNode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rootState</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Traverse a single sequence of moves. </p>
 
 </div>
 </div>
