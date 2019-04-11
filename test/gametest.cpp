@@ -17,10 +17,10 @@ struct MockGame : public KnockoutWhist
 {
     MockGame() : KnockoutWhist {2}
     {
-        deal();
+        initialDeal();
     }
 
-    void deal()
+    void initialDeal()
     {
         m_trumpSuit = Card::Diamonds;
         m_playerCards[0] = {
@@ -116,7 +116,7 @@ TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
     unsigned int turn {0};
     const unsigned int correctTurnCount {44};
 
-    while (!game.validMoves().empty() && turn < correctTurnCount) {
+    while (!game.validMoves().empty() ) {
         doValidMove(game);
         ++turn;
     }
