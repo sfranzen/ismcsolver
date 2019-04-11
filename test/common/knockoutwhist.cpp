@@ -176,3 +176,31 @@ std::ostream& operator<<(std::ostream &out, const KnockoutWhist &g)
         out << pair.first << ":" << pair.second << ",";
     return out << "]";
 }
+
+std::vector<Card> KOWhistWithBidding::validMoves() const
+{
+    // Allow first player to bid on rounds other than the first
+    if (m_biddingPhase) {
+        std::vector<Card> bids(4);
+        for (int i = 0; i < 4; ++i)
+            bids[i] = {Card::Two, Card::Suit(i)};
+        return bids;
+    }
+    return KnockoutWhist::validMoves();
+}
+
+void KOWhistWithBidding::doMove(const Card move)
+{
+    if (m_biddingPhase) {
+        m_trumpSuit = move.suit;
+        m_biddingPhase = false;
+    } else
+        KnockoutWhist::doMove(move);
+}
+
+void KOWhistWithBidding::finishTrick()
+{
+    KnockoutWhist::finishTrick();
+    if (m_tricksLeft < 7)
+        m_biddingPhase = true;
+}

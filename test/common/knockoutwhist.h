@@ -46,4 +46,16 @@ protected:
     Player trickWinner() const;
 };
 
+class KOWhistWithBidding : public KnockoutWhist
+{
+public:
+    using KnockoutWhist::KnockoutWhist;
+    virtual std::vector<Card> validMoves() const override;
+    virtual void doMove(const Card move) override;
+
+protected:
+    void finishTrick();
+    mutable bool m_biddingPhase = false;
+};
+
 #endif // KNOCKOUTWHIST_H
