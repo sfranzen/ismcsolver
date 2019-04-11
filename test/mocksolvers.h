@@ -36,6 +36,15 @@ class MockMOSolver : public ISMCTS::MOSolver<Move,ExecutionPolicy>
 public:
     using ISMCTS::MOSolver<Move,ExecutionPolicy>::MOSolver;
 
+    // MO solvers for two players for ease of testing
+    MockMOSolver(std::size_t iterationCount)
+    : MockMOSolver<Move,ExecutionPolicy>{2, iterationCount}
+    {}
+
+    MockMOSolver(ISMCTS::ExecutionPolicy::Duration iterationTime)
+    : MockMOSolver<Move,ExecutionPolicy>{2, iterationTime}
+    {}
+
 protected:
     std::mt19937 &urng() const override
     {

@@ -19,24 +19,10 @@ const unsigned int numPlayers {2};
 const unsigned int iterationCount {10};
 const auto iterationTime {milliseconds(5)};
 
-// Solver with default player number for ease of testing
-template<class Move, class ExecutionPolicy = Sequential>
-class DefaultMockMOSolver : public MockMOSolver<Move,ExecutionPolicy>
-{
-public:
-    DefaultMockMOSolver(std::size_t iterationCount)
-        : MockMOSolver<Move,ExecutionPolicy>{numPlayers, iterationCount}
-    {}
-    DefaultMockMOSolver(Duration iterationTime)
-        : MockMOSolver<Move,ExecutionPolicy>{numPlayers, iterationTime}
-    {}
-
-};
-
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
-    (MockSOSolver, DefaultMockMOSolver), (Card, (Card, RootParallel)))
+    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
 {
     SECTION("By iteration count") {
         TestType solver {iterationCount};
@@ -52,7 +38,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
-    (MockSOSolver, DefaultMockMOSolver), (Card, (Card, RootParallel)))
+    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
 
@@ -73,7 +59,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
-    (MockSOSolver, DefaultMockMOSolver), (Card, (Card, RootParallel)))
+    (MockSOSolver, MockMOSolver), (Card, (Card, RootParallel)))
 {
     KnockoutWhist game {numPlayers};
     TestType solver {iterationCount};
