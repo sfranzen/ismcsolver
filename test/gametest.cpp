@@ -113,16 +113,14 @@ TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
 TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
 {
     MockGame game;
+    // Maximum number of turns is nPlayers * (7 + 6 + ... + 1)
+    const unsigned int maxTurns {56};
     unsigned int turn {0};
-    const unsigned int correctTurnCount {44};
 
-    while (!game.validMoves().empty() ) {
-        doValidMove(game);
+    while (!game.validMoves().empty() && turn < maxTurns) {
+        CHECK_NOTHROW(doValidMove(game));
         ++turn;
     }
 
-    CHECK(turn == correctTurnCount);
     REQUIRE(game.validMoves().empty());
-    CHECK(game.getResult(0) == 1);
-    CHECK(game.getResult(1) == 0);
 }
