@@ -7,8 +7,8 @@
 #include "common/catch.hpp"
 #include "common/defaultmosolver.h"
 #include "common/knockoutwhist.h"
+#include "common/tictactoe.h"
 #include <vector>
-#include <iostream>
 
 namespace
 {
@@ -20,6 +20,23 @@ using Duration = ::ExecutionPolicy::Duration;
 const unsigned int numPlayers {2};
 const unsigned int iterationCount {10};
 const auto iterationTime {milliseconds(5)};
+
+// In this state, player 1 has to choose between move 2, ending in a draw, and
+// move 0, ending in a loss
+struct P1DrawOrLose : public TicTacToe
+{
+    P1DrawOrLose()
+        : TicTacToe{}
+    {
+        m_board = {
+            -1, 1,-1,
+             1, 0, 0,
+             0, 0, 1
+        };
+        m_moves = {0, 2};
+        m_player = 1;
+    }
+};
 
 }
 
@@ -76,8 +93,11 @@ TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
     ++calls;
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Choosing the best move", "[SOSolver][MOSolver]",
-    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+TEMPLATE_PRODUCT_TEST_CASE("Choosing the right move", "[SOSolver][MOSolver]",
+    (SOSolver, DefaultMOSolver), (int, (int, RootParallel)))
 {
-    SUCCEED();
+    P1DrawOrLose game;
+    TestType solver {16};
+    const auto move = solver(game);
+    REQUIRE(move == 2);
 }
