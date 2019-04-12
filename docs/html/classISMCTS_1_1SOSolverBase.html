@@ -262,46 +262,6 @@ template&lt;class Move, class ExecutionPolicy&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4354a652163daa139f0d97c36e888d5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4354a652163daa139f0d97c36e888d5d">&#9670;&nbsp;</a></span>expand()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move, class ExecutionPolicy&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classISMCTS_1_1SOSolverBase.html">ISMCTS::SOSolverBase</a>&lt; Move, <a class="el" href="classISMCTS_1_1ExecutionPolicy.html">ExecutionPolicy</a> &gt;::expand </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&amp;&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Expansion stage</p>
-<p>Choose a random unexplored move, add it to the children of the current node and select this new node. </p>
-
-</div>
-</div>
 <a id="a2c7264e9c784d91ea9be4b7c1d86a2eb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c7264e9c784d91ea9be4b7c1d86a2eb">&#9670;&nbsp;</a></span>search()</h2>
 
@@ -379,6 +339,46 @@ template&lt;class Move, class ExecutionPolicy&gt; </div>
 </div><div class="memdoc">
 <p>Selection stage</p>
 <p>Descend the tree until a node is reached that has unexplored moves, or is a terminal node (no more moves available). </p>
+
+</div>
+</div>
+<a id="a4354a652163daa139f0d97c36e888d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4354a652163daa139f0d97c36e888d5d">&#9670;&nbsp;</a></span>expand()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move, class ExecutionPolicy&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classISMCTS_1_1SOSolverBase.html">ISMCTS::SOSolverBase</a>&lt; Move, <a class="el" href="classISMCTS_1_1ExecutionPolicy.html">ExecutionPolicy</a> &gt;::expand </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&amp;&#160;</td>
+          <td class="paramname"><em>node</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramname"><em>state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Expansion stage</p>
+<p>Choose a random unexplored move, add it to the children of the current node and select this new node. </p>
 
 </div>
 </div>

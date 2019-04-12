@@ -136,46 +136,6 @@ class ISMCTS::SolverBase&lt; Move &gt;</h3>
 
 <p>Interface shared by all algorithms. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a71a04f072bf6d79d8cb12dc86f9f260c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71a04f072bf6d79d8cb12dc86f9f260c">&#9670;&nbsp;</a></span>backPropagate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::backPropagate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Backpropagation stage</p>
-<p>Traverse back to the root from the given node, updating the statistics of all visited nodes with the result of the finished game state. </p>
-
-</div>
-</div>
 <a id="a8e2e42374b8ca4454ce59f086597ec13"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8e2e42374b8ca4454ce59f086597ec13">&#9670;&nbsp;</a></span>operator()()</h2>
 
@@ -205,46 +165,6 @@ template&lt;class Move &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The most promising move from the given state. </dd></dl>
 
 <p>Implemented in <a class="el" href="classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html#abe542181269eeccb5550009171c6ed8f">ISMCTS::MOSolver&lt; Move, RootParallel &gt;</a>, <a class="el" href="classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html#afb80aee48279e6f772b5f954aa9b71ba">ISMCTS::MOSolver&lt; Move, Sequential &gt;</a>, <a class="el" href="classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html#ad21c9347114f382bd7e0f2abcf17b979">ISMCTS::SOSolver&lt; Move, RootParallel &gt;</a>, and <a class="el" href="classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html#a56682d2385a50c39e2a93c5d4accb0b6">ISMCTS::SOSolver&lt; Move, Sequential &gt;</a>.</p>
-
-</div>
-</div>
-<a id="a1c6f3793ea9a304608e4d4e1e8f01fea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c6f3793ea9a304608e4d4e1e8f01fea">&#9670;&nbsp;</a></span>selectNode()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static bool <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::selectNode </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; Move &gt; &amp;&#160;</td>
-          <td class="paramname"><em>moves</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Whether to select this node given available moves. </p>
 
 </div>
 </div>
@@ -305,6 +225,86 @@ template&lt;class Move &gt; </div>
 </div><div class="memdoc">
 <p>Simulation stage</p>
 <p>Continue performing random available moves from this state until the end of the game. </p>
+
+</div>
+</div>
+<a id="a71a04f072bf6d79d8cb12dc86f9f260c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71a04f072bf6d79d8cb12dc86f9f260c">&#9670;&nbsp;</a></span>backPropagate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::backPropagate </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
+          <td class="paramname"><em>node</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramname"><em>state</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Backpropagation stage</p>
+<p>Traverse back to the root from the given node, updating the statistics of all visited nodes with the result of the finished game state. </p>
+
+</div>
+</div>
+<a id="a1c6f3793ea9a304608e4d4e1e8f01fea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c6f3793ea9a304608e4d4e1e8f01fea">&#9670;&nbsp;</a></span>selectNode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::selectNode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
+          <td class="paramname"><em>node</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramname"><em>moves</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether to select this node given available moves. </p>
 
 </div>
 </div>

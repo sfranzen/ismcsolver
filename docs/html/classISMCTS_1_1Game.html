@@ -160,6 +160,34 @@ template&lt;class Move&gt; </div>
 
 </div>
 </div>
+<a id="a076e0466294eae43d234b3c6f1fd5826"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a076e0466294eae43d234b3c6f1fd5826">&#9670;&nbsp;</a></span>validMoves()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Move&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt;Move&gt; <a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>&lt; Move &gt;::validMoves </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Valid moves for the current state. </p><dl class="section return"><dt>Returns</dt><dd>A list of valid moves or an empty list if the game is finished. </dd></dl>
+
+</div>
+</div>
 <a id="a8c616941c6d2e91b1f58af95255fcc7b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8c616941c6d2e91b1f58af95255fcc7b">&#9670;&nbsp;</a></span>doMove()</h2>
 
@@ -215,34 +243,6 @@ template&lt;class Move&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Return result for the given player. This function should preferentially return numbers in the range [0, 1], for example 0 for a loss, 0.5 for a draw and 1 for a win. It is only called on finished game states. </p>
-
-</div>
-</div>
-<a id="a076e0466294eae43d234b3c6f1fd5826"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a076e0466294eae43d234b3c6f1fd5826">&#9670;&nbsp;</a></span>validMoves()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::vector&lt;Move&gt; <a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>&lt; Move &gt;::validMoves </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Valid moves for the current state. </p><dl class="section return"><dt>Returns</dt><dd>A list of valid moves or an empty list if the game is finished. </dd></dl>
 
 </div>
 </div>
