@@ -3,11 +3,11 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include "catch.hpp"
 #include <ismcts/sosolver.h>
-#include "defaultmosolver.h"
-#include "knockoutwhist.h"
-#include "card.h"
+#include "common/catch.hpp"
+#include "common/defaultmosolver.h"
+#include "common/knockoutwhist.h"
+#include "common/card.h"
 
 #include <chrono>
 #include <vector>

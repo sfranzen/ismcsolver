@@ -9,7 +9,9 @@ include(Catch)
 # Precompile Catch2 to limit compilation times
 add_library(testmain OBJECT main.cpp)
 
-set(game_src knockoutwhist.cpp)
+set(game_src
+    common/knockoutwhist.cpp
+)
 set(testlibs testmain ismcsolver coverage_config)
 
 add_executable(benchmark benchmark.cpp ${game_src})

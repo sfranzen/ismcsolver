@@ -3,11 +3,12 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include "catch.hpp"
 #include <ismcts/sosolver.h>
-#include "defaultmosolver.h"
-#include "knockoutwhist.h"
+#include "common/catch.hpp"
+#include "common/defaultmosolver.h"
+#include "common/knockoutwhist.h"
 #include <vector>
+#include <iostream>
 
 namespace
 {
@@ -73,4 +74,10 @@ TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
         REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
     }
     ++calls;
+}
+
+TEMPLATE_PRODUCT_TEST_CASE("Choosing the best move", "[SOSolver][MOSolver]",
+    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+{
+    SUCCEED();
 }

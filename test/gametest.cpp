@@ -3,8 +3,8 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include "catch.hpp"
-#include "knockoutwhist.h"
+#include "common/catch.hpp"
+#include "common/knockoutwhist.h"
 #include <vector>
 #include <string>
 #include <exception>

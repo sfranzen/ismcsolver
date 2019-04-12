@@ -6,4 +6,4 @@
 // This file is used only to generate a Catch2 command line interface that will
 // run the tests
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "common/catch.hpp"
