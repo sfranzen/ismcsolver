@@ -12,6 +12,8 @@
 #include <chrono>
 #include <vector>
 #include <iostream>
+#include <random>
+
 namespace
 {
 
@@ -19,6 +21,13 @@ using namespace std::chrono;
 using namespace ISMCTS;
 const unsigned int numGames {10};
 const unsigned int iterationCount {2000};
+
+const Card &randomMove(const std::vector<Card> &moves)
+{
+    static std::mt19937 rng {std::random_device{}()};
+    std::uniform_int_distribution<std::size_t> randomMove {0, moves.size() - 1};
+    return moves[randomMove(rng)];
+}
 
 class GameRunner
 {
@@ -53,7 +62,7 @@ private:
                 time += high_resolution_clock::now() - t0;
                 ++numCalls;
             } else {
-                move = game.validMoves().front();
+                move = randomMove(game.validMoves());
             }
             game.doMove(move);
         }
