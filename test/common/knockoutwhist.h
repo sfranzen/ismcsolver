@@ -36,7 +36,7 @@ protected:
     std::vector<unsigned> m_tricksTaken;
     unsigned m_tricksLeft {7};
     unsigned m_numPlayers;
-    Player m_player;
+    Player m_player {0};
     Player m_dealer;
     Card::Suit m_trumpSuit;
     bool m_requestTrump = false;

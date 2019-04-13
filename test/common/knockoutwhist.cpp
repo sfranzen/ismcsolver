@@ -34,20 +34,19 @@ inline std::mt19937 &prng()
 KnockoutWhist::KnockoutWhist(unsigned players)
     : m_tricksLeft{7}
     , m_numPlayers{std::min(std::max(players, 2u), 7u)}
-    , m_player{0}
+    , m_dealer{m_numPlayers - 1}
 {
     for (auto i = s_deckSize; i > 0; --i)
         m_deck[i] = {Card::Rank(i % 13), Card::Suit(i % 4)};
     m_players.resize(m_numPlayers);
     std::iota(m_players.begin(), m_players.end(), 0);
-    m_dealer = m_players.back();
     m_playerCards.resize(m_numPlayers);
     m_tricksTaken.resize(m_numPlayers, 0);
 
     // Deal, then remove one of the remaining cards to choose the initial trump
     // suit
     deal();
-    const auto choice = --m_unknownCards.end();
+    const auto choice = m_unknownCards.end() - 1;
     m_trumpSuit = choice->suit;
     m_unknownCards.erase(choice);
 }
@@ -103,8 +102,7 @@ void KnockoutWhist::doMove(const Card move)
 
 double KnockoutWhist::getResult(unsigned player) const
 {
-    const auto pos = std::find(m_players.begin(), m_players.end(), player);
-    return pos < m_players.end() ? 1 : 0;
+    return player == m_players.front() ? 1 : 0;
 }
 
 std::vector<Card> KnockoutWhist::validMoves() const
@@ -152,7 +150,7 @@ void KnockoutWhist::finishRound()
 {
     m_players.erase(
         std::remove_if(m_players.begin(), m_players.end(), [&](Player p){ return m_tricksTaken[p] == 0; }),
-                    m_players.end()
+        m_players.end()
     );
     if (m_players.size() > 1) {
         --m_tricksLeft;
@@ -169,8 +167,9 @@ void KnockoutWhist::finishRound()
 
 KnockoutWhist::Player KnockoutWhist::nextPlayer(Player p) const
 {
-    auto next = ++std::find(m_players.begin(), m_players.end(), p);
-    return next == m_players.end() ? m_players.front() : *next;
+    ++p %= m_numPlayers;
+    const auto next = std::find(m_players.begin(), m_players.end(), p);
+    return next < m_players.end() ? *next : nextPlayer(p);
 }
 
 KnockoutWhist::Player KnockoutWhist::trickWinner() const
@@ -196,7 +195,7 @@ KnockoutWhist::Player KnockoutWhist::roundWinner() const
         return m_tricksTaken[p1] > m_tricksTaken[p2];
     });
     const auto maxTricksTaken = m_tricksTaken[players[0]];
-    const unsigned playersTied = 1 + std::count_if(++players.begin(), players.end(), [&](Player p){
+    const unsigned playersTied = 1 + std::count_if(players.begin() + 1, players.end(), [&](Player p){
         return m_tricksTaken[p] == maxTricksTaken;
     });
     std::uniform_int_distribution<unsigned> randPlayer {0, playersTied - 1};
