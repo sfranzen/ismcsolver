@@ -112,7 +112,7 @@ TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
 
 TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
 {
-    MockGame game;
+    KnockoutWhist game {2};
     // Maximum number of turns is nPlayers * (7 + 6 + ... + 1)
     const unsigned int maxTurns {56};
     unsigned int turn {0};
