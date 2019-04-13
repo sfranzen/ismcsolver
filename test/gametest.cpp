@@ -12,10 +12,12 @@
 namespace
 {
 
+const unsigned numPlayers = 2;
+
 // Game with two players having known cards
 struct MockGame : public KnockoutWhist
 {
-    MockGame() : KnockoutWhist {2}
+    MockGame() : KnockoutWhist {numPlayers}
     {
         initialDeal();
     }
@@ -53,7 +55,7 @@ void doValidMove(ISMCTS::Game<Card> &game)
 
 TEST_CASE("Game instantiates correctly", "[KnockoutWhist]")
 {
-    KnockoutWhist game {2};
+    KnockoutWhist game {numPlayers};
 
     CHECK(game.currentPlayer() == 0);
     REQUIRE(game.validMoves().size() == 7);
@@ -112,9 +114,9 @@ TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
 
 TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
 {
-    KnockoutWhist game {2};
-    // Maximum number of turns is nPlayers * 34
-    const unsigned int maxTurns {2*34};
+    KnockoutWhist game {numPlayers};
+    // Maximum number of turns is nPlayers * (7 + 6 + ... + 1) + 6 (selection turns)
+    const unsigned int maxTurns {6 + numPlayers * 28};
     unsigned int turn {0};
 
     while (!game.validMoves().empty() && turn < maxTurns) {
