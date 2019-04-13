@@ -7,7 +7,7 @@
 #include "common/knockoutwhist.h"
 #include <vector>
 #include <string>
-#include <exception>
+#include <stdexcept>
 
 namespace
 {

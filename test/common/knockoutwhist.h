@@ -34,28 +34,19 @@ protected:
     std::vector<Hand> m_playerCards;
     std::vector<Play> m_currentTrick;
     std::vector<unsigned> m_tricksTaken;
-    unsigned m_tricksLeft;
+    unsigned m_tricksLeft {7};
     unsigned m_numPlayers;
     Player m_player;
+    Player m_dealer;
     Card::Suit m_trumpSuit;
+    bool m_requestTrump = false;
 
     void deal();
     void finishTrick();
     void finishRound();
-    Player nextPlayer() const;
+    Player nextPlayer(Player p) const;
     Player trickWinner() const;
-};
-
-class KOWhistWithBidding : public KnockoutWhist
-{
-public:
-    using KnockoutWhist::KnockoutWhist;
-    virtual std::vector<Card> validMoves() const override;
-    virtual void doMove(const Card move) override;
-
-protected:
-    void finishTrick();
-    mutable bool m_biddingPhase = false;
+    Player roundWinner() const;
 };
 
 #endif // KNOCKOUTWHIST_H
