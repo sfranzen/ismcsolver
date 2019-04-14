@@ -19,10 +19,12 @@
 namespace ISMCTS
 {
 /// Common base class for single observer solvers
-template<class Move, class ExecutionPolicy>
-class SOSolverBase : public SolverBase<Move>, public ExecutionPolicy
+template<class Move, class ExecutionPolicy = Sequential>
+class SOSolver : public SolverBase<Move>, public ExecutionPolicy
 {
 public:
+    using ExecutionPolicy::numThreads;
+
     /**
      * Constructs a solver that will iterate the given number of times per
      * search operation.
@@ -31,7 +33,7 @@ public:
      *      It must be positive; the authors of the algorithm suggest 0.7 for
      *      a game that reports result values on the interval [0,1].
      */
-    explicit SOSolverBase(std::size_t iterationCount = 1000, double exploration = 0.7)
+    explicit SOSolver(std::size_t iterationCount = 1000, double exploration = 0.7)
         : SolverBase<Move>{exploration}
         , ExecutionPolicy{iterationCount}
     {}
@@ -44,10 +46,23 @@ public:
      *      It must be positive; the authors of the algorithm suggest 0.7 for
      *      a game that reports result values on the interval [0,1].
      */
-    explicit SOSolverBase(std::chrono::duration<double> iterationTime, double exploration = 0.7)
+    explicit SOSolver(std::chrono::duration<double> iterationTime, double exploration = 0.7)
         : SolverBase<Move>{exploration}
         , ExecutionPolicy{iterationTime}
     {}
+
+    virtual Move operator()(const Game<Move> &rootState) const override
+    {
+        std::vector<std::thread> threads(numThreads());
+        std::vector<Node<Move>> trees(numThreads());
+
+        for (std::size_t t = 0; t < numThreads(); ++t)
+            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(trees[t]), std::ref(rootState));
+        for (auto &t : threads)
+            t.join();
+
+        return SOSolver::bestMove(trees);
+    }
 
 protected:
     void iterate(Node<Move> &root, const Game<Move> &state) const
@@ -74,7 +89,7 @@ protected:
         select(rootNode, *randomState);
         expand(rootNode, *randomState);
         this->simulate(*randomState);
-        SOSolverBase::backPropagate(rootNode, *randomState);
+        SOSolver::backPropagate(rootNode, *randomState);
     }
 
     /**
@@ -107,47 +122,6 @@ protected:
             node = node->addChild(move, state.currentPlayer());
             state.doMove(move);
         }
-    }
-};
-
-// Partial specialisations for each execution policy
-template<class Move, class ExecutionPolicy = Sequential>
-class SOSolver {};
-
-/// Sequential single observer solver
-template<class Move>
-class SOSolver<Move,Sequential> : public SOSolverBase<Move,Sequential>
-{
-public:
-    using SOSolverBase<Move,Sequential>::SOSolverBase;
-
-    virtual Move operator()(const Game<Move> &rootState) const override
-    {
-        Node<Move> root;
-        this->iterate(root, rootState);
-        return this->bestMove(root);
-    }
-};
-
-/// Single observer solver with root parallelisation
-template<class Move>
-class SOSolver<Move,RootParallel> : public SOSolverBase<Move,RootParallel>
-{
-public:
-    using SOSolverBase<Move,RootParallel>::SOSolverBase;
-    using RootParallel::numThreads;
-
-    virtual Move operator()(const Game<Move> &rootState) const override
-    {
-        std::vector<std::thread> threads(numThreads());
-        std::vector<Node<Move>> trees(numThreads());
-
-        for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(trees[t]), std::ref(rootState));
-        for (auto &t : threads)
-            t.join();
-
-        return this->bestMove(trees);
     }
 };
 

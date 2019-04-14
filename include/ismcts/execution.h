@@ -84,11 +84,11 @@ class Sequential : public ExecutionPolicy {
 public:
     using ExecutionPolicy::ExecutionPolicy;
 
-    /// Return best move from a single tree
     template<class Move>
-    static const Move &bestMove(const Node<Move> &tree)
+    static const Move &bestMove(const std::vector<Node<Move>> &trees)
     {
-        const auto &children = tree.children();
+        // Sequential solvers use a vector with only one tree
+        const auto &children = trees.front().children();
         using value = typename Node<Move>::Ptr;
         const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const value &a, const value &b){
             return a->visits() < b->visits();
@@ -116,7 +116,7 @@ public:
     {
         const auto results = compileVisitCounts(trees);
         using value = typename VisitMap<Move>::value_type;
-        const auto &mostVisited = *max_element(results.begin(), results.end(), [](const value &a, const value &b){
+        const auto &mostVisited = *std::max_element(results.begin(), results.end(), [](const value &a, const value &b){
             return a.second < b.second;
         });
         return mostVisited.first;
@@ -143,6 +143,7 @@ private:
         return results;
     }
 };
-}
+
+} // ISMCTS
 
 #endif // ISMCTS_EXECUTION_H

@@ -19,10 +19,12 @@
 namespace ISMCTS
 {
 /// Common base class for multiple observer solvers
-template<class Move, class ExecutionPolicy>
-class MOSolverBase : public SolverBase<Move>, public ExecutionPolicy
+template<class Move, class ExecutionPolicy = Sequential>
+class MOSolver : public SolverBase<Move>, public ExecutionPolicy
 {
 public:
+    using ExecutionPolicy::numThreads;
+
     /**
      * Constructs a solver for a game with the given number of players that will
      * iterate the given number of times per search operation.
@@ -31,7 +33,7 @@ public:
      *      It must be positive; the authors of the algorithm suggest 0.7 for
      *      a game that reports result values on the interval [0,1].
      */
-    explicit MOSolverBase(std::size_t numPlayers, std::size_t iterationCount = 1000, double exploration = 0.7)
+    explicit MOSolver(std::size_t numPlayers, std::size_t iterationCount = 1000, double exploration = 0.7)
         : SolverBase<Move>{exploration}
         , ExecutionPolicy(iterationCount)
         , m_numPlayers{numPlayers}
@@ -45,11 +47,31 @@ public:
      *      It must be positive; the authors of the algorithm suggest 0.7 for
      *      a game that reports result values on the interval [0,1].
      */
-    explicit MOSolverBase(std::size_t numPlayers, std::chrono::duration<double> iterationTime, double exploration = 0.7)
+    explicit MOSolver(std::size_t numPlayers, std::chrono::duration<double> iterationTime, double exploration = 0.7)
         : SolverBase<Move>{exploration}
         , ExecutionPolicy(iterationTime)
         , m_numPlayers{numPlayers}
     {}
+
+    virtual Move operator()(const Game<Move> &rootState) const override
+    {
+        std::vector<std::thread> threads(numThreads());
+        std::vector<RootList> treeSets(numThreads());
+        for (auto &set : treeSets)
+            set = RootList(m_numPlayers);
+
+        for (std::size_t t = 0; t < numThreads(); ++t)
+            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(treeSets[t]), std::ref(rootState));
+        for (auto &t : threads)
+            t.join();
+
+        // Gather results for the current player from each thread
+        RootList currentPlayerTrees(numThreads());
+        std::transform(treeSets.begin(), treeSets.end(), currentPlayerTrees.begin(), [&](RootList &set){
+            return std::move(set[rootState.currentPlayer()]);
+        });
+        return MOSolver::bestMove(currentPlayerTrees);
+    }
 
 protected:
     using RootList = std::vector<Node<Move>>;
@@ -97,7 +119,7 @@ protected:
         const auto validMoves = state.validMoves();
         const auto player = state.currentPlayer();
         const auto &targetNode = nodes[player];
-        if (!SolverBase<Move>::selectNode(targetNode, validMoves)) {
+        if (!MOSolver::selectNode(targetNode, validMoves)) {
             const auto selection = targetNode->ucbSelectChild(validMoves, this->m_exploration);
             for (auto &node : nodes)
                 node = node->findOrAddChild(selection->move(), player);
@@ -131,57 +153,6 @@ protected:
     }
 };
 
-// Partial specialisations for each execution policy
-template<class Move, class ExecutionPolicy = Sequential>
-class MOSolver {};
-
-/// Sequential multiple observer solver
-template<class Move>
-class MOSolver<Move, Sequential> : public MOSolverBase<Move,Sequential>
-{
-public:
-    using MOSolverBase<Move,Sequential>::MOSolverBase;
-
-    virtual Move operator()(const Game<Move> &rootState) const override
-    {
-        std::vector<Node<Move>> trees(this->m_numPlayers);
-        this->iterate(trees, rootState);
-        return this->bestMove(trees[rootState.currentPlayer()]);
-    }
-};
-
-/// Multiple observer solver with root parallelisation
-template<class Move>
-class MOSolver<Move, RootParallel> : public MOSolverBase<Move,RootParallel>
-{
-public:
-    using MOSolverBase<Move,RootParallel>::MOSolverBase;
-    using RootParallel::numThreads;
-
-    virtual Move operator()(const Game<Move> &rootState) const override
-    {
-        std::vector<std::thread> threads(numThreads());
-        std::vector<RootList> treeSets(numThreads());
-        for (auto &set : treeSets)
-            set = RootList(this->m_numPlayers);
-
-        for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(treeSets[t]), std::ref(rootState));
-        for (auto &t : threads)
-            t.join();
-
-        // Gather results for the current player from each thread
-        RootList currentPlayerTrees(numThreads());
-        std::transform(treeSets.begin(), treeSets.end(), currentPlayerTrees.begin(), [&](RootList &set){
-            return std::move(set[rootState.currentPlayer()]);
-        });
-        return this->bestMove(currentPlayerTrees);
-    }
-
-protected:
-    using typename MOSolverBase<Move,RootParallel>::RootList;
-};
-
-}
+} // ISMCTS
 
 #endif // ISMCTS_MOSOLVER_H
