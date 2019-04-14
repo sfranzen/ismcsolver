@@ -81,12 +81,8 @@ Inheritance diagram for ISMCTS::Sequential:</div>
 <div class="dyncontent">
 <div class="center"><img src="classISMCTS_1_1Sequential__inherit__graph.png" border="0" usemap="#ISMCTS_1_1Sequential_inherit__map" alt="Inheritance graph"/></div>
 <map name="ISMCTS_1_1Sequential_inherit__map" id="ISMCTS_1_1Sequential_inherit__map">
-<area shape="rect"  title="All iterations are executed by a single thread on a single tree." alt="" coords="136,80,283,107"/>
-<area shape="rect"  href="classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="23,155,198,196"/>
-<area shape="rect"  href="classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="226,155,398,196"/>
-<area shape="rect"  href="classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="121,5,298,32"/>
-<area shape="rect"  href="classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver." alt="" coords="5,244,197,285"/>
-<area shape="rect"  href="classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver." alt="" coords="222,244,413,285"/>
+<area shape="rect"  title="All iterations are executed by a single thread on a single tree." alt="" coords="21,80,167,107"/>
+<area shape="rect"  href="classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="5,5,183,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -127,9 +123,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ac79126118238ea321d43be1a775034e1"><td class="memTemplParams" colspan="2">template&lt;class Move &gt; </td></tr>
-<tr class="memitem:ac79126118238ea321d43be1a775034e1"><td class="memTemplItemLeft" align="right" valign="top">static const Move &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Sequential.html#ac79126118238ea321d43be1a775034e1">bestMove</a> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; &amp;tree)</td></tr>
-<tr class="separator:ac79126118238ea321d43be1a775034e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb1baf617afe262f392fc65b773dc2ba"><td class="memTemplParams" colspan="2"><a id="adb1baf617afe262f392fc65b773dc2ba"></a>
+template&lt;class Move &gt; </td></tr>
+<tr class="memitem:adb1baf617afe262f392fc65b773dc2ba"><td class="memTemplItemLeft" align="right" valign="top">static const Move &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>bestMove</b> (const std::vector&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt;&gt; &amp;trees)</td></tr>
+<tr class="separator:adb1baf617afe262f392fc65b773dc2ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -140,38 +137,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Duration</b> = std::
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>All iterations are executed by a single thread on a single tree. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac79126118238ea321d43be1a775034e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac79126118238ea321d43be1a775034e1">&#9670;&nbsp;</a></span>bestMove()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static const Move&amp; ISMCTS::Sequential::bestMove </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; &amp;&#160;</td>
-          <td class="paramname"><em>tree</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Return best move from a single tree. </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/ismcts/<a class="el" href="execution_8h_source.html">execution.h</a></li>
 </ul>
 </div><!-- contents -->

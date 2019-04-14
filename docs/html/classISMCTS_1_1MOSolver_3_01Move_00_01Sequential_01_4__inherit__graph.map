@@ -1,7 +1,0 @@
-<map id="ISMCTS::MOSolver&lt; Move, Sequential &gt;" name="ISMCTS::MOSolver&lt; Move, Sequential &gt;">
-<area shape="rect" id="node1" title="Sequential multiple observer solver." alt="" coords="73,259,265,300"/>
-<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="81,169,256,211"/>
-<area shape="rect" id="node3" href="$classISMCTS_1_1SolverBase.html" title="Interface shared by all algorithms." alt="" coords="5,80,159,121"/>
-<area shape="rect" id="node4" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="183,87,330,114"/>
-<area shape="rect" id="node5" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="168,5,345,32"/>
-</map>

@@ -18,7 +18,15 @@
 
 namespace ISMCTS
 {
-/// Common base class for single observer solvers
+/**
+ * Single observer solver class template.
+ *
+ * The single observer solvers implement the SO-ISMCTS algorithm, which searches
+ * a single tree corresponding to the information sets of the current player in
+ * the root game state. They should be used for games where the players can see
+ * each other's moves, because the algorithm treats opponent moves as fully
+ * observable.
+ */
 template<class Move, class ExecutionPolicy = Sequential>
 class SOSolver : public SolverBase<Move>, public ExecutionPolicy
 {

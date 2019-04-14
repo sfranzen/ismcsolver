@@ -70,20 +70,12 @@ $(function() {
 <ul>
 <li><a class="el" href="classISMCTS_1_1Game.html">ISMCTS::Game</a>: Most importantly, the solver classes require a game to inherit from this class;</li>
 <li>Each of the solver templates needs an <a class="el" href="classISMCTS_1_1ExecutionPolicy.html">ISMCTS::ExecutionPolicy</a> as its second parameter, two of which are currently available:<ul>
-<li><a class="el" href="classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree.">ISMCTS::Sequential</a> (the default) for single-threaded solvers;</li>
+<li><a class="el" href="classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree.">ISMCTS::Sequential</a> (the default, can be omitted) for single-threaded solvers;</li>
 <li><a class="el" href="classISMCTS_1_1RootParallel.html">ISMCTS::RootParallel</a> for multi-threaded solvers that search a separate tree on each thread.</li>
 </ul>
 </li>
-<li>Single Observer solvers:<ul>
-<li><a class="el" href="classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver.">ISMCTS::SOSolver&lt;Move,Sequential&gt;</a>;</li>
-<li><a class="el" href="classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html" title="Single observer solver with root parallelisation.">ISMCTS::SOSolver&lt;Move,RootParallel&gt;</a>.</li>
-</ul>
-</li>
-<li>Multiple Observer solvers:<ul>
-<li><a class="el" href="classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver.">ISMCTS::MOSolver&lt;Move,Sequential&gt;</a>;</li>
-<li><a class="el" href="classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html" title="Multiple observer solver with root parallelisation.">ISMCTS::MOSolver&lt;Move,RootParallel&gt;</a>. </li>
-</ul>
-</li>
+<li><a class="el" href="classISMCTS_1_1SOSolver.html">ISMCTS::SOSolver</a>: class template for Single Observer solvers;</li>
+<li><a class="el" href="classISMCTS_1_1MOSolver.html">ISMCTS::MOSolver</a>: class template for Multiple Observer solvers. </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->

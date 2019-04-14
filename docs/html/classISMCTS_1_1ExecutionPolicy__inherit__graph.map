@@ -1,15 +1,7 @@
 <map id="ISMCTS::ExecutionPolicy" name="ISMCTS::ExecutionPolicy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,114,183,141"/>
-<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolverBase.html" title="Common base class for multiple observer solvers." alt="" coords="231,16,413,57"/>
-<area shape="rect" id="node3" href="$classISMCTS_1_1RootParallel.html" title=" " alt="" coords="244,82,400,109"/>
-<area shape="rect" id="node8" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="249,139,395,166"/>
-<area shape="rect" id="node13" href="$classISMCTS_1_1SOSolverBase.html" title="Common base class for single observer solvers." alt="" coords="231,191,413,232"/>
-<area shape="rect" id="node4" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="461,5,636,47"/>
-<area shape="rect" id="node6" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="463,71,635,112"/>
-<area shape="rect" id="node5" href="$classISMCTS_1_1MOSolver_3_01Move_00_01RootParallel_01_4.html" title="Multiple observer solver with root parallelisation." alt="" coords="684,5,876,47"/>
-<area shape="rect" id="node7" href="$classISMCTS_1_1SOSolver_3_01Move_00_01RootParallel_01_4.html" title="Single observer solver with root parallelisation." alt="" coords="685,71,875,112"/>
-<area shape="rect" id="node9" href="$classISMCTS_1_1MOSolverBase.html" title=" " alt="" coords="461,136,636,177"/>
-<area shape="rect" id="node11" href="$classISMCTS_1_1SOSolverBase.html" title=" " alt="" coords="463,201,635,243"/>
-<area shape="rect" id="node10" href="$classISMCTS_1_1MOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential multiple observer solver." alt="" coords="684,136,876,177"/>
-<area shape="rect" id="node12" href="$classISMCTS_1_1SOSolver_3_01Move_00_01Sequential_01_4.html" title="Sequential single observer solver." alt="" coords="685,201,875,243"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,97,183,123"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolver.html" title=" " alt="" coords="231,5,423,47"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1RootParallel.html" title=" " alt="" coords="249,71,405,98"/>
+<area shape="rect" id="node4" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="253,122,400,149"/>
+<area shape="rect" id="node5" href="$classISMCTS_1_1SOSolver.html" title=" " alt="" coords="231,173,422,215"/>
 </map>

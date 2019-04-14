@@ -18,7 +18,14 @@
 
 namespace ISMCTS
 {
-/// Common base class for multiple observer solvers
+/**
+ * Multiple observer solver class template.
+ *
+ * The multiple observer solvers implement the MO-ISMCTS algorithm, which builds
+ * a separate tree for each player and searches these simultaneously. This makes
+ * it applicable to games with partially observable moves, i.e. where players
+ * cannot always fully observe the other players' or teams' moves.
+ */
 template<class Move, class ExecutionPolicy = Sequential>
 class MOSolver : public SolverBase<Move>, public ExecutionPolicy
 {
