@@ -79,13 +79,13 @@ protected:
     const Move &randomMove(const std::vector<Move> &moves) const
     {
         std::uniform_int_distribution<std::size_t> dist {0, moves.size() - 1};
-        return moves[dist(urng())];
+        return moves[dist(prng())];
     }
 
-    virtual std::mt19937 &urng() const
+    virtual std::mt19937 &prng() const
     {
-        thread_local static std::mt19937 urng {std::random_device{}()};
-        return urng;
+        thread_local static std::mt19937 prng {std::random_device{}()};
+        return prng;
     }
 };
 
