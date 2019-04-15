@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(Threads REQUIRED)
+
+if(NOT TARGET ismcsolver)
+    include(${CMAKE_CURRENT_LIST_DIR}/ismcsolver.cmake)
+endif()

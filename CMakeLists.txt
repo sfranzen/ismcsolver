@@ -8,24 +8,28 @@ cmake_minimum_required(VERSION 3.12.0)
 set(CMAKE_CXX_STANDARD 11)
 
 find_package(Threads REQUIRED)
-find_package(Doxygen)
-
-set(include_dir ${CMAKE_CURRENT_SOURCE_DIR}/include/ismcts)
-set(headers
-    ${include_dir}/game.h
-    ${include_dir}/node.h
-    ${include_dir}/solverbase.h
-    ${include_dir}/sosolver.h
-    ${include_dir}/mosolver.h
-    ${include_dir}/execution.h
-)
-
 add_library(ismcsolver INTERFACE)
 target_compile_features(ismcsolver INTERFACE cxx_std_11)
 target_link_libraries(ismcsolver INTERFACE Threads::Threads)
-target_include_directories(ismcsolver INTERFACE include)
-target_sources(ismcsolver INTERFACE ${headers})
-install(FILES ${headers} DESTINATION include)
+target_include_directories(ismcsolver INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+include(GNUInstallDirs)
+set(export_dir ${CMAKE_INSTALL_LIBDIR}/cmake/ismcsolver)
+install(DIRECTORY include/ismcts DESTINATION include)
+install(TARGETS ismcsolver EXPORT ismcsolver DESTINATION include)
+install(EXPORT ismcsolver DESTINATION ${export_dir})
+
+include(CMakePackageConfigHelpers)
+set(config_file ${CMAKE_CURRENT_BINARY_DIR}/ismcsolver-config.cmake)
+configure_package_config_file(
+    cmake/ismcsolver-config.cmake.in
+    ${config_file}
+    INSTALL_DESTINATION ${export_dir}
+)
+install(FILES ${config_file} DESTINATION ${export_dir})
 
 # Tests
 include(CTest)
@@ -51,6 +55,7 @@ if (BUILD_TESTING OR CODE_COVERAGE)
 endif()
 
 # Documentation
+find_package(Doxygen)
 if(DOXYGEN_FOUND)
     set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
     set(DOXYGEN_BRIEF_MEMBER_DESC NO)
