@@ -20,8 +20,9 @@ class SolverBase
 {
 public:
     explicit SolverBase(double exploration = 0.7)
-        : m_exploration{exploration}
-    {}
+    {
+        setExplorationBias(exploration);
+    }
 
     virtual ~SolverBase() = default;
 
