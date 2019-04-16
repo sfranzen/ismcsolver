@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['search',['search',['../classISMCTS_1_1SOSolver.html#a5a2799c5bd4784843dfca789f1737d1d',1,'ISMCTS::SOSolver::search()'],['../classISMCTS_1_1MOSolver.html#a85f4a2e64cec7f8e3071a9ee1f02cde9',1,'ISMCTS::MOSolver::search()']]],
-  ['select',['select',['../classISMCTS_1_1SOSolver.html#af7423942d551f647b785b0a4292a9e1a',1,'ISMCTS::SOSolver::select()'],['../classISMCTS_1_1MOSolver.html#a8790710edc10ed4edb12458a6eaaf992',1,'ISMCTS::MOSolver::select()']]],
+  ['search',['search',['../classISMCTS_1_1MOSolver.html#a85f4a2e64cec7f8e3071a9ee1f02cde9',1,'ISMCTS::MOSolver::search()'],['../classISMCTS_1_1SOSolver.html#a5a2799c5bd4784843dfca789f1737d1d',1,'ISMCTS::SOSolver::search()']]],
+  ['select',['select',['../classISMCTS_1_1MOSolver.html#a8790710edc10ed4edb12458a6eaaf992',1,'ISMCTS::MOSolver::select()'],['../classISMCTS_1_1SOSolver.html#af7423942d551f647b785b0a4292a9e1a',1,'ISMCTS::SOSolver::select()']]],
   ['selectnode',['selectNode',['../classISMCTS_1_1SolverBase.html#a1c6f3793ea9a304608e4d4e1e8f01fea',1,'ISMCTS::SolverBase']]],
   ['sequential',['Sequential',['../classISMCTS_1_1Sequential.html',1,'ISMCTS']]],
   ['setexplorationbias',['setExplorationBias',['../classISMCTS_1_1SolverBase.html#aa5462c3f61b14ec1fa40d7d88127ded4',1,'ISMCTS::SolverBase']]],
