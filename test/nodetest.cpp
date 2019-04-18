@@ -7,6 +7,7 @@
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
+#include <numeric>
 
 namespace
 {

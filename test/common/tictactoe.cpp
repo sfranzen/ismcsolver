@@ -76,7 +76,7 @@ bool TicTacToe::checkSlice(const std::slice &s) const
 {
     using namespace std;
     const valarray<int> section = m_board[s];
-    return section[0] != -1 && all_of(begin(section), end(section), bind1st(equal_to<int>(), section[0]));
+    return section[0] != -1 && all_of(begin(section), end(section), std::bind1st(equal_to<int>(), section[0]));
 }
 
 std::ostream& operator<<(std::ostream &out, const TicTacToe &g)
