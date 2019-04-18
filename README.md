@@ -1,5 +1,6 @@
 # ismcsolver
 [![Build Status](https://travis-ci.org/sfranzen/ismcsolver.svg?branch=master)](https://travis-ci.org/sfranzen/ismcsolver)
+[![Build status](https://ci.appveyor.com/api/projects/status/3rbi2an9u3t06029?svg=true)](https://ci.appveyor.com/project/sfranzen/ismcsolver)
 [![codecov](https://codecov.io/gh/sfranzen/ismcsolver/branch/master/graph/badge.svg)](https://codecov.io/gh/sfranzen/ismcsolver)
 
 ismcsolver is a header-only C++11 library providing [information set Monte Carlo tree search][ISMCTS] (ISMCTS) algorithms. Monte Carlo tree search is a (game) AI decision making algorithm noted for its applicability to many different games of perfect information, requiring no domain-specific knowledge and only little information about a game's state. ISMCTS is an elegant extension of this technique to imperfect information games, where not all information is visible to all players, possibly combined with factors of randomness.
