@@ -5,7 +5,6 @@
  */
 #include "tictactoe.h"
 #include <algorithm>
-#include <functional>
 #include <numeric>
 #include <iostream>
 
@@ -76,7 +75,7 @@ bool TicTacToe::checkSlice(const std::slice &s) const
 {
     using namespace std;
     const valarray<int> section = m_board[s];
-    return section[0] != -1 && all_of(begin(section), end(section), bind1st(equal_to<int>(), section[0]));
+    return section[0] != -1 && all_of(begin(section) + 1, end(section), [&](int i){ return i == section[0]; });
 }
 
 std::ostream& operator<<(std::ostream &out, const TicTacToe &g)

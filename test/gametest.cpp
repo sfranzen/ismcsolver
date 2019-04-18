@@ -46,7 +46,7 @@ struct MockGame : public KnockoutWhist
     }
 };
 
-void doValidMove(ISMCTS::Game<Card> &game)
+inline void doValidMove(ISMCTS::Game<Card> &game)
 {
     game.doMove(game.validMoves().front());
 }

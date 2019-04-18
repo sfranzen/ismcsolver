@@ -11,6 +11,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <random>
+#include <numeric>
 
 namespace
 {
