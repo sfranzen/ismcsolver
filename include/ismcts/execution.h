@@ -89,7 +89,7 @@ public:
     {
         // Sequential solvers use a vector with only one tree
         const auto &children = trees.front().children();
-        using value = typename Node<Move>::Ptr;
+        using value = typename Node<Move>::ChildPtr;
         const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const value &a, const value &b){
             return a->visits() < b->visits();
         });

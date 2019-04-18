@@ -32,6 +32,11 @@ class MOSolver : public SolverBase<Move>, public ExecutionPolicy
 public:
     using ExecutionPolicy::numThreads;
 
+    /// The search trees for the current observer, one per player
+    using TreeList = std::vector<Node<Move>>;
+    /// The set of tree lists, one for each thread
+    using TreeSet = std::vector<TreeList>;
+
     /**
      * Constructs a solver for a game with the given number of players that will
      * iterate the given number of times per search operation.
@@ -63,30 +68,39 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<std::thread> threads(numThreads());
-        std::vector<RootList> treeSets(numThreads());
-        for (auto &set : treeSets)
-            set = RootList(m_numPlayers);
+        m_trees = TreeSet(numThreads());
+        for (auto &set : m_trees)
+            set = TreeList(m_numPlayers);
 
         for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(treeSets[t]), std::ref(rootState));
+            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(m_trees[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
         // Gather results for the current player from each thread
-        RootList currentPlayerTrees(numThreads());
-        std::transform(treeSets.begin(), treeSets.end(), currentPlayerTrees.begin(), [&](RootList &set){
-            return std::move(set[rootState.currentPlayer()]);
+        TreeList currentPlayerTrees(numThreads());
+        std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeList &set){
+            return set[rootState.currentPlayer()];
         });
         return MOSolver::bestMove(currentPlayerTrees);
     }
 
+    /// Return the decision trees resulting from the most recent call to
+    /// operator(). The resulting vector contains one vector of root nodes for
+    /// each thread used for the search, where each node represents a different
+    /// player's information tree.
+    TreeSet &currentTrees() const
+    {
+        return m_trees;
+    }
+
 protected:
-    using RootList = std::vector<Node<Move>>;
     using NodePtrList = std::vector<Node<Move>*>;
 
     std::size_t m_numPlayers;
+    mutable TreeSet m_trees;
 
-    void iterate(RootList &trees, const Game<Move> &state) const
+    void iterate(TreeList &trees, const Game<Move> &state) const
     {
         const auto iterations = this->iterationCount();
         if (iterations > 0) {
@@ -104,7 +118,7 @@ protected:
     }
 
     /// Traverse a single sequence of moves
-    void search(RootList &trees, const Game<Move> &rootState) const
+    void search(TreeList &trees, const Game<Move> &rootState) const
     {
         NodePtrList roots(trees.size());
         std::transform(trees.begin(), trees.end(), roots.begin(), [](Node<Move> &n){ return &n; });

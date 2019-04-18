@@ -22,8 +22,7 @@ namespace ISMCTS
 template<class Move> class Node
 {
 public:
-    using Ptr = std::unique_ptr<Node>;
-    using List = std::vector<Ptr>;
+    using ChildPtr = std::shared_ptr<Node>;
 
     explicit Node(Node *parent = nullptr, const Move move = Move(), int playerJustMoved = -1)
         : m_parent{parent}
@@ -37,11 +36,11 @@ public:
     const Move &move() const { return m_move; }
     Node *parent() const { return m_parent; }
     unsigned int visits() const { return m_visits; }
-    const List &children() const { return m_children; }
+    const std::vector<ChildPtr> &children() const { return m_children; }
 
     Node *addChild(const Move &move, int player)
     {
-        m_children.emplace_back(Ptr(new Node(this, move, player)));
+        m_children.emplace_back(ChildPtr(new Node(this, move, player)));
         return m_children.back().get();
     }
 
@@ -55,7 +54,7 @@ public:
     std::vector<Move> untriedMoves(const std::vector<Move> &legalMoves) const
     {
         std::vector<Move> tried(m_children.size()), untried;
-        std::transform(m_children.begin(), m_children.end(), tried.begin(), [](const Ptr &a){ return a->m_move; });
+        std::transform(m_children.begin(), m_children.end(), tried.begin(), [](const ChildPtr &a){ return a->m_move; });
         untried.reserve(legalMoves.size());
         std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](const Move &m){
             return std::find(tried.begin(), tried.end(), m) == tried.end();
@@ -81,7 +80,7 @@ public:
 
     Node *findOrAddChild(const Move &move, int player)
     {
-        const auto childPos = std::find_if(m_children.begin(), m_children.end(), [&](const Ptr &node){ return node->m_move == move; });
+        const auto childPos = std::find_if(m_children.begin(), m_children.end(), [&](const ChildPtr &node){ return node->m_move == move; });
         return childPos < m_children.end() ? childPos->get() : addChild(move, player);
     }
 
@@ -104,7 +103,7 @@ public:
 
 private:
     Node *m_parent;
-    List m_children;
+    std::vector<ChildPtr> m_children;
     Move m_move;
     int m_playerJustMoved;
     double m_score;

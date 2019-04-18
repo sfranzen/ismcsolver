@@ -33,6 +33,9 @@ class SOSolver : public SolverBase<Move>, public ExecutionPolicy
 public:
     using ExecutionPolicy::numThreads;
 
+    /// The search trees for the current player, one per thread
+    using TreeList = std::vector<Node<Move>>;
+
     /**
      * Constructs a solver that will iterate the given number of times per
      * search operation.
@@ -62,17 +65,27 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<std::thread> threads(numThreads());
-        std::vector<Node<Move>> trees(numThreads());
+        m_trees = TreeList(numThreads());
 
         for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(trees[t]), std::ref(rootState));
+            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(m_trees[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
-        return SOSolver::bestMove(trees);
+        return SOSolver::bestMove(m_trees);
+    }
+
+    /// Return the decision tree(s) resulting from the most recent call to
+    /// operator(). The resulting vector contains one root node for each thread
+    /// used for the search.
+    TreeList &currentTrees() const
+    {
+        return m_trees;
     }
 
 protected:
+    mutable TreeList m_trees;
+
     void iterate(Node<Move> &root, const Game<Move> &state) const
     {
         const auto iterations = this->iterationCount();
