@@ -98,7 +98,15 @@ public:
     /// the given node to the given output stream.
     friend std::ostream &operator<<(std::ostream &out, const Node &node)
     {
-        return out << node.treeToString();
+        return out << std::string(node);
+    }
+
+    std::string treeToString(unsigned int indent = 0) const
+    {
+        std::string s {indentSelf(indent)};
+        for (auto &c : m_children)
+            s += c->treeToString(indent + 1);
+        return s;
     }
 
 private:
@@ -115,20 +123,12 @@ private:
         return m_score / double(m_visits) + exploration * std::sqrt(std::log(m_available) / m_visits);
     }
 
-    std::string treeToString(unsigned int indent = 0) const
-    {
-        std::string s {indentSelf(indent)};
-        for (auto &c : m_children)
-            s += c->treeToString(indent + 1);
-        return s;
-    }
-
     std::string indentSelf(unsigned int indent) const
     {
-        std::string s {"\n"};
+        std::string s;
         for (unsigned int i = 0; i < indent; ++i)
             s += "| ";
-        return s += *this;
+        return s + std::string(*this) + "\n";
     }
 };
 
