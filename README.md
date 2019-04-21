@@ -5,7 +5,9 @@
 
 ismcsolver is a header-only C++11 library providing [information set Monte Carlo tree search][ISMCTS] (ISMCTS) algorithms. Monte Carlo tree search is a (game) AI decision making algorithm noted for its applicability to many different games of perfect information, requiring no domain-specific knowledge and only little information about a game's state. ISMCTS is an elegant extension of this technique to imperfect information games, where not all information is visible to all players, possibly combined with factors of randomness.
 
-The code began its life inside a Qt game I wrote to explore game AI, eventually extracted to make testing easier and ported to standard C++ to make it portable to any future projects. It provides class templates to allow using the algorithm with a generic type of game using a generic type of move.
+Strengths of the algorithm include being *anytime:* it can be given as much or as little CPU time as is available or desired, more time simply yielding more information on which to base the decision. Additionally it uses the available budget efficiently by only building a single information tree: identical moves from different possible game states all map to the same node, making it possible to find moves that are likely to be good in a variety of circumstances.
+
+This code was originally part of a Qt game I wrote to explore game AI. I eventually wanted to test it with a simpler game, so I extracted it and also decided to port it to standard C++ to make it more useful any future projects. It now provides class templates that allow applying the algorithm to a generic game using a generic type of move.
 
 [ISMCTS]: https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf
 
@@ -41,7 +43,7 @@ void MyGame::doAIMove()
     this->doMove(solver(*this));
 }
 ```
-It may be desirable to inspect the information tree in order to tune the solver parameters to a particular game. After all, the algorithm is heavily influenced by, for example, the number of moves available and the magnitude of the result values returned by the game. Solvers provide access to the tree(s) built during the previous search through the `currentTrees()` method. The resulting structure depends on the type of solver, but will contain instances of [`ISMCTS::Node<Move>`][node] representing the root node of an individual tree, which can be manipulated using the available methods. String information about a single node can be obtained from `operator std::string()` or written to an output stream with `operator<<`. An entire (sub)tree can also be output using a node's `treeToString()` method.
+It may be desirable to inspect the information tree in order to tune the solver parameters to a particular game. After all, the algorithm is heavily influenced by, among other things, the number of moves available and the magnitude of the result values returned by the game. Solvers provide access to the tree(s) built during the previous search through the `currentTrees()` method. The resulting structure depends on the type of solver, but will contain instances of [`ISMCTS::Node<Move>`][node] representing the root node of an individual tree, which can be manipulated using the available methods. String information about a single node can be obtained from `operator std::string()` or written to an output stream with `operator<<`. An entire (sub)tree can also be output using a node's `treeToString()` method.
 
 As an example, consider the perfect information game [TicTacToe], for which this algorithm is certainly not the best solution. A game state with a winning move available to player 0 may look like this:
 ```
