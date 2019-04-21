@@ -59,10 +59,10 @@ bool TicTacToe::checkWin(int move) const
 
     // Check the row and column corresponding to the move and possibly one or
     // both diagonals
-    slices.emplace_back(move / 3, 3, 1);
+    slices.emplace_back(move / 3 * 3, 3, 1);
     slices.emplace_back(move % 3, 3, 3);
     for (int i : {0, 2})
-        if (move % 4 == i || move % 2 == 0)
+        if (move % 4 == i)
             slices.emplace_back(i, 3, 4 - i);
 
     // Check whether any slice is occupied by a single player
