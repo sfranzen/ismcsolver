@@ -25,7 +25,7 @@ class Node
 public:
     using ChildPtr = std::shared_ptr<Node>;
 
-    explicit Node(Node *parent = nullptr, const Move move = Move(), int playerJustMoved = -1)
+    explicit Node(Node *parent = nullptr, const Move move = {}, int playerJustMoved = -1)
         : m_parent{parent}
         , m_move{move}
         , m_playerJustMoved{playerJustMoved}
@@ -65,8 +65,7 @@ public:
         return untried;
     }
 
-    template<class TreePolicy>
-    Node *select(const std::vector<Move> &legalMoves, const TreePolicy &policy) const
+    Node *select(const std::vector<Move> &legalMoves, const TreePolicy<Node> &policy) const
     {
         std::vector<Node*> legalChildren;
         legalChildren.reserve(m_children.size());

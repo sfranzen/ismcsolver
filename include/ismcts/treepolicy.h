@@ -15,21 +15,18 @@ class vector;
 namespace ISMCTS
 {
 
-template<class Move>
-class Node;
-
 /**
- * Tree selection policy class template
+ * Tree selection policy
  *
  * The tree policy is used at the selection stage on fully expanded nodes to
  * determine which of the previously visited and currently legal child nodes
  * should be chosen for this iteration.
  */
-template<class Move>
+template<class Node>
 struct TreePolicy
 {
     /// Select one of the given legalChildren pointers
-    virtual Node<Move> *operator()(const std::vector<Node<Move>*> &legalChildren) const = 0;
+    virtual Node *operator()(const std::vector<Node*> &legalChildren) const = 0;
 };
 
 } // ISMCTS

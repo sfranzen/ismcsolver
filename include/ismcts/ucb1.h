@@ -14,16 +14,23 @@
 namespace ISMCTS
 {
 
-template<class Move>
-struct UCB1 : public TreePolicy<Move>
+/**
+ * Upper confidence bound tree policy
+ *
+ * UCB uses a combination of the node statistics to select a node, using a free
+ * parameter to balance exploitation of robust moves with exploration of in-
+ * frequently visited nodes.
+ */
+template<class Move, class Node = Node<Move>>
+struct UCB1 : public TreePolicy<Node>
 {
     explicit UCB1(double exploration = 0.7)
         : m_exploration{std::max(exploration, 0.0)}
     {}
 
-    virtual Node<Move> *operator()(const std::vector<Node<Move>*> &legalChildren) const override
+    virtual Node *operator()(const std::vector<Node*> &legalChildren) const override
     {
-        return *std::max_element(legalChildren.begin(), legalChildren.end(), [&](const Node<Move>* a, const Node<Move>* b){
+        return *std::max_element(legalChildren.begin(), legalChildren.end(), [&](const Node* a, const Node* b){
             return ucbScore(a) < ucbScore(b);
         });
     }
@@ -31,7 +38,7 @@ struct UCB1 : public TreePolicy<Move>
 private:
     double m_exploration;
 
-    double ucbScore(const Node<Move> *node) const
+    double ucbScore(const Node *node) const
     {
         return node->score() / node->visits() + m_exploration * std::sqrt(std::log(node->available()) / node->visits());
     }
