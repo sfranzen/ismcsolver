@@ -127,8 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4ccb8d23e23d49d51544795a9aeab9be"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1MOSolver.html#a4ccb8d23e23d49d51544795a9aeab9be">numThreads</a> () const</td></tr>
 <tr class="separator:a4ccb8d23e23d49d51544795a9aeab9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classISMCTS_1_1SolverBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classISMCTS_1_1SolverBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase&lt; Move, TreePolicy &gt;</a></td></tr>
-<tr class="memitem:a1c656a60f31dcbfb35abf53f5b3a56ab inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top"><a id="a1c656a60f31dcbfb35abf53f5b3a56ab"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SolverBase</b> (const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;policy)</td></tr>
+<tr class="memitem:a1c656a60f31dcbfb35abf53f5b3a56ab inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a1c656a60f31dcbfb35abf53f5b3a56ab">SolverBase</a> (const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;policy)</td></tr>
 <tr class="separator:a1c656a60f31dcbfb35abf53f5b3a56ab inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae21baa9c8d603931839b71af8c37173d inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#ae21baa9c8d603931839b71af8c37173d">setTreePolicy</a> (const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;policy)</td></tr>
 <tr class="separator:ae21baa9c8d603931839b71af8c37173d inherit pub_methods_classISMCTS_1_1SolverBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -286,10 +285,12 @@ template&lt;class Move , class ExecutionPolicy  = Sequential, class TreePolicy  
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Constructs a solver for a game with the given number of players that will iterate the given number of times per search operation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">exploration</td><td>Sets the algorithm's bias towards unexplored moves. It must be positive; the authors of the algorithm suggest 0.7 for a game that reports result values on the interval [0,1]. </td></tr>
+    <tr><td class="paramname">policy</td><td>The tree policy to use in the selection stage of the search. </td></tr>
   </table>
   </dd>
 </dl>
@@ -337,10 +338,12 @@ template&lt;class Move , class ExecutionPolicy  = Sequential, class TreePolicy  
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Constructs a solver for a game with the given number of players that will iterate for the given duration per search operation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">exploration</td><td>Sets the algorithm's bias towards unexplored moves. It must be positive; the authors of the algorithm suggest 0.7 for a game that reports result values on the interval [0,1]. </td></tr>
+    <tr><td class="paramname">policy</td><td>The tree policy to use in the selection stage of the search. </td></tr>
   </table>
   </dd>
 </dl>

@@ -9,6 +9,6 @@ var searchData=
   ['setiterationtime',['setIterationTime',['../classISMCTS_1_1ExecutionPolicy.html#a56f6c33414faa34441381f14b12862ed',1,'ISMCTS::ExecutionPolicy']]],
   ['settreepolicy',['setTreePolicy',['../classISMCTS_1_1SolverBase.html#ae21baa9c8d603931839b71af8c37173d',1,'ISMCTS::SolverBase']]],
   ['simulate',['simulate',['../classISMCTS_1_1SolverBase.html#a6cce2ac0cf54cec7c10bb9199b511f2d',1,'ISMCTS::SolverBase']]],
-  ['solverbase',['SolverBase',['../classISMCTS_1_1SolverBase.html',1,'ISMCTS']]],
+  ['solverbase',['SolverBase',['../classISMCTS_1_1SolverBase.html',1,'ISMCTS::SolverBase&lt; Move, TreePolicy &gt;'],['../classISMCTS_1_1SolverBase.html#a1c656a60f31dcbfb35abf53f5b3a56ab',1,'ISMCTS::SolverBase::SolverBase()']]],
   ['sosolver',['SOSolver',['../classISMCTS_1_1SOSolver.html',1,'ISMCTS::SOSolver&lt; Move, ExecutionPolicy, TreePolicy &gt;'],['../classISMCTS_1_1SOSolver.html#a813d34ddc95b541070fd7b63d9811f36',1,'ISMCTS::SOSolver::SOSolver(std::size_t iterationCount=1000, const TreePolicy &amp;policy=TreePolicy{})'],['../classISMCTS_1_1SOSolver.html#a6868634d2020069f8e806f39e8e21823',1,'ISMCTS::SOSolver::SOSolver(std::chrono::duration&lt; double &gt; iterationTime, const TreePolicy &amp;policy=TreePolicy{})']]]
 ];

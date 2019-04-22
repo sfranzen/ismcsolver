@@ -42,9 +42,7 @@ public:
      * Constructs a solver for a game with the given number of players that will
      * iterate the given number of times per search operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
     explicit MOSolver(std::size_t numPlayers, std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
         : SolverBase<Move,TreePolicy>{policy}
@@ -56,9 +54,7 @@ public:
      * Constructs a solver for a game with the given number of players that will
      * iterate for the given duration per search operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
     explicit MOSolver(std::size_t numPlayers, std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
         : SolverBase<Move,TreePolicy>{policy}

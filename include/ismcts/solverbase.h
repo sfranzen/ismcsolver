@@ -20,6 +20,9 @@ template<class Move, class TreePolicy = UCB1<Move>>
 class SolverBase
 {
 public:
+    /**
+    * @param policy The tree policy to use in the selection stage of the search.
+    */
     explicit SolverBase(const TreePolicy &policy)
         : m_treePolicy{policy}
     {}
