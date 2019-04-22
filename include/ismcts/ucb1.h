@@ -17,9 +17,9 @@ namespace ISMCTS
 /**
  * Upper confidence bound tree policy
  *
- * UCB uses a combination of the node statistics to select a node, using a free
- * parameter to balance exploitation of robust moves with exploration of in-
- * frequently visited nodes.
+ * UCB uses a combination of the node statistics to select a node, using the
+ * configurable exploration parameter to set the balance of exploitation of
+ * known robust moves against exploration of infrequently visited nodes.
  */
 template<class Move, class Node = Node<Move>>
 struct UCB1 : public TreePolicy<Node>

@@ -142,7 +142,7 @@ protected:
         const auto player = state.currentPlayer();
         const auto &targetNode = nodes[player];
         if (!MOSolver::selectNode(targetNode, validMoves)) {
-            const auto selection = targetNode->select(validMoves, this->m_treePolicy);
+            const auto selection = targetNode->selectChild(validMoves, this->m_treePolicy);
             for (auto &node : nodes)
                 node = node->findOrAddChild(selection->move(), player);
             state.doMove(selection->move());

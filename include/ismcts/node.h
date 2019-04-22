@@ -18,7 +18,9 @@
 
 namespace ISMCTS
 {
-
+/**
+ * The node is used to build the information tree that guides the algorithm.
+ */
 template<class Move>
 class Node
 {
@@ -29,16 +31,20 @@ public:
         : m_parent{parent}
         , m_move{move}
         , m_playerJustMoved{playerJustMoved}
-        , m_score{0}
-        , m_visits{0}
-        , m_available{1}
     {}
 
     Node *parent() const { return m_parent; }
     const std::vector<ChildPtr> &children() const { return m_children; }
     const Move &move() const { return m_move; }
+
+    /// Returns the reward score accumulated on sequences including this node.
     double score() const { return m_score; }
-    unsigned int visits() const { return this->m_visits; }
+
+    /// Returns the total number of visits to this node.
+    unsigned int visits() const { return m_visits; }
+
+    /// Returns the number of times this node was available for selection during
+    /// a tree search.
     unsigned int available() const { return m_available; }
 
     Node *addChild(const Move &move, int player)
@@ -65,7 +71,7 @@ public:
         return untried;
     }
 
-    Node *select(const std::vector<Move> &legalMoves, const TreePolicy<Node> &policy) const
+    Node *selectChild(const std::vector<Move> &legalMoves, const TreePolicy<Node> &policy) const
     {
         std::vector<Node*> legalChildren;
         legalChildren.reserve(m_children.size());
@@ -94,13 +100,14 @@ public:
         return oss.str();
     }
 
-    /// Writes the structure and node statistics of the (sub)tree starting at
-    /// the given node to the given output stream.
+    /// Writes the string representation of a node to an output stream.
     friend std::ostream &operator<<(std::ostream &out, const Node &node)
     {
         return out << std::string(node);
     }
 
+    /// Returns a string representation of the entire (sub)tree starting at the
+    /// the given node.
     std::string treeToString(unsigned int indent = 0) const
     {
         std::string s {indentSelf(indent)};
@@ -114,9 +121,9 @@ private:
     std::vector<ChildPtr> m_children;
     Move m_move;
     int m_playerJustMoved;
-    double m_score;
-    unsigned int m_visits;
-    mutable unsigned int m_available;
+    double m_score {0};
+    unsigned int m_visits {0};
+    mutable unsigned int m_available {1};
 
     std::string indentSelf(unsigned int indent) const
     {

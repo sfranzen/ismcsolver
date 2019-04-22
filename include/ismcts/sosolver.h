@@ -124,7 +124,7 @@ protected:
     {
         const auto validMoves = state.validMoves();
         if (!SOSolver::selectNode(node, validMoves)) {
-            node = node->select(validMoves, this->m_treePolicy);
+            node = node->selectChild(validMoves, this->m_treePolicy);
             state.doMove(node->move());
             select(node, state);
         }
