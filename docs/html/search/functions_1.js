@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['cloneandrandomise',['cloneAndRandomise',['../classISMCTS_1_1Game.html#acdd180c1d1f3a0ceacef290c3efe56f7',1,'ISMCTS::Game']]],
-  ['currentplayer',['currentPlayer',['../classISMCTS_1_1Game.html#a0fb83f559317a6ca0db0eded8df1197f',1,'ISMCTS::Game']]]
+  ['backpropagate',['backPropagate',['../classISMCTS_1_1SolverBase.html#aa0a0abcde0c7de9877e6f99bfddd0d84',1,'ISMCTS::SolverBase']]],
+  ['bestmove',['bestMove',['../classISMCTS_1_1RootParallel.html#ae3b5197498bbabcc7bdea67e466ca770',1,'ISMCTS::RootParallel']]]
 ];
