@@ -7,36 +7,45 @@
 #define ISMCTS_NODE_H
 
 #include "game.h"
+#include "treepolicy.h"
 
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <math.h>
 #include <ostream>
 #include <sstream>
 #include <iomanip>
 
 namespace ISMCTS
 {
-
-template<class Move> class Node
+/**
+ * The node is used to build the information tree that guides the algorithm.
+ */
+template<class Move>
+class Node
 {
 public:
     using ChildPtr = std::shared_ptr<Node>;
 
-    explicit Node(Node *parent = nullptr, const Move move = Move(), int playerJustMoved = -1)
+    explicit Node(Node *parent = nullptr, const Move move = {}, int playerJustMoved = -1)
         : m_parent{parent}
         , m_move{move}
         , m_playerJustMoved{playerJustMoved}
-        , m_score{0}
-        , m_visits{0}
-        , m_available{1}
     {}
 
-    const Move &move() const { return m_move; }
     Node *parent() const { return m_parent; }
-    unsigned int visits() const { return m_visits; }
     const std::vector<ChildPtr> &children() const { return m_children; }
+    const Move &move() const { return m_move; }
+
+    /// Returns the reward score accumulated on sequences including this node.
+    double score() const { return m_score; }
+
+    /// Returns the total number of visits to this node.
+    unsigned int visits() const { return m_visits; }
+
+    /// Returns the number of times this node was available for selection during
+    /// a tree search.
+    unsigned int available() const { return m_available; }
 
     Node *addChild(const Move &move, int player)
     {
@@ -62,7 +71,7 @@ public:
         return untried;
     }
 
-    Node *ucbSelectChild(const std::vector<Move> &legalMoves, double exploration) const
+    Node *selectChild(const std::vector<Move> &legalMoves, const TreePolicy<Node> &policy) const
     {
         std::vector<Node*> legalChildren;
         legalChildren.reserve(m_children.size());
@@ -72,10 +81,7 @@ public:
                 ++(node->m_available);
             }
         }
-        static const auto compareUCB = [=](const Node *a, const Node *b){
-            return a->ucbScore(exploration) < b->ucbScore(exploration);
-        };
-        return *std::max_element(legalChildren.begin(), legalChildren.end(), compareUCB);
+        return policy(legalChildren);
     }
 
     Node *findOrAddChild(const Move &move, int player)
@@ -94,13 +100,14 @@ public:
         return oss.str();
     }
 
-    /// Writes the structure and node statistics of the (sub)tree starting at
-    /// the given node to the given output stream.
+    /// Writes the string representation of a node to an output stream.
     friend std::ostream &operator<<(std::ostream &out, const Node &node)
     {
         return out << std::string(node);
     }
 
+    /// Returns a string representation of the entire (sub)tree starting at the
+    /// the given node.
     std::string treeToString(unsigned int indent = 0) const
     {
         std::string s {indentSelf(indent)};
@@ -114,14 +121,9 @@ private:
     std::vector<ChildPtr> m_children;
     Move m_move;
     int m_playerJustMoved;
-    double m_score;
-    unsigned int m_visits;
-    mutable unsigned int m_available;
-
-    double ucbScore(double exploration) const
-    {
-        return m_score / double(m_visits) + exploration * std::sqrt(std::log(m_available) / m_visits);
-    }
+    double m_score {0};
+    unsigned int m_visits {0};
+    mutable unsigned int m_available {1};
 
     std::string indentSelf(unsigned int indent) const
     {

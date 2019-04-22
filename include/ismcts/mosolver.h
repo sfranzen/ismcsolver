@@ -10,6 +10,7 @@
 #include "game.h"
 #include "node.h"
 #include "execution.h"
+#include "ucb1.h"
 
 #include <memory>
 #include <vector>
@@ -26,8 +27,8 @@ namespace ISMCTS
  * it applicable to games with partially observable moves, i.e. where players
  * cannot always fully observe the other players' or teams' moves.
  */
-template<class Move, class ExecutionPolicy = Sequential>
-class MOSolver : public SolverBase<Move>, public ExecutionPolicy
+template<class Move, class ExecutionPolicy = Sequential, class TreePolicy = UCB1<Move>>
+class MOSolver : public SolverBase<Move, TreePolicy>, public ExecutionPolicy
 {
 public:
     using ExecutionPolicy::numThreads;
@@ -41,12 +42,10 @@ public:
      * Constructs a solver for a game with the given number of players that will
      * iterate the given number of times per search operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::size_t numPlayers, std::size_t iterationCount = 1000, double exploration = 0.7)
-        : SolverBase<Move>{exploration}
+    explicit MOSolver(std::size_t numPlayers, std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
+        : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy(iterationCount)
         , m_numPlayers{numPlayers}
     {}
@@ -55,12 +54,10 @@ public:
      * Constructs a solver for a game with the given number of players that will
      * iterate for the given duration per search operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::size_t numPlayers, std::chrono::duration<double> iterationTime, double exploration = 0.7)
-        : SolverBase<Move>{exploration}
+    explicit MOSolver(std::size_t numPlayers, std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
+        : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy(iterationTime)
         , m_numPlayers{numPlayers}
     {}
@@ -141,7 +138,7 @@ protected:
         const auto player = state.currentPlayer();
         const auto &targetNode = nodes[player];
         if (!MOSolver::selectNode(targetNode, validMoves)) {
-            const auto selection = targetNode->ucbSelectChild(validMoves, this->m_exploration);
+            const auto selection = targetNode->selectChild(validMoves, this->m_treePolicy);
             for (auto &node : nodes)
                 node = node->findOrAddChild(selection->move(), player);
             state.doMove(selection->move());
@@ -170,7 +167,7 @@ protected:
     static void backPropagate(NodePtrList &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
-            SolverBase<Move>::backPropagate(node, state);
+            SolverBase<Move,TreePolicy>::backPropagate(node, state);
     }
 };
 

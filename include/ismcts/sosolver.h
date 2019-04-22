@@ -10,6 +10,7 @@
 #include "game.h"
 #include "node.h"
 #include "execution.h"
+#include "ucb1.h"
 
 #include <memory>
 #include <vector>
@@ -27,8 +28,8 @@ namespace ISMCTS
  * each other's moves, because the algorithm treats opponent moves as fully
  * observable.
  */
-template<class Move, class ExecutionPolicy = Sequential>
-class SOSolver : public SolverBase<Move>, public ExecutionPolicy
+template<class Move, class ExecutionPolicy = Sequential, class TreePolicy = UCB1<Move>>
+class SOSolver : public SolverBase<Move, TreePolicy>, public ExecutionPolicy
 {
 public:
     using ExecutionPolicy::numThreads;
@@ -40,12 +41,10 @@ public:
      * Constructs a solver that will iterate the given number of times per
      * search operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::size_t iterationCount = 1000, double exploration = 0.7)
-        : SolverBase<Move>{exploration}
+    explicit SOSolver(std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
+        : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy{iterationCount}
     {}
 
@@ -53,12 +52,10 @@ public:
      * Constructs a solver that will iterate for the given duration per search
      * operation.
      *
-     * @param exploration Sets the algorithm's bias towards unexplored moves.
-     *      It must be positive; the authors of the algorithm suggest 0.7 for
-     *      a game that reports result values on the interval [0,1].
+     * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::chrono::duration<double> iterationTime, double exploration = 0.7)
-        : SolverBase<Move>{exploration}
+    explicit SOSolver(std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
+        : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy{iterationTime}
     {}
 
@@ -122,8 +119,8 @@ protected:
     void select(Node<Move> *&node, Game<Move> &state) const
     {
         const auto validMoves = state.validMoves();
-        if (!SolverBase<Move>::selectNode(node, validMoves)) {
-            node = node->ucbSelectChild(validMoves, this->m_exploration);
+        if (!SOSolver::selectNode(node, validMoves)) {
+            node = node->selectChild(validMoves, this->m_treePolicy);
             state.doMove(node->move());
             select(node, state);
         }
