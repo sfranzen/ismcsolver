@@ -8,6 +8,7 @@
 
 #include "game.h"
 #include "node.h"
+#include "ucb1.h"
 
 #include <random>
 #include <vector>
@@ -15,14 +16,13 @@
 namespace ISMCTS
 {
 /// Interface shared by all algorithms
-template<class Move>
+template<class Move, class TreePolicy = UCB1<Move>>
 class SolverBase
 {
 public:
-    explicit SolverBase(double exploration = 0.7)
-    {
-        setExplorationBias(exploration);
-    }
+    explicit SolverBase(const TreePolicy &policy)
+        : m_treePolicy{policy}
+    {}
 
     virtual ~SolverBase() = default;
 
@@ -33,14 +33,14 @@ public:
      */
     virtual Move operator()(const Game<Move> &rootState) const = 0;
 
-    /// Sets the exploration bias of future searches.
-    void setExplorationBias(double exploration)
+    /// Set the tree policy for future searches.
+    void setTreePolicy(const TreePolicy &policy)
     {
-        m_exploration = std::max(exploration, 0.0);
+        m_treePolicy = policy;
     }
 
 protected:
-    double m_exploration;
+    TreePolicy m_treePolicy;
 
     /**
      * Simulation stage

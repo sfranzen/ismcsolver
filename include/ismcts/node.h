@@ -7,11 +7,11 @@
 #define ISMCTS_NODE_H
 
 #include "game.h"
+#include "treepolicy.h"
 
 #include <memory>
 #include <vector>
 #include <algorithm>
-#include <math.h>
 #include <ostream>
 #include <sstream>
 #include <iomanip>
@@ -19,7 +19,8 @@
 namespace ISMCTS
 {
 
-template<class Move> class Node
+template<class Move>
+class Node
 {
 public:
     using ChildPtr = std::shared_ptr<Node>;
@@ -33,10 +34,12 @@ public:
         , m_available{1}
     {}
 
-    const Move &move() const { return m_move; }
     Node *parent() const { return m_parent; }
-    unsigned int visits() const { return m_visits; }
     const std::vector<ChildPtr> &children() const { return m_children; }
+    const Move &move() const { return m_move; }
+    double score() const { return m_score; }
+    unsigned int visits() const { return this->m_visits; }
+    unsigned int available() const { return m_available; }
 
     Node *addChild(const Move &move, int player)
     {
@@ -62,7 +65,8 @@ public:
         return untried;
     }
 
-    Node *ucbSelectChild(const std::vector<Move> &legalMoves, double exploration) const
+    template<class TreePolicy>
+    Node *select(const std::vector<Move> &legalMoves, const TreePolicy &policy) const
     {
         std::vector<Node*> legalChildren;
         legalChildren.reserve(m_children.size());
@@ -72,10 +76,7 @@ public:
                 ++(node->m_available);
             }
         }
-        static const auto compareUCB = [=](const Node *a, const Node *b){
-            return a->ucbScore(exploration) < b->ucbScore(exploration);
-        };
-        return *std::max_element(legalChildren.begin(), legalChildren.end(), compareUCB);
+        return policy(legalChildren);
     }
 
     Node *findOrAddChild(const Move &move, int player)
@@ -117,11 +118,6 @@ private:
     double m_score;
     unsigned int m_visits;
     mutable unsigned int m_available;
-
-    double ucbScore(double exploration) const
-    {
-        return m_score / double(m_visits) + exploration * std::sqrt(std::log(m_available) / m_visits);
-    }
 
     std::string indentSelf(unsigned int indent) const
     {
