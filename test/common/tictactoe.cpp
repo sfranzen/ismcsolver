@@ -52,6 +52,11 @@ unsigned TicTacToe::currentPlayer() const
     return m_player;
 }
 
+unsigned TicTacToe::nextPlayer(unsigned player) const
+{
+    return player == 0 ? 1 : 0;
+}
+
 bool TicTacToe::checkWin(int move) const
 {
     using namespace std;

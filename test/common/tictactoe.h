@@ -11,12 +11,13 @@
 #include <valarray>
 #include <ostream>
 
-class TicTacToe : public ISMCTS::Game<int>
+class TicTacToe : public ISMCTS::POMGame<int>
 {
 public:
     TicTacToe();
     virtual Ptr cloneAndRandomise(unsigned observer) const override;
     virtual unsigned currentPlayer() const override;
+    virtual unsigned nextPlayer(unsigned player) const override;
     virtual std::vector<int> validMoves() const override;
     virtual void doMove(const int move) override;
     virtual double getResult(unsigned player) const override;

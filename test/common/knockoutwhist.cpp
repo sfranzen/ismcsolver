@@ -74,9 +74,16 @@ KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(unsigned observer) const
     return Ptr(std::move(clone));
 }
 
-unsigned KnockoutWhist::currentPlayer() const
+KnockoutWhist::Player KnockoutWhist::currentPlayer() const
 {
     return m_player;
+}
+
+KnockoutWhist::Player KnockoutWhist::nextPlayer(Player p) const
+{
+    ++p %= m_numPlayers;
+    const auto next = std::find(m_players.begin(), m_players.end(), p);
+    return next < m_players.end() ? *next : nextPlayer(p);
 }
 
 void KnockoutWhist::doMove(const Card move)
@@ -164,13 +171,6 @@ void KnockoutWhist::finishRound()
         m_tricksLeft = 0;
     }
     deal();
-}
-
-KnockoutWhist::Player KnockoutWhist::nextPlayer(Player p) const
-{
-    ++p %= m_numPlayers;
-    const auto next = std::find(m_players.begin(), m_players.end(), p);
-    return next < m_players.end() ? *next : nextPlayer(p);
 }
 
 KnockoutWhist::Player KnockoutWhist::trickWinner() const

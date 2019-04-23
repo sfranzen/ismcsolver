@@ -11,19 +11,20 @@
 
 #include <vector>
 
-class KnockoutWhist : public ISMCTS::Game<Card>
+class KnockoutWhist : public ISMCTS::POMGame<Card>
 {
 public:
+    using Player = unsigned;
     KnockoutWhist(unsigned players = 4);
     virtual Ptr cloneAndRandomise(unsigned observer) const override;
-    virtual unsigned currentPlayer() const override;
+    virtual Player currentPlayer() const override;
+    virtual Player nextPlayer(Player p) const override;
     virtual std::vector<Card> validMoves() const override;
     virtual void doMove(const Card move) override;
     virtual double getResult(unsigned player) const override;
     friend std::ostream &operator<<(std::ostream &out, const KnockoutWhist &g);
 
 protected:
-    using Player = unsigned;
     using Hand = std::vector<Card>;
     using Play = std::pair<Player,Card>;
 
@@ -44,7 +45,6 @@ protected:
     void deal();
     void finishTrick();
     void finishRound();
-    Player nextPlayer(Player p) const;
     Player trickWinner() const;
     Player roundWinner() const;
 };
