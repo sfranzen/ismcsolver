@@ -37,7 +37,7 @@ KnockoutWhist::KnockoutWhist(unsigned players)
     , m_numPlayers{std::min(std::max(players, 2u), 7u)}
     , m_dealer{m_numPlayers - 1}
 {
-    for (auto i = s_deckSize; i > 0; --i)
+    for (int i {0}; i < s_deckSize; ++i)
         m_deck[i] = {Card::Rank(i % 13), Card::Suit(i % 4)};
     m_players.resize(m_numPlayers);
     std::iota(m_players.begin(), m_players.end(), 0);
