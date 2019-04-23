@@ -28,11 +28,11 @@ namespace ISMCTS
  * each other's moves, because the algorithm treats opponent moves as fully
  * observable.
  */
-template<class Move, class ExecutionPolicy = Sequential, class TreePolicy = UCB1<Move>>
-class SOSolver : public SolverBase<Move, TreePolicy>, public ExecutionPolicy
+template<class Move, class _ExecutionPolicy = Sequential, class _TreePolicy = UCB1<Move>>
+class SOSolver : public SolverBase<Move, _TreePolicy>, public _ExecutionPolicy
 {
 public:
-    using ExecutionPolicy::numThreads;
+    using _ExecutionPolicy::numThreads;
 
     /// The search trees for the current player, one per thread
     using TreeList = std::vector<Node<Move>>;
@@ -43,9 +43,9 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
-        : SolverBase<Move,TreePolicy>{policy}
-        , ExecutionPolicy{iterationCount}
+    explicit SOSolver(std::size_t iterationCount = 1000, const _TreePolicy &policy = _TreePolicy{})
+        : SolverBase<Move, _TreePolicy>{policy}
+        , _ExecutionPolicy{iterationCount}
     {}
 
     /**
@@ -54,9 +54,9 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
-        : SolverBase<Move,TreePolicy>{policy}
-        , ExecutionPolicy{iterationTime}
+    explicit SOSolver(std::chrono::duration<double> iterationTime, const _TreePolicy &policy = _TreePolicy{})
+        : SolverBase<Move, _TreePolicy>{policy}
+        , _ExecutionPolicy{iterationTime}
     {}
 
     virtual Move operator()(const Game<Move> &rootState) const override

@@ -28,11 +28,11 @@ namespace ISMCTS
  * it applicable to games with partially observable moves, i.e. where players
  * cannot always fully observe the other players' or teams' moves.
  */
-template<class Move, class ExecutionPolicy = Sequential, class TreePolicy = UCB1<Move>>
-class MOSolver : public SolverBase<Move, TreePolicy>, public ExecutionPolicy
+template<class Move, class _ExecutionPolicy = Sequential, class _TreePolicy = UCB1<Move>>
+class MOSolver : public SolverBase<Move, _TreePolicy>, public _ExecutionPolicy
 {
 public:
-    using ExecutionPolicy::numThreads;
+    using _ExecutionPolicy::numThreads;
 
     /// The search trees for the current observer, one per player
     using TreeMap = std::map<unsigned int, Node<Move>>;
@@ -45,9 +45,9 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
-        : SolverBase<Move,TreePolicy>{policy}
-        , ExecutionPolicy(iterationCount)
+explicit MOSolver(std::size_t iterationCount = 1000, const _TreePolicy &policy = _TreePolicy{})
+        : SolverBase<Move,_TreePolicy>{policy}
+        , _ExecutionPolicy(iterationCount)
         , m_trees{numThreads()}
     {}
 
@@ -57,9 +57,9 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
-        : SolverBase<Move,TreePolicy>{policy}
-        , ExecutionPolicy(iterationTime)
+explicit MOSolver(std::chrono::duration<double> iterationTime, const _TreePolicy &policy = _TreePolicy{})
+        : SolverBase<Move,_TreePolicy>{policy}
+        , _ExecutionPolicy(iterationTime)
         , m_trees{numThreads()}
     {}
 
@@ -166,7 +166,7 @@ protected:
     static void backPropagate(NodePtrMap &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
-            SolverBase<Move,TreePolicy>::backPropagate(node.second, state);
+            SolverBase<Move,_TreePolicy>::backPropagate(node.second, state);
     }
 
     void setupTrees(const Game<Move> &rootState) const
