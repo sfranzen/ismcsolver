@@ -18,12 +18,12 @@ namespace ISMCTS
  * The game should be able to function as a finite state machine, so that after
  * processing each move in doMove it is ready to accept the next.
  */
-template<class Move> class Game
+template<class Move>
+struct Game
 {
-public:
     using Ptr = std::unique_ptr<Game>;
 
-    virtual ~Game() {};
+    virtual ~Game() = default;
 
     /// Constructs a copy of the game state, with the information unknown to the
     /// observer player randomised.
@@ -45,6 +45,19 @@ public:
     /// for example 0 for a loss, 0.5 for a draw and 1 for a win. It is only
     /// called on finished game states.
     virtual double getResult(unsigned int player) const = 0;
+};
+
+/**
+ * Interface for games that have partially observable moves (POM).
+ *
+ * This is required for the game to work with the MOSolver class, which needs to
+ * be able to identify all players in order to maintain individual trees.
+ */
+template<class Move>
+struct POMGame : public Game<Move>
+{
+    /// Return the player whose turn it will be after the given player.
+    virtual unsigned int nextPlayer(unsigned int player) const = 0;
 };
 
 } // ISMCTS
