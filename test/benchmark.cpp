@@ -4,8 +4,8 @@
  * the root directory of this distribution.
  */
 #include <ismcts/sosolver.h>
+#include <ismcts/mosolver.h>
 #include "common/catch.hpp"
-#include "common/defaultmosolver.h"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
 
@@ -82,7 +82,7 @@ private:
 } // namespace
 
 TEMPLATE_PRODUCT_TEST_CASE("Fixed iteration count", "[SOSolver][MOSolver]",
-                           (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+                           (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
     GameRunner g(solver, numGames);

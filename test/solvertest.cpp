@@ -4,8 +4,8 @@
  * the root directory of this distribution.
  */
 #include <ismcts/sosolver.h>
+#include <ismcts/mosolver.h>
 #include "common/catch.hpp"
-#include "common/defaultmosolver.h"
 #include "common/knockoutwhist.h"
 #include "common/tictactoe.h"
 #include <vector>
@@ -41,7 +41,7 @@ struct P1DrawOrLose : public TicTacToe
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
-    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     SECTION("By iteration count") {
         TestType solver {iterationCount};
@@ -57,7 +57,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
-    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
 
@@ -78,7 +78,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
-    (SOSolver, DefaultMOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     static unsigned int calls = 0;
     KnockoutWhist game {numPlayers};
@@ -94,7 +94,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Choosing the right move", "[SOSolver][MOSolver]",
-    (SOSolver, DefaultMOSolver), (int, (int, RootParallel)))
+    (SOSolver, MOSolver), (int, (int, RootParallel)))
 {
     P1DrawOrLose game;
     TestType solver {16};

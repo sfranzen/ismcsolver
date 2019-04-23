@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 #include <thread>
 #include <chrono>
 
@@ -34,9 +35,9 @@ public:
     using ExecutionPolicy::numThreads;
 
     /// The search trees for the current observer, one per player
-    using TreeList = std::vector<Node<Move>>;
+    using TreeMap = std::map<unsigned int, Node<Move>>;
     /// The set of tree lists, one for each thread
-    using TreeSet = std::vector<TreeList>;
+    using TreeSet = std::vector<TreeMap>;
 
     /**
      * Constructs a solver for a game with the given number of players that will
@@ -44,10 +45,10 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::size_t numPlayers, std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
+    explicit MOSolver(std::size_t iterationCount = 1000, const TreePolicy &policy = TreePolicy{})
         : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy(iterationCount)
-        , m_numPlayers{numPlayers}
+        , m_trees{numThreads()}
     {}
 
     /**
@@ -56,18 +57,16 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit MOSolver(std::size_t numPlayers, std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
+    explicit MOSolver(std::chrono::duration<double> iterationTime, const TreePolicy &policy = TreePolicy{})
         : SolverBase<Move,TreePolicy>{policy}
         , ExecutionPolicy(iterationTime)
-        , m_numPlayers{numPlayers}
+        , m_trees{numThreads()}
     {}
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<std::thread> threads(numThreads());
-        m_trees = TreeSet(numThreads());
-        for (auto &set : m_trees)
-            set = TreeList(m_numPlayers);
+        setupTrees(rootState);
 
         for (std::size_t t = 0; t < numThreads(); ++t)
             threads[t] = std::thread(&MOSolver::iterate, this, std::ref(m_trees[t]), std::ref(rootState));
@@ -75,8 +74,8 @@ public:
             t.join();
 
         // Gather results for the current player from each thread
-        TreeList currentPlayerTrees(numThreads());
-        std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeList &set){
+        std::vector<Node<Move>> currentPlayerTrees(numThreads());
+        std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeMap &set){
             return set[rootState.currentPlayer()];
         });
         return MOSolver::bestMove(currentPlayerTrees);
@@ -92,12 +91,11 @@ public:
     }
 
 protected:
-    using NodePtrList = std::vector<Node<Move>*>;
+    using NodePtrMap = std::map<unsigned int, Node<Move>*>;
 
-    std::size_t m_numPlayers;
     mutable TreeSet m_trees;
 
-    void iterate(TreeList &trees, const Game<Move> &state) const
+    void iterate(TreeMap &trees, const Game<Move> &state) const
     {
         const auto iterations = this->iterationCount();
         if (iterations > 0) {
@@ -115,10 +113,11 @@ protected:
     }
 
     /// Traverse a single sequence of moves
-    void search(TreeList &trees, const Game<Move> &rootState) const
+    void search(TreeMap &trees, const Game<Move> &rootState) const
     {
-        NodePtrList roots(trees.size());
-        std::transform(trees.begin(), trees.end(), roots.begin(), [](Node<Move> &n){ return &n; });
+        NodePtrMap roots;
+        for (auto &pair : trees)
+            roots.emplace(pair.first, &pair.second);
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
         select(roots, *randomState);
         expand(roots, *randomState);
@@ -132,7 +131,7 @@ protected:
      * Descend all trees until a node is reached that has unexplored moves, or
      * is a terminal node (no more moves available).
      */
-    void select(NodePtrList &nodes, Game<Move> &state) const
+    void select(NodePtrMap &nodes, Game<Move> &state) const
     {
         const auto validMoves = state.validMoves();
         const auto player = state.currentPlayer();
@@ -140,7 +139,7 @@ protected:
         if (!MOSolver::selectNode(targetNode, validMoves)) {
             const auto selection = targetNode->selectChild(validMoves, this->m_treePolicy);
             for (auto &node : nodes)
-                node = node->findOrAddChild(selection->move(), player);
+                node.second = node.second->findOrAddChild(selection->move(), player);
             state.doMove(selection->move());
             select(nodes, state);
         }
@@ -152,22 +151,37 @@ protected:
      * Choose a random unexplored move, add it to the children of all current
      * nodes and select these new nodes.
      */
-    void expand(NodePtrList &nodes, Game<Move> &state) const
+    void expand(NodePtrMap &nodes, Game<Move> &state) const
     {
         const auto player = state.currentPlayer();
         const auto untriedMoves = nodes[player]->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
             const auto move = this->randomMove(untriedMoves);
             for (auto &node : nodes)
-                node = node->findOrAddChild(move, player);
+                node.second = node.second->findOrAddChild(move, player);
             state.doMove(move);
         }
     }
 
-    static void backPropagate(NodePtrList &nodes, const Game<Move> &state)
+    static void backPropagate(NodePtrMap &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
-            SolverBase<Move,TreePolicy>::backPropagate(node, state);
+            SolverBase<Move,TreePolicy>::backPropagate(node.second, state);
+    }
+
+    void setupTrees(const Game<Move> &rootState) const
+    {
+        TreeMap newMap;
+        std::vector<unsigned int> players;
+        const auto &state = dynamic_cast<const POMGame<Move>&>(rootState);
+        const auto first = state.currentPlayer();
+        auto current = first;
+        do {
+            newMap.emplace(current, Node<Move>{});
+            current = state.nextPlayer(current);
+        } while (current != first);
+
+        std::fill(m_trees.begin(), m_trees.end(), newMap);
     }
 };
 
