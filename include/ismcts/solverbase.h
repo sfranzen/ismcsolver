@@ -16,14 +16,14 @@
 namespace ISMCTS
 {
 /// Interface shared by all algorithms
-template<class Move, class TreePolicy = UCB1<Move>>
+template<class Move, class _TreePolicy = UCB1<Move>>
 class SolverBase
 {
 public:
     /**
     * @param policy The tree policy to use in the selection stage of the search.
     */
-    explicit SolverBase(const TreePolicy &policy)
+    explicit SolverBase(const _TreePolicy &policy)
         : m_treePolicy{policy}
     {}
 
@@ -37,13 +37,13 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const = 0;
 
     /// Set the tree policy for future searches.
-    void setTreePolicy(const TreePolicy &policy)
+    void setTreePolicy(const _TreePolicy &policy)
     {
         m_treePolicy = policy;
     }
 
 protected:
-    TreePolicy m_treePolicy;
+    _TreePolicy m_treePolicy;
 
     /**
      * Simulation stage
