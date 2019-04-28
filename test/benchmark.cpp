@@ -13,78 +13,86 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <string>
 
 namespace
 {
 
-using namespace std::chrono;
 using namespace ISMCTS;
 const unsigned int numGames {10};
 const unsigned int iterationCount {2000};
 
-const Card &randomMove(const std::vector<Card> &moves)
+// Test one "move generator" against another in a given game
+class SolverTester
 {
-    static std::mt19937 rng {std::random_device{}()};
+public:
+    explicit SolverTester(unsigned numGames = 100)
+        : m_numGames{numGames}
+    {}
+
+    template<class Game, class Generator1, class Generator2>
+    void run(Game &&game, Generator1 &&g1, Generator2 &&g2)
+    {
+        for (unsigned i = 0; i < m_numGames; ++i)
+            m_score += playGame(game, g1, g2);
+        report();
+    };
+
+private:
+    using Clock = std::chrono::high_resolution_clock;
+    using Duration = ExecutionPolicy::Duration;
+
+    unsigned m_numGames;
+    double m_score {0};
+    std::array<unsigned, 2> m_numCalls {0, 0};
+    std::array<Duration, 2> m_times;
+
+    template<class Game, class Generator1, class Generator2>
+    double playGame(Game &&game, Generator1 &&g1, Generator2 &&g2)
+    {
+        auto newGame = game;
+
+        while (!newGame.validMoves().empty()) {
+            const auto player = newGame.currentPlayer();
+            const auto t0 = Clock::now();
+            auto move = player == 0 ? g1(newGame) : g2(newGame);
+            m_times[player] += Clock::now() - t0;
+            ++m_numCalls[player];
+            newGame.doMove(move);
+        }
+        return newGame.getResult(0);
+    }
+
+    void report() const
+    {
+        using namespace std::chrono;
+        using std::cout;
+        auto separator = []{ return std::string(79, '-') + "\n"; };
+        cout << separator() << "First player scored " << m_score << " points in " << m_numGames << " games.\n";
+        for (unsigned p : {0, 1}) {
+            const auto time_us = duration_cast<microseconds>(m_times[p]).count();
+            cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << time_us
+                 << " µs, average " << double(time_us) / m_numCalls[p] << " µs per move.\n";
+        }
+        cout << separator();
+    }
+};
+
+template<class Move>
+Move randomMove(const Game<Move> &game)
+{
+    static thread_local std::mt19937 rng {std::random_device{}()};
+    const auto moves = game.validMoves();
     std::uniform_int_distribution<std::size_t> randomMove {0, moves.size() - 1};
     return moves[randomMove(rng)];
 }
 
-class GameRunner
-{
-public:
-    GameRunner(SolverBase<Card> &solver, unsigned int numGames)
-        : solver{solver}, numGames{numGames}
-    {}
-
-    void run()
-    {
-        for (unsigned i = 0; i < numGames; ++i)
-            score += playGame();
-        report();
-    }
-
-private:
-    SolverBase<Card> &solver;
-    unsigned int numGames {100};
-    unsigned int score {0};
-    unsigned int numCalls {0};
-    duration<double> time {0};
-
-    unsigned int playGame()
-    {
-        KnockoutWhist game {2};
-
-        while (!game.validMoves().empty()) {
-            Card move;
-            if (game.currentPlayer() == 0) {
-                const auto t0 = high_resolution_clock::now();
-                move = solver(game);
-                time += high_resolution_clock::now() - t0;
-                ++numCalls;
-            } else {
-                move = randomMove(game.validMoves());
-            }
-            game.doMove(move);
-        }
-        return game.getResult(0);
-    }
-    void report() const
-    {
-        using std::cout;
-        const auto time_us = duration_cast<microseconds>(time).count();
-        cout << std::string(79, '-') << "\nISMCTS player won: " << score << " out of " << numGames << " games,\n";
-        cout << "selecting " << numCalls << " moves in " << time_us << " microseconds.\n";
-        cout << "Average per search: " << double(time_us) / (numCalls) << " µs\n";
-        cout << std::string(79, '-') << "\n";
-    }
-};
-
 } // namespace
 
-TEMPLATE_PRODUCT_TEST_CASE("Fixed iteration count", "[SOSolver][MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]",
                            (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
-    GameRunner g(solver, numGames);
-    REQUIRE_NOTHROW(g.run());
+    SolverTester tester {numGames};
+    REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
 }

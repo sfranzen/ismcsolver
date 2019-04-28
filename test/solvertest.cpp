@@ -7,7 +7,7 @@
 #include <ismcts/mosolver.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
-#include "common/tictactoe.h"
+#include "common/mnkgame.h"
 #include <vector>
 
 namespace
@@ -23,15 +23,15 @@ const auto iterationTime {milliseconds(5)};
 
 // In this state, player 1 has to choose between move 2, ending in a draw, and
 // move 0, ending in a loss
-struct P1DrawOrLose : public TicTacToe
+struct P1DrawOrLose : public MnkGame 
 {
     P1DrawOrLose()
-        : TicTacToe{}
+        : MnkGame{}
     {
         m_board = {
-            -1, 1,-1,
-             1, 0, 0,
-             0, 0, 1
+            {-1, 1,-1},
+            {1, 0, 0},
+            {0, 0, 1}
         };
         m_moves = {0, 2};
         m_player = 1;

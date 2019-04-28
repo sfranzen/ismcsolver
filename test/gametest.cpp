@@ -4,6 +4,8 @@
  * the root directory of this distribution.
  */
 #include "common/catch.hpp"
+#include "common/mnkgame.h"
+#include "common/phantommnkgame.h"
 #include "common/knockoutwhist.h"
 #include <vector>
 #include <string>
@@ -15,9 +17,9 @@ namespace
 const unsigned numPlayers = 2;
 
 // Game with two players having known cards
-struct MockGame : public KnockoutWhist
+struct MockWhist : public KnockoutWhist
 {
-    MockGame() : KnockoutWhist {numPlayers}
+    MockWhist() : KnockoutWhist {numPlayers}
     {
         initialDeal();
     }
@@ -46,31 +48,77 @@ struct MockGame : public KnockoutWhist
     }
 };
 
-inline void doValidMove(ISMCTS::Game<Card> &game)
+// Mock phantom game to test cloning
+struct MockPhantomGame : public PhantomMnkGame
+{
+    using PhantomMnkGame::PhantomMnkGame;
+
+    std::vector<std::vector<int>> &board()
+    {
+        return m_board;
+    }
+
+    std::vector<int> &available(unsigned player)
+    {
+        return m_available[player];
+    }
+
+    std::vector<int> &moves()
+    {
+        return m_moves;
+    }
+};
+
+template<class Move>
+inline void doValidMove(ISMCTS::Game<Move> &game)
 {
     game.doMove(game.validMoves().front());
 }
 
+// Sequences that should give player 0 a win, one for each row/column/diagonal
+const std::vector<std::vector<int>> MNKP0WinSequences {
+    {0,3,1,4,2},
+    {3,0,4,1,5},
+    {6,0,7,1,8},
+    {0,2,3,4,6},
+    {1,0,4,2,7},
+    {2,0,5,1,8},
+    {0,1,4,2,8},
+    {2,0,4,1,6}
+};
+
 }
 
-TEST_CASE("Game instantiates correctly", "[KnockoutWhist]")
+TEST_CASE("Knockout Whist instantiates correctly", "[KnockoutWhist]")
 {
     KnockoutWhist game {numPlayers};
-
     CHECK(game.currentPlayer() == 0);
+    CHECK(game.nextPlayer(0) == 1);
     REQUIRE(game.validMoves().size() == 7);
 }
 
-TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
+TEMPLATE_TEST_CASE("M-n-k games instantiate correctly", "[MnkGame][PhantomMnkGame]", MnkGame, PhantomMnkGame)
 {
-    MockGame game;
+    TestType game;
+    CHECK(game.currentPlayer() == 0);
+    CHECK(game.nextPlayer(0) == 1);
+    REQUIRE(game.validMoves().size() == 9);
+}
 
+TEMPLATE_TEST_CASE("Games handle valid moves correctly", "[KnockoutWhist][MnkGame][PhantomMnkGame]",
+                   KnockoutWhist, MnkGame, PhantomMnkGame)
+{
+    TestType game;
     SECTION("Valid move is accepted") {
         REQUIRE_NOTHROW(doValidMove(game));
         SECTION("Current player has advanced")
             REQUIRE(game.currentPlayer() == 1);
     }
+}
 
+TEST_CASE("Knockout Whist functions correctly", "[KnockoutWhist]")
+{
+    MockWhist game;
     // Note: invalid means any card not held by the player as the game does not
     // check for failures to follow suit
     SECTION("Invalid move causes out of range exception") {
@@ -112,7 +160,49 @@ TEST_CASE("Game handles moves correctly", "[KnockoutWhist]")
     }
 }
 
-TEST_CASE("Game terminates correctly", "[KnockoutWhist]")
+TEMPLATE_TEST_CASE("M-n-k games function correctly", "[MnkGame][PhantomMnkGame]", MnkGame, PhantomMnkGame)
+{
+    TestType game;
+    SECTION("Invalid move causes out of range exception") {
+        REQUIRE_THROWS_AS(game.doMove(9), std::out_of_range);
+    }
+    SECTION("Wins are detected properly") {
+        int seqNum = 0;
+        for (auto &sequence : MNKP0WinSequences) {
+            DYNAMIC_SECTION("Checking test sequence " << ++seqNum) {
+                game = TestType{};
+                for (auto move : sequence)
+                    game.doMove(move);
+                CHECK(game.validMoves().empty());
+                REQUIRE(game.getResult(0) == 1);
+            }
+        }
+    }
+}
+
+// Test game with a sequence of moves that leads to the board state
+//  1 -1  1
+// -1  0 -1
+//  0 -1 -1,
+// with player 0 not knowing any of player 1's positions
+TEST_CASE("Phantom m-n-k game clones correctly", "[PhantomMnkGame]")
+{
+    MockPhantomGame game;
+    const std::vector<int> sequence {4,4,0,6,2};
+
+    for (auto move : sequence)
+        game.doMove(move);
+    auto clone = game.cloneAndRandomise(0);
+    auto &rClone = static_cast<MockPhantomGame&>(*clone);
+
+    CHECK(game.available(0) == rClone.available(0));
+    CHECK(game.available(1).size() == rClone.available(1).size());
+    CHECK(game.moves().size() == rClone.moves().size());
+    REQUIRE(rClone.board()[1][1] == 0);
+    REQUIRE(rClone.board()[2][0] == 0);
+}
+
+TEST_CASE("Knockout Whist terminates correctly", "[KnockoutWhist]")
 {
     KnockoutWhist game {numPlayers};
     // Maximum number of turns is nPlayers * (7 + 6 + ... + 1) + 6 (selection turns)

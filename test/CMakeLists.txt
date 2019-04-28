@@ -11,7 +11,8 @@ add_library(testmain OBJECT main.cpp)
 
 set(game_src
     common/knockoutwhist.cpp
-    common/tictactoe.cpp
+    common/mnkgame.cpp
+    common/phantommnkgame.cpp
 )
 set(testlibs testmain ismcsolver coverage_config)
 

@@ -45,7 +45,7 @@ void MyGame::doAIMove()
 ```
 It may be desirable to inspect the information tree in order to tune the solver parameters to a particular game. After all, the algorithm is heavily influenced by, among other things, the number of moves available and the magnitude of the result values returned by the game. Solvers provide access to the tree(s) built during the previous search through the `currentTrees()` method. The resulting structure depends on the type of solver, but will contain instances of [`ISMCTS::Node<Move>`][node] representing the root node of an individual tree, which can be manipulated using the available methods. String information about a single node can be obtained from `operator std::string()` or written to an output stream with `operator<<`. An entire (sub)tree can also be output using a node's `treeToString()` method.
 
-As an example, consider the perfect information game [TicTacToe], for which this algorithm is certainly not the best solution. A game state with a winning move available to player 0 may look like this:
+As an example, consider the perfect information [m-n-k game], for which this algorithm is certainly not the best approach. A game state with a winning move available to player 0 may look like this:
 ```
   1  0  0
   1  0 -1
@@ -71,7 +71,7 @@ A simple card game (Knockout Whist) is also included [here][whist], based on an 
 [SO]: include/ismcts/sosolver.h
 [MO]: include/ismcts/mosolver.h
 [node]: include/ismcts/node.h
-[TicTacToe]: test/common/tictactoe.cpp
+[m-n-k game]: test/common/mnkgame.cpp
 [whist]: test/common/knockoutwhist.cpp
 [py]: https://gist.github.com/kjlubick/8ea239ede6a026a61f4d
 
