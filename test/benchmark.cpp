@@ -11,6 +11,7 @@
 
 #include <chrono>
 #include <vector>
+#include <array>
 #include <iostream>
 #include <random>
 #include <string>
@@ -44,7 +45,7 @@ private:
 
     unsigned m_numGames;
     double m_score {0};
-    std::array<unsigned, 2> m_numCalls {0, 0};
+    std::array<unsigned, 2> m_numCalls {{0, 0}};
     std::array<Duration, 2> m_times;
 
     template<class Game, class Generator1, class Generator2>
@@ -67,14 +68,14 @@ private:
     {
         using namespace std::chrono;
         using std::cout;
-        auto separator = []{ return std::string(79, '-') + "\n"; };
-        cout << separator() << "First player scored " << m_score << " points in " << m_numGames << " games.\n";
+        static const auto separator = std::string(79, '-') + "\n";
+        cout << separator << "First player scored " << m_score << " points in " << m_numGames << " games.\n";
         for (unsigned p : {0, 1}) {
             const auto time_us = duration_cast<microseconds>(m_times[p]).count();
             cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << time_us
                  << " µs, average " << double(time_us) / m_numCalls[p] << " µs per move.\n";
         }
-        cout << separator();
+        cout << separator;
     }
 };
 
