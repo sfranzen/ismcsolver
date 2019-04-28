@@ -20,7 +20,7 @@
 class MnkGame : public ISMCTS::POMGame<int>
 {
 public:
-    explicit MnkGame(unsigned m = 3, unsigned n = 3, unsigned k = 3);
+    explicit MnkGame(int m = 3, int n = 3, int k = 3);
     virtual Ptr cloneAndRandomise(unsigned observer) const override;
     virtual unsigned currentPlayer() const override;
     virtual unsigned nextPlayer(unsigned player) const override;
@@ -32,18 +32,18 @@ public:
 protected:
     using Stride = std::pair<int,int>;
 
-    unsigned m_m, m_n, m_k;
+    int m_m, m_n, m_k;
     std::vector<std::vector<int>> m_board;
     std::vector<int> m_moves;
     unsigned m_player;
     double m_result;
 
     void markBoard(int move, unsigned player);
-    unsigned row(int move) const;
-    unsigned column(int move) const;
+    int row(int move) const;
+    int column(int move) const;
     bool isWinningMove(int move, unsigned player) const;
     bool hasWinningSequence(int move, Stride stride, unsigned player) const;
-    bool continueCounting(long row, long col, unsigned player) const;
+    bool continueCounting(int row, int col, unsigned player) const;
 };
 
 #endif // MNKGAME_H

@@ -10,8 +10,16 @@
 #include <ostream>
 #include <iomanip>
 
-MnkGame::MnkGame(unsigned m, unsigned n, unsigned k)
-    : m_m{m}, m_n{n}, m_k{k}
+namespace
+{
+    inline int limit(int i) noexcept
+    {
+        return std::max(i, 0);
+    }
+}
+
+MnkGame::MnkGame(int m, int n, int k)
+    : m_m{limit(m)}, m_n{limit(n)}, m_k{limit(k)}
     , m_board(n, std::vector<int>(m, -1))
     , m_moves(m * n)
     , m_player{0}
@@ -67,12 +75,12 @@ void MnkGame::markBoard(int move, unsigned player)
     m_board[row(move)][column(move)] = player;
 }
 
-unsigned MnkGame::row(int move) const
+int MnkGame::row(int move) const
 {
     return move / m_m;
 }
 
-unsigned MnkGame::column(int move) const
+int MnkGame::column(int move) const
 {
     return move % m_m;
 }
@@ -98,8 +106,8 @@ bool MnkGame::isWinningMove(int move, unsigned player) const
 bool MnkGame::hasWinningSequence(int move, Stride stride, unsigned player) const
 {
     unsigned count {1};
-    const long r0 {row(move)};
-    const long c0 {column(move)};
+    const auto r0 {row(move)};
+    const auto c0 {column(move)};
 
     for (int i : {-1, 1}) {
         auto r = r0, c = c0;
@@ -110,7 +118,7 @@ bool MnkGame::hasWinningSequence(int move, Stride stride, unsigned player) const
 }
 
 // Continue if the given position is valid and occupied by the given player
-bool MnkGame::continueCounting(long row, long col, unsigned player) const
+bool MnkGame::continueCounting(int row, int col, unsigned player) const
 {
     if (row < 0 || col < 0 || row >= m_n || col >= m_m)
         return false;

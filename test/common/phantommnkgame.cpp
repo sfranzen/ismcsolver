@@ -8,7 +8,7 @@
 #include <numeric>
 #include <random>
 
-PhantomMnkGame::PhantomMnkGame(unsigned m, unsigned n, unsigned k)
+PhantomMnkGame::PhantomMnkGame(int m, int n, int k)
     : MnkGame{m, n, k}
 {
     for (auto &moves : m_available) {
