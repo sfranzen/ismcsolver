@@ -14,14 +14,13 @@
 class KnockoutWhist : public ISMCTS::POMGame<Card>
 {
 public:
-    using Player = unsigned;
     KnockoutWhist(unsigned players = 4);
-    virtual Ptr cloneAndRandomise(unsigned observer) const override;
+    virtual Ptr cloneAndRandomise(Player observer) const override;
     virtual Player currentPlayer() const override;
-    virtual Player nextPlayer(Player p) const override;
+    virtual std::vector<Player> players() const override;
     virtual std::vector<Card> validMoves() const override;
     virtual void doMove(const Card move) override;
-    virtual double getResult(unsigned player) const override;
+    virtual double getResult(Player player) const override;
     friend std::ostream &operator<<(std::ostream &out, const KnockoutWhist &g);
 
 protected:
@@ -42,6 +41,7 @@ protected:
     Card::Suit m_trumpSuit;
     bool m_requestTrump = false;
 
+    Player nextPlayer(Player p) const;
     void deal();
     void finishTrick();
     void finishRound();

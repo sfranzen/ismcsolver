@@ -52,7 +52,7 @@ KnockoutWhist::KnockoutWhist(unsigned players)
     m_unknownCards.erase(choice);
 }
 
-KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(unsigned observer) const
+KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(Player observer) const
 {
     auto clone = new KnockoutWhist(*this);
     Hand unseenCards = m_unknownCards;
@@ -86,6 +86,11 @@ KnockoutWhist::Player KnockoutWhist::nextPlayer(Player p) const
     return next < m_players.end() ? *next : nextPlayer(p);
 }
 
+std::vector<KnockoutWhist::Player> KnockoutWhist::players() const
+{
+    return m_players;
+}
+
 void KnockoutWhist::doMove(const Card move)
 {
     if (m_requestTrump) {
@@ -108,7 +113,7 @@ void KnockoutWhist::doMove(const Card move)
         finishRound();
 }
 
-double KnockoutWhist::getResult(unsigned player) const
+double KnockoutWhist::getResult(Player player) const
 {
     return player == m_players.front() ? 1 : 0;
 }

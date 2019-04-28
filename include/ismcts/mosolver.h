@@ -171,15 +171,11 @@ protected:
 
     void setupTrees(const Game<Move> &rootState) const
     {
-        TreeMap newMap;
-        std::vector<unsigned int> players;
         const auto &state = dynamic_cast<const POMGame<Move>&>(rootState);
-        const auto first = state.currentPlayer();
-        auto current = first;
-        do {
-            newMap.emplace(current, Node<Move>{});
-            current = state.nextPlayer(current);
-        } while (current != first);
+
+        TreeMap newMap;
+        for (auto player : state.players())
+            newMap.emplace(player, Node<Move>{});
 
         std::fill(m_trees.begin(), m_trees.end(), newMap);
     }

@@ -21,7 +21,7 @@ class PhantomMnkGame : public MnkGame
 {
 public:
     explicit PhantomMnkGame(int m = 3, int n = 3, int k = 3);
-    Ptr cloneAndRandomise(unsigned observer) const override;
+    Ptr cloneAndRandomise(Player observer) const override;
     void doMove(const int move) override;
     std::vector<int> validMoves() const override;
 
@@ -29,10 +29,10 @@ protected:
     std::array<std::vector<int>, 2> m_available;
 
     // Undo moves for the given player and return the number of moves
-    unsigned undoMoves(unsigned player);
+    unsigned undoMoves(Player player);
     // Try applying the given number of randomly selected moves for the given
     // player to the current game state, until a non-terminal state is found
-    void randomReplay(unsigned player, unsigned numMoves);
+    void randomReplay(Player player, unsigned numMoves);
 };
 
 #endif // PHANTOMMNKGAME_H

@@ -87,13 +87,15 @@ const std::vector<std::vector<int>> MNKP0WinSequences {
     {2,0,4,1,6}
 };
 
+const std::vector<unsigned> expectedPlayers {0, 1};
+
 }
 
 TEST_CASE("Knockout Whist instantiates correctly", "[KnockoutWhist]")
 {
     KnockoutWhist game {numPlayers};
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.nextPlayer(0) == 1);
+    CHECK(game.players() == expectedPlayers);
     REQUIRE(game.validMoves().size() == 7);
 }
 
@@ -101,7 +103,7 @@ TEMPLATE_TEST_CASE("M-n-k games instantiate correctly", "[MnkGame][PhantomMnkGam
 {
     TestType game;
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.nextPlayer(0) == 1);
+    CHECK(game.players() == expectedPlayers);
     REQUIRE(game.validMoves().size() == 9);
 }
 

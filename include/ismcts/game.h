@@ -22,15 +22,16 @@ template<class Move>
 struct Game
 {
     using Ptr = std::unique_ptr<Game>;
+    using Player = unsigned int;
 
     virtual ~Game() = default;
 
     /// Constructs a copy of the game state, with the information unknown to the
     /// observer player randomised.
-    virtual Ptr cloneAndRandomise(unsigned int observer) const = 0;
+    virtual Ptr cloneAndRandomise(Player observer) const = 0;
 
     /// The player making a move from this state.
-    virtual unsigned int currentPlayer() const = 0;
+    virtual Player currentPlayer() const = 0;
 
     /// Valid moves for the current state.
     /// @return A list of valid moves or an empty list if the game is finished.
@@ -44,7 +45,7 @@ struct Game
     /// This function should preferentially return numbers in the range [0, 1],
     /// for example 0 for a loss, 0.5 for a draw and 1 for a win. It is only
     /// called on finished game states.
-    virtual double getResult(unsigned int player) const = 0;
+    virtual double getResult(Player player) const = 0;
 };
 
 /**
@@ -56,8 +57,10 @@ struct Game
 template<class Move>
 struct POMGame : public Game<Move>
 {
-    /// Return the player whose turn it will be after the given player.
-    virtual unsigned int nextPlayer(unsigned int player) const = 0;
+    using typename Game<Move>::Player;
+
+    /// Return the list of all player identifiers.
+    virtual std::vector<Player> players() const = 0;
 };
 
 } // ISMCTS

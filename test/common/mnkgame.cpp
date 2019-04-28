@@ -50,7 +50,7 @@ void MnkGame::doMove(const int move)
         m_result = 0.5;
 }
 
-double MnkGame::getResult(unsigned player) const
+double MnkGame::getResult(Player player) const
 {
     return player == 0 ? m_result : 1 - m_result;
 }
@@ -60,17 +60,17 @@ std::vector<int> MnkGame::validMoves() const
     return m_result == -1 ? m_moves : std::vector<int>{};
 }
 
-unsigned MnkGame::currentPlayer() const
+MnkGame::Player MnkGame::currentPlayer() const
 {
     return m_player;
 }
 
-unsigned MnkGame::nextPlayer(unsigned player) const
+std::vector<MnkGame::Player> MnkGame::players() const
 {
-    return player == 0 ? 1 : 0;
+    return {0,1};
 }
 
-void MnkGame::markBoard(int move, unsigned player)
+void MnkGame::markBoard(int move, Player player)
 {
     m_board[row(move)][column(move)] = player;
 }
@@ -85,7 +85,7 @@ int MnkGame::column(int move) const
     return move % m_m;
 }
 
-bool MnkGame::isWinningMove(int move, unsigned player) const
+bool MnkGame::isWinningMove(int move, Player player) const
 {
     // Strides representing the directions in which to look for sequences
     static constexpr std::array<const Stride, 4> strides { {
@@ -103,7 +103,7 @@ bool MnkGame::isWinningMove(int move, unsigned player) const
 // Check from the position of the given move, in both the positive and negative
 // directions of the given stride vector, whether the given player occupies
 // enough positions to win the game.
-bool MnkGame::hasWinningSequence(int move, Stride stride, unsigned player) const
+bool MnkGame::hasWinningSequence(int move, Stride stride, Player player) const
 {
     unsigned count {1};
     const auto r0 {row(move)};
@@ -118,7 +118,7 @@ bool MnkGame::hasWinningSequence(int move, Stride stride, unsigned player) const
 }
 
 // Continue if the given position is valid and occupied by the given player
-bool MnkGame::continueCounting(int row, int col, unsigned player) const
+bool MnkGame::continueCounting(int row, int col, Player player) const
 {
     if (row < 0 || col < 0 || row >= m_n || col >= m_m)
         return false;

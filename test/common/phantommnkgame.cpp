@@ -26,10 +26,10 @@ PhantomMnkGame::PhantomMnkGame(int m, int n, int k)
  * Given these constraints, generate a cloned game state with a random sampling
  * of the hidden information.
  */
-PhantomMnkGame::Ptr PhantomMnkGame::cloneAndRandomise(unsigned observer) const
+PhantomMnkGame::Ptr PhantomMnkGame::cloneAndRandomise(Player observer) const
 {
     auto clone = new PhantomMnkGame{*this};
-    const auto opponent = nextPlayer(observer);
+    const auto opponent = 1 - observer;
     const auto numMoves = clone->undoMoves(opponent);
     clone->randomReplay(opponent, numMoves);
     return Ptr{clone};
@@ -37,11 +37,11 @@ PhantomMnkGame::Ptr PhantomMnkGame::cloneAndRandomise(unsigned observer) const
 
 // Only undo those moves that are still marked as available in the opponent's
 // view of the game state
-unsigned PhantomMnkGame::undoMoves(unsigned player)
+unsigned PhantomMnkGame::undoMoves(Player player)
 {
     unsigned numMoves {0};
     auto &ourMoves = m_available[player];
-    const auto &opponentMoves = m_available[nextPlayer(player)];
+    const auto &opponentMoves = m_available[1 - player];
     for (int move = 0; move < m_m * m_n; ++move) {
         auto &pos = m_board[row(move)][column(move)];
         if (pos == player && std::binary_search(opponentMoves.begin(), opponentMoves.end(), move)) {
@@ -56,7 +56,7 @@ unsigned PhantomMnkGame::undoMoves(unsigned player)
     return numMoves;
 }
 
-void PhantomMnkGame::randomReplay(unsigned player, unsigned numMoves)
+void PhantomMnkGame::randomReplay(Player player, unsigned numMoves)
 {
     static thread_local std::mt19937 prng {std::random_device{}()};
     auto newState = *this;

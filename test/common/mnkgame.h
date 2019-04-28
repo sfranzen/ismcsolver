@@ -21,12 +21,12 @@ class MnkGame : public ISMCTS::POMGame<int>
 {
 public:
     explicit MnkGame(int m = 3, int n = 3, int k = 3);
-    virtual Ptr cloneAndRandomise(unsigned observer) const override;
-    virtual unsigned currentPlayer() const override;
-    virtual unsigned nextPlayer(unsigned player) const override;
+    virtual Ptr cloneAndRandomise(Player observer) const override;
+    virtual Player currentPlayer() const override;
+    virtual std::vector<Player> players() const override;
     virtual std::vector<int> validMoves() const override;
     virtual void doMove(const int move) override;
-    virtual double getResult(unsigned player) const override;
+    virtual double getResult(Player player) const override;
     friend std::ostream &operator<<(std::ostream &out, const MnkGame &g);
 
 protected:
@@ -38,12 +38,12 @@ protected:
     unsigned m_player;
     double m_result;
 
-    void markBoard(int move, unsigned player);
+    void markBoard(int move, Player player);
     int row(int move) const;
     int column(int move) const;
-    bool isWinningMove(int move, unsigned player) const;
-    bool hasWinningSequence(int move, Stride stride, unsigned player) const;
-    bool continueCounting(int row, int col, unsigned player) const;
+    bool isWinningMove(int move, Player player) const;
+    bool hasWinningSequence(int move, Stride stride, Player player) const;
+    bool continueCounting(int row, int col, Player player) const;
 };
 
 #endif // MNKGAME_H
