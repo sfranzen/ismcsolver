@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['expand',['expand',['../classISMCTS_1_1MOSolver.html#adcdeda919a5709cffb97bf2706af8643',1,'ISMCTS::MOSolver::expand()'],['../classISMCTS_1_1SOSolver.html#ae6c7004f0e274ad1ea788276c8cf3ec5',1,'ISMCTS::SOSolver::expand()']]]
+  ['getresult',['getResult',['../structISMCTS_1_1Game.html#a72db6c73105a463d7c89685f15b8bcf5',1,'ISMCTS::Game']]]
 ];

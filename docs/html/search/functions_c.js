@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['validmoves',['validMoves',['../classISMCTS_1_1Game.html#a076e0466294eae43d234b3c6f1fd5826',1,'ISMCTS::Game']]],
-  ['visits',['visits',['../classISMCTS_1_1Node.html#abf9fee0ce2be6513b5b8df07e4a99be6',1,'ISMCTS::Node']]]
+  ['ucbscore',['ucbScore',['../classISMCTS_1_1UCBNode.html#a8529c5fbc94e92b293a7ea92907e6d43',1,'ISMCTS::UCBNode']]]
 ];

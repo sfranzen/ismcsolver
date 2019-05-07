@@ -3,7 +3,7 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#include <ismcts/node.h>
+#include <ismcts/tree/nodetypes.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
@@ -13,13 +13,13 @@ namespace
 {
 using namespace ISMCTS;
 const Card testMove {Card::Ace, Card::Spades};
-const int testPlayer {0};
+const unsigned int testPlayer {0};
 }
 
-TEST_CASE("Node instantiation", "[node]")
+TEMPLATE_TEST_CASE("Node instantiation", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     SECTION("Default constructor") {
-        Node<Card> node;
+        TestType node;
 
         CHECK(node.parent() == nullptr);
         CHECK(node.move() == Card{});
@@ -27,51 +27,40 @@ TEST_CASE("Node instantiation", "[node]")
         REQUIRE(node.children().empty());
     }
     SECTION("Non-default constructor") {
-        Node<Card> parent;
-        Node<Card> node {&parent, testMove, testPlayer};
+        TestType parent;
+        auto node = parent.addChild(new TestType{testMove, testPlayer});
 
-        CHECK(node.parent() == &parent);
-        CHECK(node.move() == testMove);
-        CHECK(node.visits() == 0);
-        REQUIRE(node.children().empty());
+        CHECK(node->parent() == &parent);
+        CHECK(node->move() == testMove);
+        CHECK(node->visits() == 0);
+        REQUIRE(node->children().empty());
     }
 }
 
-TEST_CASE("Adding children", "[node]")
+TEMPLATE_TEST_CASE("Adding children", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
-    Node<Card> root;
+    TestType root;
     Node<Card>* child {nullptr};
-    auto findOrAdd = [&](){ child = root.findOrAddChild(testMove, testPlayer); };
 
-    SECTION("Using addChild()")
-        CHECK_NOTHROW([&](){ child = root.addChild(testMove, testPlayer); }());
-
-    SECTION("Using findOrAddChild()")
-        CHECK_NOTHROW(findOrAdd());
-
-    SECTION("Repeating findOrAddChild() with same input") {
-        CHECK_NOTHROW(findOrAdd());
-        CHECK_NOTHROW(findOrAdd());
-    }
-
+    CHECK_NOTHROW([&]{ child = root.addChild(new TestType{testMove, testPlayer}); }());
     REQUIRE(root.children().size() == 1);
     CHECK(child->move() == testMove);
     CHECK(child == root.children().front().get());
     REQUIRE(child->parent() == &root);
 }
 
-TEST_CASE("Updating node statistics", "[node]")
+TEMPLATE_TEST_CASE("Updating node statistics", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
-    Node<Card> node {nullptr, testMove, testPlayer};
+    TestType node {testMove, testPlayer};
     KnockoutWhist game;
 
     CHECK_NOTHROW(node.update(game));
     REQUIRE(node.visits() == 1);
 }
 
-TEST_CASE("Finding untried moves", "[node]")
+TEMPLATE_TEST_CASE("Finding untried moves", "[node]", UCBNode<int>, EXPNode<int>)
 {
-    Node<int> root;
+    TestType root;
     std::vector<int> legalMoves(10);
     std::iota(legalMoves.begin(), legalMoves.end(), 0);
 
@@ -81,7 +70,7 @@ TEST_CASE("Finding untried moves", "[node]")
     SECTION("After expanding available moves") {
         while (legalMoves.size() > 0) {
             auto move = --legalMoves.end();
-            root.addChild(std::move(*move), testPlayer);
+            root.addChild(new TestType{*move, testPlayer});
             legalMoves.erase(move);
             REQUIRE(root.untriedMoves(legalMoves) == legalMoves);
         }

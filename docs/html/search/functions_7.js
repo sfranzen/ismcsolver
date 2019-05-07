@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mosolver',['MOSolver',['../classISMCTS_1_1MOSolver.html#a46109910f5b8309d25f890c0bb36563a',1,'ISMCTS::MOSolver::MOSolver(std::size_t numPlayers, std::size_t iterationCount=1000, const TreePolicy &amp;policy=TreePolicy{})'],['../classISMCTS_1_1MOSolver.html#a4d4f462292eda636ecdc6966d628be0c',1,'ISMCTS::MOSolver::MOSolver(std::size_t numPlayers, std::chrono::duration&lt; double &gt; iterationTime, const TreePolicy &amp;policy=TreePolicy{})']]]
+  ['numthreads',['numThreads',['../classISMCTS_1_1ExecutionPolicy.html#a4ccb8d23e23d49d51544795a9aeab9be',1,'ISMCTS::ExecutionPolicy']]]
 ];

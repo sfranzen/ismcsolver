@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['domove',['doMove',['../classISMCTS_1_1Game.html#a8c616941c6d2e91b1f58af95255fcc7b',1,'ISMCTS::Game']]]
+  ['expand',['expand',['../classISMCTS_1_1MOSolver.html#af5034f9e69648de7fdd2fdce8cddc878',1,'ISMCTS::MOSolver::expand()'],['../classISMCTS_1_1SOSolver.html#a18804b6327e32729b876531843a9cd99',1,'ISMCTS::SOSolver::expand()']]]
 ];

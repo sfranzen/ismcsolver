@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['node',['Node',['../classISMCTS_1_1Node.html',1,'ISMCTS']]]
+  ['mosolver',['MOSolver',['../classISMCTS_1_1MOSolver.html',1,'ISMCTS']]]
 ];

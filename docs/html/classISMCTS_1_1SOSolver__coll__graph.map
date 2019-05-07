@@ -1,7 +1,5 @@
-<map id="ISMCTS::SOSolver&lt; Move, ExecutionPolicy, TreePolicy &gt;" name="ISMCTS::SOSolver&lt; Move, ExecutionPolicy, TreePolicy &gt;">
-<area shape="rect" id="node1" title=" " alt="" coords="564,64,772,105"/>
-<area shape="rect" id="node2" href="$classISMCTS_1_1SolverBase.html" title="Interface shared by all algorithms." alt="" coords="297,5,451,47"/>
-<area shape="rect" id="node3" href="$structISMCTS_1_1TreePolicy.html" title=" " alt="" coords="5,5,155,47"/>
-<area shape="rect" id="node4" href="$classISMCTS_1_1ExecutionPolicy.html" title=" " alt="" coords="285,71,463,98"/>
-<area shape="rect" id="node5" href="$classstd_1_1vector.html" title=" " alt="" coords="305,123,443,164"/>
+<map id="ISMCTS::SOSolver&lt; Move, _ExecutionPolicy &gt;" name="ISMCTS::SOSolver&lt; Move, _ExecutionPolicy &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="68,95,259,136"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1SolverBase.html" title="Interface shared by all algorithms." alt="" coords="5,5,159,47"/>
+<area shape="rect" id="node3" title=" " alt="" coords="183,13,307,39"/>
 </map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['treepolicy',['TreePolicy',['../structISMCTS_1_1TreePolicy.html',1,'ISMCTS']]]
+  ['rootparallel',['RootParallel',['../classISMCTS_1_1RootParallel.html',1,'ISMCTS']]]
 ];

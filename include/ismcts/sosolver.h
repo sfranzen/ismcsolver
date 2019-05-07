@@ -8,9 +8,9 @@
 
 #include "solverbase.h"
 #include "game.h"
-#include "node.h"
+#include "tree/nodetypes.h"
+#include "tree/policies.h"
 #include "execution.h"
-#include "ucb1.h"
 
 #include <memory>
 #include <vector>
@@ -28,14 +28,15 @@ namespace ISMCTS
  * each other's moves, because the algorithm treats opponent moves as fully
  * observable.
  */
-template<class Move, class _ExecutionPolicy = Sequential, class _TreePolicy = UCB1<Move>>
-class SOSolver : public SolverBase<Move, _TreePolicy>, public _ExecutionPolicy
+template<class Move, class _ExecutionPolicy = Sequential>
+class SOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
 public:
     using _ExecutionPolicy::numThreads;
+    using NodePtr = typename Node<Move>::Ptr;
 
     /// The search trees for the current player, one per thread
-    using TreeList = std::vector<Node<Move>>;
+    using TreeList = std::vector<NodePtr>;
 
     /**
      * Constructs a solver that will iterate the given number of times per
@@ -43,8 +44,8 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::size_t iterationCount = 1000, const _TreePolicy &policy = _TreePolicy{})
-        : SolverBase<Move, _TreePolicy>{policy}
+    explicit SOSolver(std::size_t iterationCount = 1000)
+        : SolverBase<Move>{}
         , _ExecutionPolicy{iterationCount}
     {}
 
@@ -54,8 +55,8 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-    explicit SOSolver(std::chrono::duration<double> iterationTime, const _TreePolicy &policy = _TreePolicy{})
-        : SolverBase<Move, _TreePolicy>{policy}
+    explicit SOSolver(std::chrono::duration<double> iterationTime)
+        : SolverBase<Move>{}
         , _ExecutionPolicy{iterationTime}
     {}
 
@@ -63,13 +64,15 @@ public:
     {
         std::vector<std::thread> threads(numThreads());
         m_trees = TreeList(numThreads());
+        for (auto &t : m_trees)
+            t = SOSolver::newNode(rootState);
 
         for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(m_trees[t]), std::ref(rootState));
+            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(*m_trees[t]), std::ref(rootState));
         for (auto &t : threads)
             t.join();
 
-        return SOSolver::bestMove(m_trees);
+        return SOSolver::template bestMove<Move>(m_trees);
     }
 
     /// Return the decision tree(s) resulting from the most recent call to
@@ -120,7 +123,7 @@ protected:
     {
         const auto validMoves = state.validMoves();
         if (!SOSolver::selectNode(node, validMoves)) {
-            node = node->selectChild(validMoves, this->m_treePolicy);
+            node = this->selectChild(node, state, validMoves);
             state.doMove(node->move());
             select(node, state);
         }
@@ -137,7 +140,7 @@ protected:
         const auto untriedMoves = node->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
             const auto move = this->randomMove(untriedMoves);
-            node = node->addChild(move, state.currentPlayer());
+            node = SOSolver::addChild(node, state, move);
             state.doMove(move);
         }
     }
