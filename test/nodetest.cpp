@@ -13,7 +13,7 @@ namespace
 {
 using namespace ISMCTS;
 const Card testMove {Card::Ace, Card::Spades};
-const int testPlayer {0};
+const unsigned int testPlayer {0};
 }
 
 TEMPLATE_TEST_CASE("Node instantiation", "[node]", UCBNode<Card>, EXPNode<Card>)
