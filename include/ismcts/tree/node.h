@@ -18,9 +18,7 @@ namespace ISMCTS
 template<class Move>
 struct Game;
 
-/**
- * The node is used to build the information tree that guides the algorithm.
- */
+/// The node is used to build the information tree that guides the algorithm.
 template<class Move>
 class Node
 {

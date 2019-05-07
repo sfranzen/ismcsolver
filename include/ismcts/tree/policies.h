@@ -11,11 +11,17 @@
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <iostream>
 
 namespace ISMCTS
 {
 
+/**
+ * EXP3: Exponential weight algorithm for Exploitation and Exploration
+ *
+ * The EXP3 method uses and updates a non-uniform distribution of probabilities
+ * over the nodes to select one, skewing this distribution over time in favour
+ * of nodes with better expected rewards.
+ */
 template<class Move>
 struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
 {
@@ -30,6 +36,13 @@ struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
     }
 };
 
+/**
+ * UCB: Upper Confidence Bound tree policy algorithm
+ *
+ * UCB uses a combination of the node statistics to select a node, using the
+ * configurable exploration parameter to set the balance of exploitation of
+ * known robust moves against exploration of infrequently visited nodes.
+ */
 template<class Move>
 struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
 {
@@ -46,7 +59,7 @@ struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
         return *std::max_element(nodes.begin(), nodes.end(), [&](const Node *a, const Node *b){
             return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
         });
-    };
+    }
 
 private:
     const double m_exploration;

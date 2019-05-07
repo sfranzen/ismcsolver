@@ -17,6 +17,7 @@
 namespace ISMCTS
 {
 
+/// Node for the UCB1 tree policy
 template<class Move>
 class UCBNode : public Node<Move>
 {
@@ -29,13 +30,15 @@ public:
             m_score += terminalState.getResult(this->m_playerJustMoved);
     }
 
-    // Mark this node as having been available for selection
+    /// Mark this node as having been available for selection
     void markAvailable()
     {
         ++m_available;
     }
 
-    double ucbScore(double exploration = 0.7) const
+    /// The UCB score is used to rank children for selection; the exploration
+    /// parameter increases the bias towards infrequently visited nodes.
+    double ucbScore(double exploration) const
     {
         return m_score / this->m_visits + exploration * std::sqrt(std::log(m_available) / this->m_visits);
     }

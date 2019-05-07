@@ -16,6 +16,7 @@
 namespace ISMCTS
 {
 
+/// Node for the EXP3 tree policy
 template<class Move>
 class EXPNode : public Node<Move>
 {
@@ -28,17 +29,17 @@ public:
             m_score += terminalState.getResult(this->m_playerJustMoved) / m_probability;
     }
 
+    /// Update, and return as a vector, all the selection probabilities of the
+    /// given nodes.
     static std::vector<double> probabilities(const std::vector<EXPNode*> &nodes)
     {
         const auto K = nodes.size();
-        const double c { K * std::log(K) / (std::exp(1) - 1) };
         std::vector<double> probabilities(K);
 
         std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](EXPNode *node){
-            const auto gamma = std::min(1., std::sqrt(c / node->m_visits));
+            const auto gamma = std::min(1., coefficient(K, node->m_visits));
             const auto eta = gamma / K;
-            const auto sum = sumRewards(nodes, eta);
-            const auto p = eta + (1 - gamma) / (std::exp(-node->m_score * eta) * sum);
+            const auto p = eta + (1 - gamma) / sumDifferences(nodes, node->m_score, eta);
             node->m_probability = p;
             return p;
         });
@@ -59,10 +60,23 @@ private:
     double m_probability {1};
     double m_score {0};
 
-    static double sumRewards(const std::vector<EXPNode*> &nodes, double eta)
+    /// Return the coefficient used in determining "gamma" for the selection
+    /// probability.
+    /// @param K The number of available choices.
+    /// @param maxReward The maximum reward that could have been obtained from
+    ///     selecting this node every time.
+    static double coefficient(std::size_t K, double maxReward)
+    {
+        static const double factor { 1 / (std::exp(1) - 1) };
+        return std::sqrt(K * std::log(K) * factor / maxReward );
+    }
+
+    /// Sum the exponential differences of the scores of the nodes with the
+    /// given score, using the factor eta.
+    static double sumDifferences(const std::vector<EXPNode*> &nodes, double score, double eta)
     {
         return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const EXPNode *node){
-            return sum + std::exp(eta * node->m_score);
+            return sum + std::exp(eta * (node->m_score - score));
         });
     }
 };
