@@ -7,8 +7,8 @@
 #define ISMCTS_SOLVERBASE_H
 
 #include "game.h"
-#include "node.h"
-#include "ucb1.h"
+#include "tree/nodetypes.h"
+#include "tree/policies.h"
 
 #include <random>
 #include <vector>
@@ -16,15 +16,17 @@
 namespace ISMCTS
 {
 /// Interface shared by all algorithms
-template<class Move, class _TreePolicy = UCB1<Move>>
+template<class Move>
 class SolverBase
 {
 public:
-    /**
-    * @param policy The tree policy to use in the selection stage of the search.
-    */
-    explicit SolverBase(const _TreePolicy &policy)
-        : m_treePolicy{policy}
+    using NodePtr = typename Node<Move>::Ptr;
+    using EXP3 = TreePolicy<EXPNode<Move>>;
+    using UCB1 = TreePolicy<UCBNode<Move>>;
+
+    explicit SolverBase(EXP3 &&expPolicy = EXP3{}, UCB1 &&ucbPolicy = UCB1{})
+        : m_EXP3{expPolicy}
+        , m_UCB1{ucbPolicy}
     {}
 
     virtual ~SolverBase() = default;
@@ -36,15 +38,17 @@ public:
      */
     virtual Move operator()(const Game<Move> &rootState) const = 0;
 
-    /// Set the tree policy for future searches.
-    void setTreePolicy(const _TreePolicy &policy)
+    void setEXPPolicy(EXP3 &&policy)
     {
-        m_treePolicy = policy;
+        m_EXP3 = policy;
+    }
+
+    void setUCBPolicy(UCB1 &&policy)
+    {
+        m_UCB1 = policy;
     }
 
 protected:
-    _TreePolicy m_treePolicy;
-
     /**
      * Simulation stage
      *
@@ -80,6 +84,25 @@ protected:
         return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
+    static Node<Move> *addChild(Node<Move> *node, const Game<Move> &state, const Move &move)
+    {
+        if (state.currentMoveSimultaneous())
+            return node->addChild(new EXPNode<Move>{move, state.currentPlayer()});
+        else
+            return node->addChild(new UCBNode<Move>{move, state.currentPlayer()});
+    }
+
+    Node<Move> *selectChild(const Node<Move> *node, const Game<Move> &state, const std::vector<Move> &moves) const
+    {
+        if (state.currentMoveSimultaneous()) {
+            const auto children = legalChildren<EXPNode<Move>>(node, moves);
+            return this->m_EXP3(children);
+        } else {
+            const auto children = legalChildren<UCBNode<Move>>(node, moves);
+            return this->m_UCB1(children);
+        }
+    }
+
     const Move &randomMove(const std::vector<Move> &moves) const
     {
         std::uniform_int_distribution<std::size_t> dist {0, moves.size() - 1};
@@ -90,6 +113,30 @@ protected:
     {
         thread_local static std::mt19937 prng {std::random_device{}()};
         return prng;
+    }
+
+    static NodePtr newNode(const Game<Move> &state)
+    {
+        if (state.currentMoveSimultaneous())
+            return std::make_shared<EXPNode<Move>>();
+        else
+            return std::make_shared<UCBNode<Move>>();
+    }
+
+private:
+    EXP3 m_EXP3;
+    UCB1 m_UCB1;
+
+    template<class Type>
+    static std::vector<Type*> legalChildren(const Node<Move> *node, const std::vector<Move> &legalMoves)
+    {
+        std::vector<Type*> legalChildren;
+        legalChildren.reserve(legalMoves.size());
+        for(auto &c : node->children()) {
+            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](const Move &move){ return c->move() == move; }))
+                legalChildren.emplace_back(static_cast<Type*>(c.get()));
+        }
+        return legalChildren;
     }
 };
 

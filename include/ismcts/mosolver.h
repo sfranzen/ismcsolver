@@ -8,9 +8,9 @@
 
 #include "solverbase.h"
 #include "game.h"
-#include "node.h"
+#include "tree/nodetypes.h"
+#include "tree/policies.h"
 #include "execution.h"
-#include "ucb1.h"
 
 #include <memory>
 #include <vector>
@@ -28,14 +28,15 @@ namespace ISMCTS
  * it applicable to games with partially observable moves, i.e. where players
  * cannot always fully observe the other players' or teams' moves.
  */
-template<class Move, class _ExecutionPolicy = Sequential, class _TreePolicy = UCB1<Move>>
-class MOSolver : public SolverBase<Move, _TreePolicy>, public _ExecutionPolicy
+template<class Move, class _ExecutionPolicy = Sequential>
+class MOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
 public:
     using _ExecutionPolicy::numThreads;
+    using NodePtr = typename Node<Move>::Ptr;
 
     /// The search trees for the current observer, one per player
-    using TreeMap = std::map<unsigned int, Node<Move>>;
+    using TreeMap = std::map<unsigned int, NodePtr>;
     /// The set of tree lists, one for each thread
     using TreeSet = std::vector<TreeMap>;
 
@@ -45,8 +46,8 @@ public:
      *
      * @copydetails SolverBase::SolverBase
      */
-explicit MOSolver(std::size_t iterationCount = 1000, const _TreePolicy &policy = _TreePolicy{})
-        : SolverBase<Move,_TreePolicy>{policy}
+explicit MOSolver(std::size_t iterationCount = 1000)
+        : SolverBase<Move>{}
         , _ExecutionPolicy(iterationCount)
         , m_trees{numThreads()}
     {}
@@ -57,8 +58,8 @@ explicit MOSolver(std::size_t iterationCount = 1000, const _TreePolicy &policy =
      *
      * @copydetails SolverBase::SolverBase
      */
-explicit MOSolver(std::chrono::duration<double> iterationTime, const _TreePolicy &policy = _TreePolicy{})
-        : SolverBase<Move,_TreePolicy>{policy}
+explicit MOSolver(std::chrono::duration<double> iterationTime)
+        : SolverBase<Move>{}
         , _ExecutionPolicy(iterationTime)
         , m_trees{numThreads()}
     {}
@@ -74,11 +75,11 @@ explicit MOSolver(std::chrono::duration<double> iterationTime, const _TreePolicy
             t.join();
 
         // Gather results for the current player from each thread
-        std::vector<Node<Move>> currentPlayerTrees(numThreads());
+        std::vector<NodePtr> currentPlayerTrees(numThreads());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeMap &set){
             return set[rootState.currentPlayer()];
         });
-        return MOSolver::bestMove(currentPlayerTrees);
+        return MOSolver::template bestMove<Move>(currentPlayerTrees);
     }
 
     /// Return the decision trees resulting from the most recent call to
@@ -117,7 +118,7 @@ protected:
     {
         NodePtrMap roots;
         for (auto &pair : trees)
-            roots.emplace(pair.first, &pair.second);
+            roots.emplace(pair.first, pair.second.get());
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
         select(roots, *randomState);
         expand(roots, *randomState);
@@ -137,12 +138,20 @@ protected:
         const auto player = state.currentPlayer();
         const auto &targetNode = nodes[player];
         if (!MOSolver::selectNode(targetNode, validMoves)) {
-            const auto selection = targetNode->selectChild(validMoves, this->m_treePolicy);
+            const auto selection = this->selectChild(targetNode, state, validMoves);
             for (auto &node : nodes)
-                node.second = node.second->findOrAddChild(selection->move(), player);
+                node.second = MOSolver::findOrAddChild(node.second, state, selection->move());
             state.doMove(selection->move());
             select(nodes, state);
         }
+    }
+
+    static Node<Move> *findOrAddChild(Node<Move> *node, Game<Move> &state, const Move &move)
+    {
+        using Child = typename Node<Move>::ChildPtr;
+        const auto &children = node->children();
+        const auto pos = std::find_if(children.begin(), children.end(), [&](const Child &c){ return c->move() == move; });
+        return pos < children.end() ? pos->get() : MOSolver::addChild(node, state, move);
     }
 
     /**
@@ -158,7 +167,7 @@ protected:
         if (!untriedMoves.empty()) {
             const auto move = this->randomMove(untriedMoves);
             for (auto &node : nodes)
-                node.second = node.second->findOrAddChild(move, player);
+                node.second = MOSolver::findOrAddChild(node.second, state, move);
             state.doMove(move);
         }
     }
@@ -166,18 +175,18 @@ protected:
     static void backPropagate(NodePtrMap &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
-            SolverBase<Move,_TreePolicy>::backPropagate(node.second, state);
+            SolverBase<Move>::backPropagate(node.second, state);
     }
 
     void setupTrees(const Game<Move> &rootState) const
     {
         const auto &state = dynamic_cast<const POMGame<Move>&>(rootState);
 
-        TreeMap newMap;
-        for (auto player : state.players())
-            newMap.emplace(player, Node<Move>{});
-
-        std::fill(m_trees.begin(), m_trees.end(), newMap);
+        for (auto &tree : m_trees) {
+            tree.clear();
+            for (auto player : state.players())
+                tree.emplace(player, MOSolver::newNode(rootState));
+        }
     }
 };
 

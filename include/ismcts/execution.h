@@ -6,7 +6,7 @@
 #ifndef ISMCTS_EXECUTION_H
 #define ISMCTS_EXECUTION_H
 
-#include "node.h"
+#include "tree/node.h"
 
 #include <vector>
 #include <map>
@@ -26,6 +26,8 @@ class ExecutionPolicy
 {
 public:
     using Duration = std::chrono::duration<double>;
+    template<class Move>
+    using NodePtr = typename Node<Move>::Ptr;
 
     explicit ExecutionPolicy(std::size_t iterationCount = 1000, unsigned int numThreads = 1)
         : m_numThreads{numThreads}
@@ -85,10 +87,10 @@ public:
     using ExecutionPolicy::ExecutionPolicy;
 
     template<class Move>
-    static const Move &bestMove(const std::vector<Node<Move>> &trees)
+    static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
     {
         // Sequential solvers use a vector with only one tree
-        const auto &children = trees.front().children();
+        const auto &children = trees.front()->children();
         using value = typename Node<Move>::ChildPtr;
         const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const value &a, const value &b){
             return a->visits() < b->visits();
@@ -112,9 +114,9 @@ public:
     /// Return best move from a number of trees holding results for the same
     /// player
     template<class Move>
-    static const Move &bestMove(const std::vector<Node<Move>> &trees)
+    static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
     {
-        const auto results = compileVisitCounts(trees);
+        const auto results = compileVisitCounts<Move>(trees);
         using value = typename VisitMap<Move>::value_type;
         const auto &mostVisited = *std::max_element(results.begin(), results.end(), [](const value &a, const value &b){
             return a.second < b.second;
@@ -128,13 +130,13 @@ private:
 
     /// Map each unique move to its total number of visits
     template<class Move>
-    static VisitMap<Move> compileVisitCounts(const std::vector<Node<Move>> &trees)
+    static VisitMap<Move> compileVisitCounts(const std::vector<NodePtr<Move>> &trees)
     {
         VisitMap<Move> results;
-        for (auto &node : trees.front().children())
+        for (auto &node : trees.front()->children())
             results.emplace(node->move(), node->visits());
         for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
-            for (auto &node : t->children()) {
+            for (auto &node : (*t)->children()) {
                 const auto result = results.emplace(node->move(), node->visits());
                 if (!result.second)
                     (*result.first).second += node->visits();

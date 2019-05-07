@@ -46,6 +46,15 @@ struct Game
     /// for example 0 for a loss, 0.5 for a draw and 1 for a win. It is only
     /// called on finished game states.
     virtual double getResult(Player player) const = 0;
+
+    /// Indicate whether the current game state has a simultaneous move, i.e.
+    /// multiple players must decide on a move without first seeing any of the
+    /// other(s) decisions as in turn-based play. Override if the game features
+    /// such moves; the base implementation always returns false.
+    virtual bool currentMoveSimultaneous() const
+    {
+        return false;
+    }
 };
 
 /**
