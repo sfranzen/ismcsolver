@@ -69,60 +69,95 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classISMCTS_1_1Node-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ISMCTS::Node&lt; Move &gt; Class Template Reference</div>  </div>
+<div class="title">ISMCTS::Node&lt; Move &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="node_8h_source.html">ismcts/node.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="node_8h_source.html">ismcts/tree/node.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for ISMCTS::Node&lt; Move &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classISMCTS_1_1Node__inherit__graph.png" border="0" usemap="#ISMCTS_1_1Node_3_01Move_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="ISMCTS_1_1Node_3_01Move_01_4_inherit__map" id="ISMCTS_1_1Node_3_01Move_01_4_inherit__map">
+<area shape="rect"  title="The node is used to build the information tree that guides the algorithm." alt="" coords="130,5,303,32"/>
+<area shape="rect"  href="classISMCTS_1_1EXPNode.html" title="Node for the EXP3 tree policy." alt="" coords="5,80,204,107"/>
+<area shape="rect"  href="classISMCTS_1_1UCBNode.html" title="Node for the UCB1 tree policy." alt="" coords="228,80,429,107"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for ISMCTS::Node&lt; Move &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classISMCTS_1_1Node__coll__graph.png" border="0" usemap="#ISMCTS_1_1Node_3_01Move_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="ISMCTS_1_1Node_3_01Move_01_4_coll__map" id="ISMCTS_1_1Node_3_01Move_01_4_coll__map">
+<area shape="rect"  title="The node is used to build the information tree that guides the algorithm." alt="" coords="5,5,179,32"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae26c9ec543028786b5f7fcd1f6ccb699"><td class="memItemLeft" align="right" valign="top"><a id="ae26c9ec543028786b5f7fcd1f6ccb699"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>ChildPtr</b> = std::shared_ptr&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a> &gt;</td></tr>
-<tr class="separator:ae26c9ec543028786b5f7fcd1f6ccb699"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ef4d7a50005cb5cbee5945eebf09b6d"><td class="memItemLeft" align="right" valign="top"><a id="a1ef4d7a50005cb5cbee5945eebf09b6d"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>Ptr</b> = std::shared_ptr&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a> &gt;</td></tr>
+<tr class="separator:a1ef4d7a50005cb5cbee5945eebf09b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a076b7cd2301338def7e2077c398c6165"><td class="memItemLeft" align="right" valign="top"><a id="a076b7cd2301338def7e2077c398c6165"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>ChildPtr</b> = std::unique_ptr&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a> &gt;</td></tr>
+<tr class="separator:a076b7cd2301338def7e2077c398c6165"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0eb3c4b8567268b76cf9cc05d8112958"><td class="memItemLeft" align="right" valign="top"><a id="a0eb3c4b8567268b76cf9cc05d8112958"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Node</b> (<a class="el" href="classISMCTS_1_1Node.html">Node</a> *parent=nullptr, const Move move={}, int playerJustMoved=-1)</td></tr>
-<tr class="separator:a0eb3c4b8567268b76cf9cc05d8112958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad39809d703ee5f05e3424c9c4e4db12c"><td class="memItemLeft" align="right" valign="top"><a id="ad39809d703ee5f05e3424c9c4e4db12c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Node</b> (const Move &amp;move={}, unsigned int player=0)</td></tr>
+<tr class="separator:ad39809d703ee5f05e3424c9c4e4db12c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad139cc94663afe24abef2e3cd28989f5"><td class="memItemLeft" align="right" valign="top"><a id="ad139cc94663afe24abef2e3cd28989f5"></a>
 <a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> () const</td></tr>
 <tr class="separator:ad139cc94663afe24abef2e3cd28989f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35cfd7ffd9251ce4292809fc0143a779"><td class="memItemLeft" align="right" valign="top"><a id="a35cfd7ffd9251ce4292809fc0143a779"></a>
-const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; ChildPtr &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>children</b> () const</td></tr>
+const std::vector&lt; ChildPtr &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>children</b> () const</td></tr>
 <tr class="separator:a35cfd7ffd9251ce4292809fc0143a779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca76841a13a60ff987c73c21010d0f74"><td class="memItemLeft" align="right" valign="top"><a id="aca76841a13a60ff987c73c21010d0f74"></a>
 const Move &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>move</b> () const</td></tr>
 <tr class="separator:aca76841a13a60ff987c73c21010d0f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af970c588bd5bd9685a584e9ed2a2a62e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Node.html#af970c588bd5bd9685a584e9ed2a2a62e">score</a> () const</td></tr>
-<tr class="separator:af970c588bd5bd9685a584e9ed2a2a62e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf9fee0ce2be6513b5b8df07e4a99be6"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Node.html#abf9fee0ce2be6513b5b8df07e4a99be6">visits</a> () const</td></tr>
+<tr class="memitem:abf9fee0ce2be6513b5b8df07e4a99be6"><td class="memItemLeft" align="right" valign="top"><a id="abf9fee0ce2be6513b5b8df07e4a99be6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>visits</b> () const</td></tr>
 <tr class="separator:abf9fee0ce2be6513b5b8df07e4a99be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85cff59fd35283606bdc4f2596df6324"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Node.html#a85cff59fd35283606bdc4f2596df6324">available</a> () const</td></tr>
-<tr class="separator:a85cff59fd35283606bdc4f2596df6324"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab82a6b43597d1b395c3f04518434f724"><td class="memItemLeft" align="right" valign="top"><a id="ab82a6b43597d1b395c3f04518434f724"></a>
-<a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>addChild</b> (const Move &amp;move, int player)</td></tr>
-<tr class="separator:ab82a6b43597d1b395c3f04518434f724"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8070f844c9699966c74ce0866ad41ec"><td class="memItemLeft" align="right" valign="top"><a id="af8070f844c9699966c74ce0866ad41ec"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;terminalState)</td></tr>
-<tr class="separator:af8070f844c9699966c74ce0866ad41ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73c94fdfd13fc4ae5e33282357e660b0"><td class="memItemLeft" align="right" valign="top"><a id="a73c94fdfd13fc4ae5e33282357e660b0"></a>
+<a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>addChild</b> (<a class="el" href="classISMCTS_1_1Node.html">Node</a> *child)</td></tr>
+<tr class="separator:a73c94fdfd13fc4ae5e33282357e660b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abab2514feea5cb8ff3d033e64a038158"><td class="memItemLeft" align="right" valign="top"><a id="abab2514feea5cb8ff3d033e64a038158"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;terminalState) final</td></tr>
+<tr class="separator:abab2514feea5cb8ff3d033e64a038158"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6819934198f58576a96943338d0ab62d"><td class="memItemLeft" align="right" valign="top"><a id="a6819934198f58576a96943338d0ab62d"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateData</b> (const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;terminalState)=0</td></tr>
+<tr class="separator:a6819934198f58576a96943338d0ab62d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93e0f12764494044c0f56a18584e34d3"><td class="memItemLeft" align="right" valign="top"><a id="a93e0f12764494044c0f56a18584e34d3"></a>
-<a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>untriedMoves</b> (const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt; &amp;legalMoves) const</td></tr>
+std::vector&lt; Move &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>untriedMoves</b> (const std::vector&lt; Move &gt; &amp;legalMoves) const</td></tr>
 <tr class="separator:a93e0f12764494044c0f56a18584e34d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb5fcb10c5473c09ecbb01e07def9156"><td class="memItemLeft" align="right" valign="top"><a id="abb5fcb10c5473c09ecbb01e07def9156"></a>
-<a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>selectChild</b> (const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt; &amp;legalMoves, const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a>&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a> &gt; &amp;policy) const</td></tr>
-<tr class="separator:abb5fcb10c5473c09ecbb01e07def9156"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5342be945f811e5d2e32b55bedde60e"><td class="memItemLeft" align="right" valign="top"><a id="af5342be945f811e5d2e32b55bedde60e"></a>
-<a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>findOrAddChild</b> (const Move &amp;move, int player)</td></tr>
-<tr class="separator:af5342be945f811e5d2e32b55bedde60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d60fa03e2110e14903627027afd28a1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Node.html#a8d60fa03e2110e14903627027afd28a1">operator std::string</a> () const</td></tr>
-<tr class="separator:a8d60fa03e2110e14903627027afd28a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b8f66de398191660c9f01ffd380de1e"><td class="memItemLeft" align="right" valign="top"><a id="a5b8f66de398191660c9f01ffd380de1e"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><b>operator std::string</b> () const</td></tr>
+<tr class="separator:a5b8f66de398191660c9f01ffd380de1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ee18dd98760d875cac19bd6dc9f4ef1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1Node.html#a2ee18dd98760d875cac19bd6dc9f4ef1">treeToString</a> (unsigned int indent=0) const</td></tr>
 <tr class="separator:a2ee18dd98760d875cac19bd6dc9f4ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:aca87e46f17d2b8c7899efea35e53a76e"><td class="memItemLeft" align="right" valign="top"><a id="aca87e46f17d2b8c7899efea35e53a76e"></a>
+<a class="el" href="classISMCTS_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_parent</b> = nullptr</td></tr>
+<tr class="separator:aca87e46f17d2b8c7899efea35e53a76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa82529383e08485e06497e15af35eeb"><td class="memItemLeft" align="right" valign="top"><a id="afa82529383e08485e06497e15af35eeb"></a>
+std::vector&lt; ChildPtr &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_children</b></td></tr>
+<tr class="separator:afa82529383e08485e06497e15af35eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad36c94e5ce442aa2171c4b070dc53cd4"><td class="memItemLeft" align="right" valign="top"><a id="ad36c94e5ce442aa2171c4b070dc53cd4"></a>
+const Move&#160;</td><td class="memItemRight" valign="bottom"><b>m_move</b></td></tr>
+<tr class="separator:ad36c94e5ce442aa2171c4b070dc53cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4afb34c580b74abb7a27ab3b6c7aa484"><td class="memItemLeft" align="right" valign="top"><a id="a4afb34c580b74abb7a27ab3b6c7aa484"></a>
+const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>m_playerJustMoved</b></td></tr>
+<tr class="separator:a4afb34c580b74abb7a27ab3b6c7aa484"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5669d9c69b65a9fbbd3fdf7f81cfe083"><td class="memItemLeft" align="right" valign="top"><a id="a5669d9c69b65a9fbbd3fdf7f81cfe083"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>m_visits</b> {0}</td></tr>
+<tr class="separator:a5669d9c69b65a9fbbd3fdf7f81cfe083"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -135,120 +170,6 @@ class ISMCTS::Node&lt; Move &gt;</h3>
 
 <p>The node is used to build the information tree that guides the algorithm. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="af970c588bd5bd9685a584e9ed2a2a62e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af970c588bd5bd9685a584e9ed2a2a62e">&#9670;&nbsp;</a></span>score()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classISMCTS_1_1Node.html">ISMCTS::Node</a>&lt; Move &gt;::score </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the reward score accumulated on sequences including this node. </p>
-
-</div>
-</div>
-<a id="abf9fee0ce2be6513b5b8df07e4a99be6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf9fee0ce2be6513b5b8df07e4a99be6">&#9670;&nbsp;</a></span>visits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classISMCTS_1_1Node.html">ISMCTS::Node</a>&lt; Move &gt;::visits </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the total number of visits to this node. </p>
-
-</div>
-</div>
-<a id="a85cff59fd35283606bdc4f2596df6324"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85cff59fd35283606bdc4f2596df6324">&#9670;&nbsp;</a></span>available()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classISMCTS_1_1Node.html">ISMCTS::Node</a>&lt; Move &gt;::available </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns the number of times this node was available for selection during a tree search. </p>
-
-</div>
-</div>
-<a id="a8d60fa03e2110e14903627027afd28a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d60fa03e2110e14903627027afd28a1">&#9670;&nbsp;</a></span>operator std::string()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classISMCTS_1_1Node.html">ISMCTS::Node</a>&lt; Move &gt;::operator std::string </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns a string containing information about this node, in the format "[M:(move) by (player), S/V/A: (score)/(visits)/(available)]". </p>
-
-</div>
-</div>
 <a id="a2ee18dd98760d875cac19bd6dc9f4ef1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2ee18dd98760d875cac19bd6dc9f4ef1">&#9670;&nbsp;</a></span>treeToString()</h2>
 
@@ -320,7 +241,7 @@ template&lt;class Move&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>include/ismcts/<a class="el" href="node_8h_source.html">node.h</a></li>
+<li>include/ismcts/tree/<a class="el" href="node_8h_source.html">node.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

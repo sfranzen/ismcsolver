@@ -123,10 +123,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:adb1baf617afe262f392fc65b773dc2ba"><td class="memTemplParams" colspan="2"><a id="adb1baf617afe262f392fc65b773dc2ba"></a>
+<tr class="memitem:ab1ca942ea872e32f62141f5255d5c763"><td class="memTemplParams" colspan="2"><a id="ab1ca942ea872e32f62141f5255d5c763"></a>
 template&lt;class Move &gt; </td></tr>
-<tr class="memitem:adb1baf617afe262f392fc65b773dc2ba"><td class="memTemplItemLeft" align="right" valign="top">static const Move &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>bestMove</b> (const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt;&gt; &amp;trees)</td></tr>
-<tr class="separator:adb1baf617afe262f392fc65b773dc2ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1ca942ea872e32f62141f5255d5c763"><td class="memTemplItemLeft" align="right" valign="top">static const Move &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>bestMove</b> (const std::vector&lt; NodePtr&lt; Move &gt;&gt; &amp;trees)</td></tr>
+<tr class="separator:ab1ca942ea872e32f62141f5255d5c763"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -134,6 +134,10 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:aa120ba6c4a1c4a98e43567f4e4b6ef5a inherit pub_types_classISMCTS_1_1ExecutionPolicy"><td class="memItemLeft" align="right" valign="top"><a id="aa120ba6c4a1c4a98e43567f4e4b6ef5a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>Duration</b> = std::chrono::duration&lt; double &gt;</td></tr>
 <tr class="separator:aa120ba6c4a1c4a98e43567f4e4b6ef5a inherit pub_types_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e699e8277c99e487824fca12bc8dd37 inherit pub_types_classISMCTS_1_1ExecutionPolicy"><td class="memTemplParams" colspan="2"><a id="a1e699e8277c99e487824fca12bc8dd37"></a>
+template&lt;class Move &gt; </td></tr>
+<tr class="memitem:a1e699e8277c99e487824fca12bc8dd37 inherit pub_types_classISMCTS_1_1ExecutionPolicy"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NodePtr</b> = typename <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt;::Ptr</td></tr>
+<tr class="separator:a1e699e8277c99e487824fca12bc8dd37 inherit pub_types_classISMCTS_1_1ExecutionPolicy"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>All iterations are executed by a single thread on a single tree. </p>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rootparallel',['RootParallel',['../classISMCTS_1_1RootParallel.html',1,'ISMCTS']]]
+  ['node',['Node',['../classISMCTS_1_1Node.html',1,'ISMCTS']]]
 ];

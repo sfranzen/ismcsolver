@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classstd_1_1vector.html" title=" " alt="" coords="5,5,144,47"/>
+<area shape="rect" id="node1" href="$classISMCTS_1_1Node.html" title="The node is used to build the information tree that guides the algorithm." alt="" coords="5,31,179,57"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1EXPNode.html" title="Node for the EXP3 tree policy." alt="" coords="228,5,427,32"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1UCBNode.html" title="Node for the UCB1 tree policy." alt="" coords="227,56,428,83"/>
 </map>

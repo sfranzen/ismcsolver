@@ -1,7 +1,5 @@
 <map id="ISMCTS::ExecutionPolicy" name="ISMCTS::ExecutionPolicy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,97,183,123"/>
-<area shape="rect" id="node2" href="$classISMCTS_1_1MOSolver.html" title=" " alt="" coords="231,5,439,47"/>
-<area shape="rect" id="node3" href="$classISMCTS_1_1RootParallel.html" title=" " alt="" coords="257,71,413,98"/>
-<area shape="rect" id="node4" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="261,122,408,149"/>
-<area shape="rect" id="node5" href="$classISMCTS_1_1SOSolver.html" title=" " alt="" coords="231,173,439,215"/>
+<area shape="rect" id="node1" title=" " alt="" coords="83,5,260,32"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1RootParallel.html" title=" " alt="" coords="5,80,161,107"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1Sequential.html" title="All iterations are executed by a single thread on a single tree." alt="" coords="186,80,333,107"/>
 </map>

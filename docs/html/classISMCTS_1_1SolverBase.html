@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ismcsolver: ISMCTS::SolverBase&lt; Move, TreePolicy &gt; Class Template Reference</title>
+<title>ismcsolver: ISMCTS::SolverBase&lt; Move &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -67,126 +67,102 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classISMCTS_1_1SolverBase-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">ISMCTS::SolverBase&lt; Move, TreePolicy &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">ISMCTS::SolverBase&lt; Move &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="solverbase_8h_source.html">ismcts/solverbase.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for ISMCTS::SolverBase&lt; Move, TreePolicy &gt;:</div>
+Inheritance diagram for ISMCTS::SolverBase&lt; Move &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classISMCTS_1_1SolverBase__inherit__graph.png" border="0" usemap="#ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_inherit__map" id="ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_inherit__map">
-<area shape="rect"  title="Interface shared by all algorithms." alt="" coords="132,5,287,47"/>
-<area shape="rect"  href="classISMCTS_1_1MOSolver.html" title=" " alt="" coords="5,95,197,136"/>
-<area shape="rect"  href="classISMCTS_1_1SOSolver.html" title=" " alt="" coords="222,95,413,136"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for ISMCTS::SolverBase&lt; Move, TreePolicy &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classISMCTS_1_1SolverBase__coll__graph.png" border="0" usemap="#ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_coll__map" id="ISMCTS_1_1SolverBase_3_01Move_00_01TreePolicy_01_4_coll__map">
-<area shape="rect"  title="Interface shared by all algorithms." alt="" coords="5,109,160,151"/>
-<area shape="rect"  href="structISMCTS_1_1TreePolicy.html" title=" " alt="" coords="8,5,157,47"/>
+<div class="center"><img src="classISMCTS_1_1SolverBase__inherit__graph.png" border="0" usemap="#ISMCTS_1_1SolverBase_3_01Move_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="ISMCTS_1_1SolverBase_3_01Move_01_4_inherit__map" id="ISMCTS_1_1SolverBase_3_01Move_01_4_inherit__map">
+<area shape="rect"  title="Interface shared by all algorithms." alt="" coords="139,5,293,47"/>
+<area shape="rect"  href="classISMCTS_1_1MOSolver.html" title=" " alt="" coords="5,95,205,121"/>
+<area shape="rect"  href="classISMCTS_1_1SOSolver.html" title=" " alt="" coords="229,95,427,121"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ab9a3fcd8f0c1758af4b6cdae8c2e8df5"><td class="memItemLeft" align="right" valign="top"><a id="ab9a3fcd8f0c1758af4b6cdae8c2e8df5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>NodePtr</b> = typename <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt;::Ptr</td></tr>
+<tr class="separator:ab9a3fcd8f0c1758af4b6cdae8c2e8df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46814edbd9ca96dfd79c5a650d0d497c"><td class="memItemLeft" align="right" valign="top"><a id="a46814edbd9ca96dfd79c5a650d0d497c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>EXP3</b> = <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a>&lt; <a class="el" href="classISMCTS_1_1EXPNode.html">EXPNode</a>&lt; Move &gt; &gt;</td></tr>
+<tr class="separator:a46814edbd9ca96dfd79c5a650d0d497c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0711ed7dcac8c37bfe3036d468d4527"><td class="memItemLeft" align="right" valign="top"><a id="ae0711ed7dcac8c37bfe3036d468d4527"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>UCB1</b> = <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a>&lt; <a class="el" href="classISMCTS_1_1UCBNode.html">UCBNode</a>&lt; Move &gt; &gt;</td></tr>
+<tr class="separator:ae0711ed7dcac8c37bfe3036d468d4527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1c656a60f31dcbfb35abf53f5b3a56ab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a1c656a60f31dcbfb35abf53f5b3a56ab">SolverBase</a> (const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;policy)</td></tr>
-<tr class="separator:a1c656a60f31dcbfb35abf53f5b3a56ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab38dca37072f67671609a76619d72162"><td class="memItemLeft" align="right" valign="top">virtual Move&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#ab38dca37072f67671609a76619d72162">operator()</a> (const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;rootState) const =0</td></tr>
-<tr class="separator:ab38dca37072f67671609a76619d72162"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae21baa9c8d603931839b71af8c37173d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#ae21baa9c8d603931839b71af8c37173d">setTreePolicy</a> (const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;policy)</td></tr>
-<tr class="separator:ae21baa9c8d603931839b71af8c37173d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a7a53cb9580202f33bf52851580b60e"><td class="memItemLeft" align="right" valign="top"><a id="a1a7a53cb9580202f33bf52851580b60e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SolverBase</b> (<a class="el" href="structISMCTS_1_1TreePolicy_3_01EXPNode_3_01Move_01_4_01_4.html">EXP3</a> &amp;&amp;expPolicy=<a class="el" href="structISMCTS_1_1TreePolicy_3_01EXPNode_3_01Move_01_4_01_4.html">EXP3</a>{}, <a class="el" href="structISMCTS_1_1TreePolicy_3_01UCBNode_3_01Move_01_4_01_4.html">UCB1</a> &amp;&amp;ucbPolicy=<a class="el" href="structISMCTS_1_1TreePolicy_3_01UCBNode_3_01Move_01_4_01_4.html">UCB1</a>{})</td></tr>
+<tr class="separator:a1a7a53cb9580202f33bf52851580b60e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e2e42374b8ca4454ce59f086597ec13"><td class="memItemLeft" align="right" valign="top">virtual Move&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a8e2e42374b8ca4454ce59f086597ec13">operator()</a> (const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;rootState) const =0</td></tr>
+<tr class="separator:a8e2e42374b8ca4454ce59f086597ec13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af40446009d959978c8bd5dc6676937d9"><td class="memItemLeft" align="right" valign="top"><a id="af40446009d959978c8bd5dc6676937d9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setEXPPolicy</b> (<a class="el" href="structISMCTS_1_1TreePolicy_3_01EXPNode_3_01Move_01_4_01_4.html">EXP3</a> &amp;&amp;policy)</td></tr>
+<tr class="separator:af40446009d959978c8bd5dc6676937d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2ee0a95f446aa6d473dcfaeee616665"><td class="memItemLeft" align="right" valign="top"><a id="ac2ee0a95f446aa6d473dcfaeee616665"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setUCBPolicy</b> (<a class="el" href="structISMCTS_1_1TreePolicy_3_01UCBNode_3_01Move_01_4_01_4.html">UCB1</a> &amp;&amp;policy)</td></tr>
+<tr class="separator:ac2ee0a95f446aa6d473dcfaeee616665"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a6cce2ac0cf54cec7c10bb9199b511f2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a6cce2ac0cf54cec7c10bb9199b511f2d">simulate</a> (<a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state) const</td></tr>
-<tr class="separator:a6cce2ac0cf54cec7c10bb9199b511f2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a429e6c4f0ec3e39fe45faf5a66ced8a5"><td class="memItemLeft" align="right" valign="top"><a id="a429e6c4f0ec3e39fe45faf5a66ced8a5"></a>
-const Move &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>randomMove</b> (const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt; &amp;moves) const</td></tr>
-<tr class="separator:a429e6c4f0ec3e39fe45faf5a66ced8a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cb14863f944150fbe1e7251a9a781e0"><td class="memItemLeft" align="right" valign="top"><a id="a3cb14863f944150fbe1e7251a9a781e0"></a>
+<tr class="memitem:a024ae06c4d6d818523acf9ec752f0ecc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a024ae06c4d6d818523acf9ec752f0ecc">simulate</a> (<a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state) const</td></tr>
+<tr class="separator:a024ae06c4d6d818523acf9ec752f0ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c392c0e7afe86749987ac3b215e88da"><td class="memItemLeft" align="right" valign="top"><a id="a8c392c0e7afe86749987ac3b215e88da"></a>
+<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>selectChild</b> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state, const std::vector&lt; Move &gt; &amp;moves) const</td></tr>
+<tr class="separator:a8c392c0e7afe86749987ac3b215e88da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57f6e1bc56557724c4866fe48bafd482"><td class="memItemLeft" align="right" valign="top"><a id="a57f6e1bc56557724c4866fe48bafd482"></a>
+const Move &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>randomMove</b> (const std::vector&lt; Move &gt; &amp;moves) const</td></tr>
+<tr class="separator:a57f6e1bc56557724c4866fe48bafd482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa673688e5b19d1f96e26647dd1bcd0e4"><td class="memItemLeft" align="right" valign="top"><a id="aa673688e5b19d1f96e26647dd1bcd0e4"></a>
 virtual std::mt19937 &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>prng</b> () const</td></tr>
-<tr class="separator:a3cb14863f944150fbe1e7251a9a781e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aa673688e5b19d1f96e26647dd1bcd0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa0a0abcde0c7de9877e6f99bfddd0d84"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#aa0a0abcde0c7de9877e6f99bfddd0d84">backPropagate</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state)</td></tr>
-<tr class="separator:aa0a0abcde0c7de9877e6f99bfddd0d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ae0c28ca2fa1a3b0fada4b6af7136f5"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a6ae0c28ca2fa1a3b0fada4b6af7136f5">selectNode</a> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt; &amp;moves)</td></tr>
-<tr class="separator:a6ae0c28ca2fa1a3b0fada4b6af7136f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
-<tr class="memitem:ad3b971668a760ad7e71c554e4069f7aa"><td class="memItemLeft" align="right" valign="top"><a id="ad3b971668a760ad7e71c554e4069f7aa"></a>
-<a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_treePolicy</b></td></tr>
-<tr class="separator:ad3b971668a760ad7e71c554e4069f7aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71a04f072bf6d79d8cb12dc86f9f260c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a71a04f072bf6d79d8cb12dc86f9f260c">backPropagate</a> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state)</td></tr>
+<tr class="separator:a71a04f072bf6d79d8cb12dc86f9f260c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c6f3793ea9a304608e4d4e1e8f01fea"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classISMCTS_1_1SolverBase.html#a1c6f3793ea9a304608e4d4e1e8f01fea">selectNode</a> (const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const std::vector&lt; Move &gt; &amp;moves)</td></tr>
+<tr class="separator:a1c6f3793ea9a304608e4d4e1e8f01fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe7ed4a52efc40552c6f437ea3a50d08"><td class="memItemLeft" align="right" valign="top"><a id="afe7ed4a52efc40552c6f437ea3a50d08"></a>
+static <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>addChild</b> (<a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *node, const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state, const Move &amp;move)</td></tr>
+<tr class="separator:afe7ed4a52efc40552c6f437ea3a50d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad826f1ceef5f67871e614ae49fa8bbdb"><td class="memItemLeft" align="right" valign="top"><a id="ad826f1ceef5f67871e614ae49fa8bbdb"></a>
+static NodePtr&#160;</td><td class="memItemRight" valign="bottom"><b>newNode</b> (const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;state)</td></tr>
+<tr class="separator:ad826f1ceef5f67871e614ae49fa8bbdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class Move, class TreePolicy = UCB1&lt;Move&gt;&gt;<br />
-class ISMCTS::SolverBase&lt; Move, TreePolicy &gt;</h3>
+<div class="textblock"><h3>template&lt;class Move&gt;<br />
+class ISMCTS::SolverBase&lt; Move &gt;</h3>
 
 <p>Interface shared by all algorithms. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1c656a60f31dcbfb35abf53f5b3a56ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c656a60f31dcbfb35abf53f5b3a56ab">&#9670;&nbsp;</a></span>SolverBase()</h2>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a8e2e42374b8ca4454ce59f086597ec13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e2e42374b8ca4454ce59f086597ec13">&#9670;&nbsp;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
+template&lt;class Move &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::<a class="el" href="classISMCTS_1_1SolverBase.html">SolverBase</a> </td>
+          <td class="memname">virtual Move <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::operator() </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;&#160;</td>
-          <td class="paramname"><em>policy</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">policy</td><td>The tree policy to use in the selection stage of the search. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab38dca37072f67671609a76619d72162"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab38dca37072f67671609a76619d72162">&#9670;&nbsp;</a></span>operator()()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual Move <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::operator() </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
           <td class="paramname"><em>rootState</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -200,55 +176,25 @@ template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
 <p>Search operator.</p>
 <dl class="section return"><dt>Returns</dt><dd>The most promising move from the given state. </dd></dl>
 
-<p>Implemented in <a class="el" href="classISMCTS_1_1MOSolver.html#a98392792493349e37c5c3d1568ceb6ea">ISMCTS::MOSolver&lt; Move, ExecutionPolicy, TreePolicy &gt;</a>, and <a class="el" href="classISMCTS_1_1SOSolver.html#a341a82827d492aebe9a2e0965c1feb90">ISMCTS::SOSolver&lt; Move, ExecutionPolicy, TreePolicy &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classISMCTS_1_1MOSolver.html#a38c1d99b2bbf01bec0257b31ac747242">ISMCTS::MOSolver&lt; Move, _ExecutionPolicy &gt;</a>, and <a class="el" href="classISMCTS_1_1SOSolver.html#acb0c980c109927f1747f484f484680c0">ISMCTS::SOSolver&lt; Move, _ExecutionPolicy &gt;</a>.</p>
 
 </div>
 </div>
-<a id="ae21baa9c8d603931839b71af8c37173d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae21baa9c8d603931839b71af8c37173d">&#9670;&nbsp;</a></span>setTreePolicy()</h2>
+<a id="a024ae06c4d6d818523acf9ec752f0ecc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a024ae06c4d6d818523acf9ec752f0ecc">&#9670;&nbsp;</a></span>simulate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
+template&lt;class Move &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::setTreePolicy </td>
+          <td class="memname">void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::simulate </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &amp;&#160;</td>
-          <td class="paramname"><em>policy</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Set the tree policy for future searches. </p>
-
-</div>
-</div>
-<a id="a6cce2ac0cf54cec7c10bb9199b511f2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6cce2ac0cf54cec7c10bb9199b511f2d">&#9670;&nbsp;</a></span>simulate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::simulate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
           <td class="paramname"><em>state</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -264,19 +210,19 @@ template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
 
 </div>
 </div>
-<a id="aa0a0abcde0c7de9877e6f99bfddd0d84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0a0abcde0c7de9877e6f99bfddd0d84">&#9670;&nbsp;</a></span>backPropagate()</h2>
+<a id="a71a04f072bf6d79d8cb12dc86f9f260c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71a04f072bf6d79d8cb12dc86f9f260c">&#9670;&nbsp;</a></span>backPropagate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
+template&lt;class Move &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::backPropagate </td>
+          <td class="memname">static void <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::backPropagate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
           <td class="paramname"><em>node</em>, </td>
@@ -284,7 +230,7 @@ template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structISMCTS_1_1Game.html">Game</a>&lt; Move &gt; &amp;&#160;</td>
           <td class="paramname"><em>state</em>&#160;</td>
         </tr>
         <tr>
@@ -304,19 +250,19 @@ template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
 
 </div>
 </div>
-<a id="a6ae0c28ca2fa1a3b0fada4b6af7136f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ae0c28ca2fa1a3b0fada4b6af7136f5">&#9670;&nbsp;</a></span>selectNode()</h2>
+<a id="a1c6f3793ea9a304608e4d4e1e8f01fea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c6f3793ea9a304608e4d4e1e8f01fea">&#9670;&nbsp;</a></span>selectNode()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
+template&lt;class Move &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move, <a class="el" href="structISMCTS_1_1TreePolicy.html">TreePolicy</a> &gt;::selectNode </td>
+          <td class="memname">static bool <a class="el" href="classISMCTS_1_1SolverBase.html">ISMCTS::SolverBase</a>&lt; Move &gt;::selectNode </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classISMCTS_1_1Node.html">Node</a>&lt; Move &gt; *&#160;</td>
           <td class="paramname"><em>node</em>, </td>
@@ -324,7 +270,7 @@ template&lt;class Move , class TreePolicy  = UCB1&lt;Move&gt;&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classstd_1_1vector.html">std::vector</a>&lt; Move &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; Move &gt; &amp;&#160;</td>
           <td class="paramname"><em>moves</em>&#160;</td>
         </tr>
         <tr>

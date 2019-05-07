@@ -1,0 +1,5 @@
+<map id="ISMCTS::Node&lt; Move &gt;" name="ISMCTS::Node&lt; Move &gt;">
+<area shape="rect" id="node1" title="The node is used to build the information tree that guides the algorithm." alt="" coords="130,5,303,32"/>
+<area shape="rect" id="node2" href="$classISMCTS_1_1EXPNode.html" title="Node for the EXP3 tree policy." alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node3" href="$classISMCTS_1_1UCBNode.html" title="Node for the UCB1 tree policy." alt="" coords="228,80,429,107"/>
+</map>
