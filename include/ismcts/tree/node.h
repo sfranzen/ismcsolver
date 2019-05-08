@@ -18,7 +18,6 @@ namespace ISMCTS
 template<class Move>
 struct Game;
 
-/// The node is used to build the information tree that guides the algorithm.
 template<class Move>
 class Node
 {
@@ -65,8 +64,6 @@ public:
 
     virtual operator std::string() const { return ""; }
 
-    /// Returns a string representation of the entire (sub)tree starting at the
-    /// the given node.
     std::string treeToString(unsigned int indent = 0) const
     {
         std::string s {indentSelf(indent)};
@@ -75,7 +72,6 @@ public:
         return s;
     }
 
-    /// Writes the string representation of a node to an output stream.
     friend std::ostream &operator<<(std::ostream &out, const Node &node)
     {
         return out << std::string(node);

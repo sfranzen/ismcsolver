@@ -15,13 +15,7 @@
 
 namespace ISMCTS
 {
-/**
- * Execution policy base class
- *
- * Manages the information for the solver that is related to its execution. It
- * stores the number of threads the algorithm should be executed on and the
- * length of the search, either as a number of iterations or a length of time.
- */
+
 class ExecutionPolicy
 {
 public:
@@ -43,33 +37,28 @@ public:
 
     virtual ~ExecutionPolicy() = default;
 
-    /// Return number of iterations to perform per search
     std::size_t iterationCount() const
     {
         return m_iterCount;
     }
 
-    /// Set policy to a fixed number of iterations
     void setIterationCount(std::size_t count)
     {
         m_iterCount = count / m_numThreads;
         m_iterTime = Duration::zero();
     }
 
-    /// Return the time each search should take
     Duration iterationTime() const
     {
         return m_iterTime;
     }
 
-    /// Set policy to a fixed length of time
     void setIterationTime(Duration time)
     {
         m_iterTime = time;
         m_iterCount = 0;
     }
 
-    /// Return number of execution threads
     unsigned int numThreads() const
     {
         return m_numThreads;
@@ -81,7 +70,6 @@ private:
     unsigned int m_numThreads;
 };
 
-/// All iterations are executed by a single thread on a single tree.
 class Sequential : public ExecutionPolicy {
 public:
     using ExecutionPolicy::ExecutionPolicy;
@@ -99,8 +87,6 @@ public:
     }
 };
 
-/// Each system thread executes a portion of the iterations on its own tree;
-/// results of its root nodes are combined afterwards.
 class RootParallel : public ExecutionPolicy {
 public:
     RootParallel(std::size_t iterationCount)
@@ -111,8 +97,8 @@ public:
         : ExecutionPolicy{iterationTime, std::thread::hardware_concurrency()}
     {}
 
-    /// Return best move from a number of trees holding results for the same
-    /// player
+    // Return best move from a number of trees holding results for the same
+    // player
     template<class Move>
     static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
     {
@@ -128,7 +114,6 @@ private:
     template<class Move>
     using VisitMap = std::map<Move, unsigned int>;
 
-    /// Map each unique move to its total number of visits
     template<class Move>
     static VisitMap<Move> compileVisitCounts(const std::vector<NodePtr<Move>> &trees)
     {

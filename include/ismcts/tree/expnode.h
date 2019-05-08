@@ -16,7 +16,6 @@
 namespace ISMCTS
 {
 
-/// Node for the EXP3 tree policy
 template<class Move>
 class EXPNode : public Node<Move>
 {
@@ -32,8 +31,6 @@ public:
             m_score += terminalState.getResult(this->m_playerJustMoved) / m_probability;
     }
 
-    /// Returns a string containing information about this node, in the format
-    /// "[M:(move) by (player), V/S/P: (visits)/(score)/(probability)]".
     operator std::string() const override
     {
         std::ostringstream oss;

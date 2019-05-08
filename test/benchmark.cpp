@@ -38,11 +38,12 @@ public:
     template<class Game, class G1, class G2>
     void run(Game &&game, G1 &&generator1, G2 &&generator2)
     {
-        m_p0Scores.resize(m_numGames, 0);
+        m_p0Scores.resize(m_numGames);
         m_numCalls.fill(0);
         m_times.fill(Duration::zero());
-        for (auto &score : m_p0Scores)
-            score = playGame(game, generator1, generator2);
+        std::generate(m_p0Scores.begin(), m_p0Scores.end(), [&]{
+            return playGame(std::forward<Game>(game), std::forward<G1>(generator1), std::forward<G2>(generator2));
+        });
         report();
     };
 
@@ -84,8 +85,8 @@ private:
                 ++ret.first->second;
         }
 
-        auto f = cout.flags();
-        auto p = cout.precision();
+        auto flags = cout.flags();
+        auto precision = cout.precision();
         auto countWidth = std::floor(1 + std::log10(m_numGames));
 
         cout << separator << "First player score stats after " << m_numGames << " games:\n";
@@ -93,7 +94,7 @@ private:
             cout << setw(3) << setprecision(2) << pair.first << ": " << setw(countWidth) << pair.second
                 << " times (" << setprecision(3) << pair.second * 100. / m_numGames << "%)\n";
 
-        cout << setiosflags(f) << setprecision(p);
+        cout << setiosflags(flags) << setprecision(precision);
         for (unsigned p : {0, 1}) {
             const auto time_us = duration_cast<microseconds>(m_times[p]).count();
             cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << time_us

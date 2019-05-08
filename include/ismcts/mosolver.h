@@ -20,14 +20,7 @@
 
 namespace ISMCTS
 {
-/**
- * Multiple observer solver class template.
- *
- * The multiple observer solvers implement the MO-ISMCTS algorithm, which builds
- * a separate tree for each player and searches these simultaneously. This makes
- * it applicable to games with partially observable moves, i.e. where players
- * cannot always fully observe the other players' or teams' moves.
- */
+
 template<class Move, class _ExecutionPolicy = Sequential>
 class MOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
@@ -35,29 +28,18 @@ public:
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
 
-    /// The search trees for the current observer, one per player
+    // The search trees for the current observer, one per player
     using TreeMap = std::map<unsigned int, NodePtr>;
-    /// The set of tree lists, one for each thread
-    using TreeSet = std::vector<TreeMap>;
 
-    /**
-     * Constructs a solver for a game with the given number of players that will
-     * iterate the given number of times per search operation.
-     *
-     * @copydetails SolverBase::SolverBase
-     */
+    // The set of tree maps, one for each thread
+    using TreeList = std::vector<TreeMap>;
+
 explicit MOSolver(std::size_t iterationCount = 1000)
         : SolverBase<Move>{}
         , _ExecutionPolicy(iterationCount)
         , m_trees{numThreads()}
     {}
 
-    /**
-     * Constructs a solver for a game with the given number of players that will
-     * iterate for the given duration per search operation.
-     *
-     * @copydetails SolverBase::SolverBase
-     */
 explicit MOSolver(std::chrono::duration<double> iterationTime)
         : SolverBase<Move>{}
         , _ExecutionPolicy(iterationTime)
@@ -74,7 +56,6 @@ explicit MOSolver(std::chrono::duration<double> iterationTime)
         for (auto &t : threads)
             t.join();
 
-        // Gather results for the current player from each thread
         std::vector<NodePtr> currentPlayerTrees(numThreads());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeMap &set){
             return set[rootState.currentPlayer()];
@@ -82,11 +63,7 @@ explicit MOSolver(std::chrono::duration<double> iterationTime)
         return MOSolver::template bestMove<Move>(currentPlayerTrees);
     }
 
-    /// Return the decision trees resulting from the most recent call to
-    /// operator(). The resulting vector contains one vector of root nodes for
-    /// each thread used for the search, where each node represents a different
-    /// player's information tree.
-    TreeSet &currentTrees() const
+    TreeList &currentTrees() const
     {
         return m_trees;
     }
@@ -94,7 +71,7 @@ explicit MOSolver(std::chrono::duration<double> iterationTime)
 protected:
     using NodePtrMap = std::map<unsigned int, Node<Move>*>;
 
-    mutable TreeSet m_trees;
+    mutable TreeList m_trees;
 
     void iterate(TreeMap &trees, const Game<Move> &state) const
     {
@@ -113,7 +90,6 @@ protected:
         }
     }
 
-    /// Traverse a single sequence of moves
     void search(TreeMap &trees, const Game<Move> &rootState) const
     {
         NodePtrMap roots;
@@ -126,12 +102,6 @@ protected:
         backPropagate(roots, *randomState);
     }
 
-    /**
-     * Selection stage
-     *
-     * Descend all trees until a node is reached that has unexplored moves, or
-     * is a terminal node (no more moves available).
-     */
     void select(NodePtrMap &nodes, Game<Move> &state) const
     {
         const auto validMoves = state.validMoves();
@@ -154,12 +124,6 @@ protected:
         return pos < children.end() ? pos->get() : MOSolver::addChild(node, state, move);
     }
 
-    /**
-     * Expansion stage
-     *
-     * Choose a random unexplored move, add it to the children of all current
-     * nodes and select these new nodes.
-     */
     void expand(NodePtrMap &nodes, Game<Move> &state) const
     {
         const auto player = state.currentPlayer();

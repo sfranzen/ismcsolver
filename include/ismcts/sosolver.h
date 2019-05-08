@@ -19,42 +19,20 @@
 
 namespace ISMCTS
 {
-/**
- * Single observer solver class template.
- *
- * The single observer solvers implement the SO-ISMCTS algorithm, which searches
- * a single tree corresponding to the information sets of the current player in
- * the root game state. They should be used for games where the players can see
- * each other's moves, because the algorithm treats opponent moves as fully
- * observable.
- */
+
 template<class Move, class _ExecutionPolicy = Sequential>
 class SOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
 public:
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
-
-    /// The search trees for the current player, one per thread
     using TreeList = std::vector<NodePtr>;
 
-    /**
-     * Constructs a solver that will iterate the given number of times per
-     * search operation.
-     *
-     * @copydetails SolverBase::SolverBase
-     */
     explicit SOSolver(std::size_t iterationCount = 1000)
         : SolverBase<Move>{}
         , _ExecutionPolicy{iterationCount}
     {}
 
-    /**
-     * Constructs a solver that will iterate for the given duration per search
-     * operation.
-     *
-     * @copydetails SolverBase::SolverBase
-     */
     explicit SOSolver(std::chrono::duration<double> iterationTime)
         : SolverBase<Move>{}
         , _ExecutionPolicy{iterationTime}
@@ -75,9 +53,7 @@ public:
         return SOSolver::template bestMove<Move>(m_trees);
     }
 
-    /// Return the decision tree(s) resulting from the most recent call to
-    /// operator(). The resulting vector contains one root node for each thread
-    /// used for the search.
+
     TreeList &currentTrees() const
     {
         return m_trees;
@@ -103,7 +79,6 @@ protected:
         }
     }
 
-    /// Traverse a single sequence of moves
     void search(Node<Move> *rootNode, const Game<Move> &rootState) const
     {
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
@@ -113,12 +88,6 @@ protected:
         SOSolver::backPropagate(rootNode, *randomState);
     }
 
-    /**
-     * Selection stage
-     *
-     * Descend the tree until a node is reached that has unexplored moves, or
-     * is a terminal node (no more moves available).
-     */
     void select(Node<Move> *&node, Game<Move> &state) const
     {
         const auto validMoves = state.validMoves();
@@ -129,12 +98,6 @@ protected:
         }
     }
 
-    /**
-     * Expansion stage
-     *
-     * Choose a random unexplored move, add it to the children of the current
-     * node and select this new node.
-     */
     void expand(Node<Move> *&node, Game<Move> &state) const
     {
         const auto untriedMoves = node->untriedMoves(state.validMoves());
