@@ -26,7 +26,7 @@ public:
 
     void updateData(const Game<Move> &terminalState) override
     {
-        if (this->m_parent != nullptr)
+        if (this->m_parent)
             m_score += terminalState.getResult(this->m_playerJustMoved);
     }
 

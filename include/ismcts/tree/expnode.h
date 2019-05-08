@@ -23,27 +23,13 @@ class EXPNode : public Node<Move>
 public:
     using Node<Move>::Node;
 
+    void setProbability(double p) { m_probability = p; }
+    double score() const { return m_score; }
+
     void updateData(const Game<Move> &terminalState) override
     {
-        if (this->m_parent != nullptr)
+        if (this->m_parent)
             m_score += terminalState.getResult(this->m_playerJustMoved) / m_probability;
-    }
-
-    /// Update, and return as a vector, all the selection probabilities of the
-    /// given nodes.
-    static std::vector<double> probabilities(const std::vector<EXPNode*> &nodes)
-    {
-        const auto K = nodes.size();
-        std::vector<double> probabilities(K);
-
-        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](EXPNode *node){
-            const auto gamma = std::min(1., coefficient(K, node->m_visits));
-            const auto eta = gamma / K;
-            const auto p = eta + (1 - gamma) / sumDifferences(nodes, node->m_score, eta);
-            node->m_probability = p;
-            return p;
-        });
-        return probabilities;
     }
 
     /// Returns a string containing information about this node, in the format
@@ -59,26 +45,6 @@ public:
 private:
     double m_probability {1};
     double m_score {0};
-
-    /// Return the coefficient used in determining "gamma" for the selection
-    /// probability.
-    /// @param K The number of available choices.
-    /// @param maxReward The maximum reward that could have been obtained from
-    ///     selecting this node every time.
-    static double coefficient(std::size_t K, double maxReward)
-    {
-        static const double factor { 1 / (std::exp(1) - 1) };
-        return std::sqrt(K * std::log(K) * factor / maxReward );
-    }
-
-    /// Sum the exponential differences of the scores of the nodes with the
-    /// given score, using the factor eta.
-    static double sumDifferences(const std::vector<EXPNode*> &nodes, double score, double eta)
-    {
-        return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const EXPNode *node){
-            return sum + std::exp(eta * (node->m_score - score));
-        });
-    }
 };
 
 } // ISMCTS

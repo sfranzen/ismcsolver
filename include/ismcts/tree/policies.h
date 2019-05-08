@@ -30,9 +30,46 @@ struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
     Node *operator()(const std::vector<Node*> &nodes) const override
     {
         static thread_local std::mt19937 prng {std::random_device{}()};
-        const auto weights = Node::probabilities(nodes);
+        const auto weights = probabilities(nodes);
         std::discrete_distribution<std::size_t> dist {weights.begin(), weights.end()};
         return nodes[dist(prng)];
+    }
+
+private:
+    /// Update, and return as a vector, all the selection probabilities of the
+    /// given nodes.
+    static std::vector<double> probabilities(const std::vector<Node*> &nodes)
+    {
+        const auto K = nodes.size();
+        std::vector<double> probabilities(K);
+        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](Node *node){
+            const auto gamma = std::min(1., coefficient(K, node->visits()));
+            const auto eta = gamma / K;
+            const auto p = eta + (1 - gamma) / sumDifferences(nodes, node->score(), eta);
+            node->setProbability(p);
+            return p;
+        });
+        return probabilities;
+    }
+
+    /// Return the coefficient used in determining "gamma" for the selection
+    /// probability.
+    /// @param K The number of available choices.
+    /// @param maxReward The maximum reward that could have been obtained from
+    ///     selecting this node every time.
+    static double coefficient(std::size_t K, double maxReward)
+    {
+        static const double factor { 1 / (std::exp(1) - 1) };
+        return std::sqrt(K * std::log(K) * factor / maxReward);
+    }
+
+    /// Sum the exponential differences of the scores of the nodes with the
+    /// given score, using the factor eta.
+    static double sumDifferences(const std::vector<Node*> &nodes, double score, double eta)
+    {
+        return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const Node *node){
+            return sum + std::exp(eta * (node->score() - score));
+        });
     }
 };
 
