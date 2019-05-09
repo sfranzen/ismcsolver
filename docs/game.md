@@ -1,5 +1,4 @@
 ---
-layout: page
 title: Game interfaces
 ---
 
@@ -12,6 +11,7 @@ template<class Move> struct Game;
 ```
 This class represents a game that has fully observable moves, in other words, players can always see the actions done by the other players.
 ### Member types
+
 | Type      | Definition                |
 |:----------|:--------------------------|
 |`Ptr`      |`std::unique_ptr<Game>`    |

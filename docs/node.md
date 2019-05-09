@@ -1,12 +1,28 @@
----
-layout: page
-title: Node classes
----
+# Nodes and trees
+Although nodes are not primarily intended for use outside the algorithm, the `currentTrees` function provided by the solvers returns the `std::shared_ptr<Node<Move>>` instances holding the root nodes of the generated information trees. These may be used to query information about the tree using the functions below.
 
-# Node classes
-Although nodes are not primarily intended for use outside the algorithm, the `currentTrees` function provided by the solvers returns the `std::shared_ptr<Node<Move>>` instances holding the root nodes of the generated information trees. These may be used to query information about the node using the functions below.
+The structure of the tree is simple, with each node holding a raw pointer to its parent and a vector of `std::unique_ptr<Node>` storing zero or more children.
+
+### Member types
+
+| Type      | Definition                |
+|:----------|:--------------------------|
+|`Ptr`      |`std::shared_ptr<Node>`    |
+|`ChildPtr` |`std::unique_ptr<Node>`    |
 
 ### Member functions
+```cpp
+Node *parent() const;
+```
+Returns a pointer to the parent node or `nullptr` if this node is a root.
+
+---
+```cpp
+const std::vector<ChildPtr> &children() const;
+```
+Returns the children of this node.
+
+---
 ```cpp
 virtual operator std::string() const;
 ```

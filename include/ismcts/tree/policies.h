@@ -15,13 +15,6 @@
 namespace ISMCTS
 {
 
-/**
- * EXP3: Exponential weight algorithm for Exploitation and Exploration
- *
- * The EXP3 method uses and updates a non-uniform distribution of probabilities
- * over the nodes to select one, skewing this distribution over time in favour
- * of nodes with better expected rewards.
- */
 template<class Move>
 struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
 {
@@ -36,8 +29,6 @@ struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
     }
 
 private:
-    /// Update, and return as a vector, all the selection probabilities of the
-    /// given nodes.
     static std::vector<double> probabilities(const std::vector<Node*> &nodes)
     {
         const auto K = nodes.size();
@@ -52,19 +43,12 @@ private:
         return probabilities;
     }
 
-    /// Return the coefficient used in determining "gamma" for the selection
-    /// probability.
-    /// @param K The number of available choices.
-    /// @param maxReward The maximum reward that could have been obtained from
-    ///     selecting this node every time.
     static double coefficient(std::size_t K, double maxReward)
     {
         static const double factor { 1 / (std::exp(1) - 1) };
         return std::sqrt(K * std::log(K) * factor / maxReward);
     }
 
-    /// Sum the exponential differences of the scores of the nodes with the
-    /// given score, using the factor eta.
     static double sumDifferences(const std::vector<Node*> &nodes, double score, double eta)
     {
         return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const Node *node){
@@ -73,13 +57,6 @@ private:
     }
 };
 
-/**
- * UCB: Upper Confidence Bound tree policy algorithm
- *
- * UCB uses a combination of the node statistics to select a node, using the
- * configurable exploration parameter to set the balance of exploitation of
- * known robust moves against exploration of infrequently visited nodes.
- */
 template<class Move>
 struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
 {

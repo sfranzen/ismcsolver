@@ -11,12 +11,6 @@
 namespace ISMCTS
 {
 
-/**
- * Tree policy interface class
- *
- * ITreePolicy represents the abstract operation of a tree policy: choosing one
- * of the of the compatible child nodes.
- */
 template<class Node>
 struct ITreePolicy
 {
@@ -24,7 +18,8 @@ struct ITreePolicy
 };
 
 template<class Node>
-struct TreePolicy {};
+struct TreePolicy : public ITreePolicy<Node>
+{};
 
 } // ISMCTS
 

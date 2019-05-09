@@ -1,7 +1,4 @@
----
-layout: page
-title: Solvers
----
+
 
 # Solver class templates
 The class templates listed below form the main point of interaction with this library. All that is generally needed to use the algorithms is a solver instance and a compatible game. The tree search algorithm is then invoked on any game state by calling the solver's `operator()`. Both solvers share the same interface, which is described further below.
@@ -26,21 +23,22 @@ template<
 ```
 The multiple observer solvers implement the MO-ISMCTS algorithm, which builds a separate tree for each player and searches these simultaneously. This makes it applicable to games with partially observable moves, i.e. where players cannot always fully observe the other players' or teams' moves.
 
-### Member types
-| Type      | Definition                        |
-|:----------|:----------------------------------|
-|`Duration` | `std::chrono::duration<double>`   |
-|`EXP3`     | `TreePolicy<EXPNode<Move>>`       |
-|`UCB1`     | `TreePolicy<UCBNode<Move>>`       |
-|`NodePtr`  | `std::shared_ptr<Node<Move>>`     |
-|*SOSolver:*|                                   |
-|`TreeList` | `std::vector<NodePtr> `           |
-|*MOsolver:*|                                   |
-|`TreeMap`  | `std::map<unsigned int, NodePtr>` |
-|`TreeList` | `std::vector<TreeMap>`            |
+## Member types
 
-### Member functions
-#### Constructors
+| Type      | Definition                            |
+|:----------|:--------------------------------------|
+|`Duration` | `std::chrono::duration<double>`       |
+|`EXP3`     | `ISMCTS::TreePolicy<EXPNode<Move>>`   |
+|`UCB1`     | `ISMCTS::TreePolicy<UCBNode<Move>>`   |
+|`NodePtr`  | `std::shared_ptr<Node<Move>>`         |
+|*SOSolver:*|                                       |
+|`TreeList` | `std::vector<NodePtr> `               |
+|*MOsolver:*|                                       |
+|`TreeMap`  | `std::map<unsigned int, NodePtr>`     |
+|`TreeList` | `std::vector<TreeMap>`                |
+
+## Member functions
+### Constructors
 In this section, the name `SolverType` refers to either of the two solvers.
 
 ```cpp
@@ -54,13 +52,13 @@ explicit SolverType(Duration iterationTime);
 ```
 Constructs a solver that will iterate for the given duration per search operation.
 
-#### Search
+### Search
 ```cpp
 Move operator()(const Game<Move> &rootState) const;
 ```
 Returns the most promising move from the given game state.
 
-#### Modifiers
+### Modifiers
 ```cpp
 void setIterationCount(std::size_t count);
 ```
@@ -84,7 +82,7 @@ void setUCBPolicy(UCB1 &&policy);
 ```
 Sets a new UCB1 tree policy, which is applied at nodes where the game uses sequential moves.
 
-#### Observers
+### Observers
 ```cpp
 std::size_t iterationCount() const;
 ```
