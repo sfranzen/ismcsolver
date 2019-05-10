@@ -3,15 +3,18 @@ dist: xenial
 compiler:
   - clang
   - gcc
-env:
-  - CTEST_OUTPUT_ON_FAILURE=1
 script: 
-  - mkdir build && cd build
-  - cmake -DCODE_COVERAGE=ON ..
-  - make -j$(nproc) && make test
+  - cmake -S . -B build
+  - cmake -DCODE_COVERAGE=ON --build build
+  - cmake -E build ctest -V --output-on-failure
 addons:
   apt:
-    packages: lcov
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+     - lcov
+     - gcc-6
+     - g++-6
 after_success:
   # Create lcov report
   # capture coverage info
