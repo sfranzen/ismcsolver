@@ -4,8 +4,9 @@ compiler:
   - clang
   - gcc
 script:
-  - cmake -S .. -B .
-  - cmake -DCODE_COVERAGE=ON --build .
+  - pwd
+  - cmake -S . -B build
+  - cmake -DCODE_COVERAGE=ON --build build
   - ctest -V --output-on-failure
 addons:
   apt:
