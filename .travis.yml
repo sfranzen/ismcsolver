@@ -4,9 +4,9 @@ compiler:
   - clang
   - gcc
 script:
-  - cmake -S . -B build
-  - cmake -DCODE_COVERAGE=ON --build build
-  - ctest -V --output-on-failure
+  - mkdir -p build && cd build
+  - cmake -DCODE_COVERAGE=ON ..
+  - make && make test
 addons:
   apt:
     sources:
@@ -15,7 +15,6 @@ addons:
       - lcov
       - gcc-6
       - g++-6
-      - cmake
 after_success:
   # Create lcov report
   # capture coverage info
