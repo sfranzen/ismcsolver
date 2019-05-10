@@ -3,9 +3,8 @@ dist: xenial
 compiler:
   - clang
   - gcc
-script: 
-  - cmake -E make_directory build
-  - cmake -S . -B build
+script:
+  - cmake -S .. -B .
   - cmake -DCODE_COVERAGE=ON --build build
   - cmake -E chdir build ctest -V --output-on-failure
 addons:
@@ -13,9 +12,9 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-     - lcov
-     - gcc-6
-     - g++-6
+      - lcov
+      - gcc-6
+      - g++-6
 after_success:
   # Create lcov report
   # capture coverage info
