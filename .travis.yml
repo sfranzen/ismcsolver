@@ -4,6 +4,8 @@ compiler:
   - clang
   - gcc
 script:
+  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
   - mkdir -p build && cd build
   - cmake -DCODE_COVERAGE=ON ..
   - make && make test
