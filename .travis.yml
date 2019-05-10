@@ -15,8 +15,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - lcov
-      - gcc-6
-      - g++-6
+      - gcc-7
+      - g++-7
 after_success:
   # Create lcov report
   # capture coverage info
