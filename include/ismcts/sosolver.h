@@ -21,10 +21,10 @@ namespace ISMCTS
 {
 
 template<class Move, class _ExecutionPolicy = Sequential>
-class SOSolver : public SolverBase<Move>, public _ExecutionPolicy
+class SOSolver : public SolverBase<Move, _ExecutionPolicy>
 {
 public:
-    using _ExecutionPolicy::_ExecutionPolicy;
+    using SolverBase<Move,_ExecutionPolicy>::SolverBase;
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
     using TreeList = std::vector<NodePtr>;

@@ -22,10 +22,10 @@ namespace ISMCTS
 {
 
 template<class Move, class _ExecutionPolicy = Sequential>
-class MOSolver : public SolverBase<Move>, public _ExecutionPolicy
+class MOSolver : public SolverBase<Move,_ExecutionPolicy>
 {
 public:
-    using _ExecutionPolicy::_ExecutionPolicy;
+    using SolverBase<Move,_ExecutionPolicy>::SolverBase;
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
 
@@ -127,7 +127,7 @@ protected:
     static void backPropagate(NodePtrMap &nodes, const Game<Move> &state)
     {
         for (auto node : nodes)
-            SolverBase<Move>::backPropagate(node.second, state);
+            SolverBase<Move,_ExecutionPolicy>::backPropagate(node.second, state);
     }
 
     void setupTrees(const Game<Move> &rootState) const

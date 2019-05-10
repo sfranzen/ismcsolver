@@ -6,6 +6,7 @@
 #ifndef ISMCTS_SOLVERBASE_H
 #define ISMCTS_SOLVERBASE_H
 
+#include "execution.h"
 #include "game.h"
 #include "tree/nodetypes.h"
 #include "tree/policies.h"
@@ -16,10 +17,11 @@
 namespace ISMCTS
 {
 
-template<class Move>
-class SolverBase
+template<class Move, class _ExecutionPolicy>
+class SolverBase : public _ExecutionPolicy
 {
 public:
+    using _ExecutionPolicy::_ExecutionPolicy;
     using NodePtr = typename Node<Move>::Ptr;
     using EXP3 = TreePolicy<EXPNode<Move>>;
     using UCB1 = TreePolicy<UCBNode<Move>>;
