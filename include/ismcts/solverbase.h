@@ -24,11 +24,6 @@ public:
     using EXP3 = TreePolicy<EXPNode<Move>>;
     using UCB1 = TreePolicy<UCBNode<Move>>;
 
-    explicit SolverBase(EXP3 &&expPolicy = EXP3{}, UCB1 &&ucbPolicy = UCB1{})
-        : m_EXP3{expPolicy}
-        , m_UCB1{ucbPolicy}
-    {}
-
     virtual ~SolverBase() = default;
 
     virtual Move operator()(const Game<Move> &rootState) const = 0;
@@ -68,20 +63,23 @@ protected:
 
     static Node<Move> *addChild(Node<Move> *node, const Game<Move> &state, const Move &move)
     {
+        using ChildPtr = typename Node<Move>::ChildPtr;
+        ChildPtr child;
         if (state.currentMoveSimultaneous())
-            return node->addChild(new EXPNode<Move>{move, state.currentPlayer()});
+            child = std::make_unique<EXPNode<Move>>(move, state.currentPlayer());
         else
-            return node->addChild(new UCBNode<Move>{move, state.currentPlayer()});
+            child = std::make_unique<UCBNode<Move>>(move, state.currentPlayer());
+        return node->addChild(std::move(child));
     }
 
     Node<Move> *selectChild(const Node<Move> *node, const Game<Move> &state, const std::vector<Move> &moves) const
     {
         if (state.currentMoveSimultaneous()) {
             const auto children = legalChildren<EXPNode<Move>>(node, moves);
-            return this->m_EXP3(children);
+            return m_EXP3(children);
         } else {
             const auto children = legalChildren<UCBNode<Move>>(node, moves);
-            return this->m_UCB1(children);
+            return m_UCB1(children);
         }
     }
 
@@ -106,8 +104,8 @@ protected:
     }
 
 private:
-    EXP3 m_EXP3;
-    UCB1 m_UCB1;
+    EXP3 m_EXP3 {};
+    UCB1 m_UCB1 {};
 
     template<class Type>
     static std::vector<Type*> legalChildren(const Node<Move> *node, const std::vector<Move> &legalMoves)
@@ -115,7 +113,7 @@ private:
         std::vector<Type*> legalChildren;
         legalChildren.reserve(legalMoves.size());
         for(auto &c : node->children()) {
-            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](const Move &move){ return c->move() == move; }))
+            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](const auto &move){ return c->move() == move; }))
                 legalChildren.emplace_back(static_cast<Type*>(c.get()));
         }
         return legalChildren;

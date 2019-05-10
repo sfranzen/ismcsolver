@@ -33,7 +33,7 @@ private:
     {
         const auto K = nodes.size();
         std::vector<double> probabilities(K);
-        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](Node *node){
+        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](auto *node){
             const auto gamma = std::min(1., coefficient(K, node->visits()));
             const auto eta = gamma / K;
             const auto p = eta + (1 - gamma) / sumDifferences(nodes, node->score(), eta);
@@ -51,7 +51,7 @@ private:
 
     static double sumDifferences(const std::vector<Node*> &nodes, double score, double eta)
     {
-        return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const Node *node){
+        return std::accumulate(nodes.begin(), nodes.end(), 0, [=](auto sum, const auto *node){
             return sum + std::exp(eta * (node->score() - score));
         });
     }
@@ -70,7 +70,7 @@ struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
     {
         for (auto &node : nodes)
             node->markAvailable();
-        return *std::max_element(nodes.begin(), nodes.end(), [&](const Node *a, const Node *b){
+        return *std::max_element(nodes.begin(), nodes.end(), [&](const auto *a, const auto *b){
             return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
         });
     }

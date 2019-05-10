@@ -24,19 +24,10 @@ template<class Move, class _ExecutionPolicy = Sequential>
 class SOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
 public:
+    using _ExecutionPolicy::_ExecutionPolicy;
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
     using TreeList = std::vector<NodePtr>;
-
-    explicit SOSolver(std::size_t iterationCount = 1000)
-        : SolverBase<Move>{}
-        , _ExecutionPolicy{iterationCount}
-    {}
-
-    explicit SOSolver(std::chrono::duration<double> iterationTime)
-        : SolverBase<Move>{}
-        , _ExecutionPolicy{iterationTime}
-    {}
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {

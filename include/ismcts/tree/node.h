@@ -37,11 +37,11 @@ public:
     const Move &move() const { return m_move; }
     unsigned int visits() const { return m_visits; }
 
-    Node *addChild(Node *child)
+    Node *addChild(ChildPtr child)
     {
         child->m_parent = this;
-        m_children.emplace_back(ChildPtr{child});
-        return child;
+        m_children.emplace_back(std::move(child));
+        return m_children.back().get();
     }
 
     virtual void update(const Game<Move> &terminalState) final
@@ -56,8 +56,8 @@ public:
     {
         std::vector<Move> untried;
         untried.reserve(legalMoves.size());
-        std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](const Move &m){
-            return std::none_of(m_children.begin(), m_children.end(), [&](const ChildPtr &c){ return c->m_move == m; });
+        std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](const auto &m){
+            return std::none_of(m_children.begin(), m_children.end(), [&](const auto &c){ return c->m_move == m; });
         });
         return untried;
     }

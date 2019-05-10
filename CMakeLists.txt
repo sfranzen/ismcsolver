@@ -5,11 +5,11 @@
 project(ismcsolver)
 
 cmake_minimum_required(VERSION 3.12.0)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 find_package(Threads REQUIRED)
 add_library(ismcsolver INTERFACE)
-target_compile_features(ismcsolver INTERFACE cxx_std_11)
+target_compile_features(ismcsolver INTERFACE cxx_std_14)
 target_link_libraries(ismcsolver INTERFACE Threads::Threads)
 target_include_directories(ismcsolver INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

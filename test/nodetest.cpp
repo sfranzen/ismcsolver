@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE("Node instantiation", "[node]", UCBNode<Card>, EXPNode<Card>)
     }
     SECTION("Non-default constructor") {
         TestType parent;
-        auto node = parent.addChild(new TestType{testMove, testPlayer});
+        auto node = parent.addChild(std::make_unique<TestType>(testMove, testPlayer));
 
         CHECK(node->parent() == &parent);
         CHECK(node->move() == testMove);
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE("Adding children", "[node]", UCBNode<Card>, EXPNode<Card>)
     TestType root;
     Node<Card>* child {nullptr};
 
-    CHECK_NOTHROW([&]{ child = root.addChild(new TestType{testMove, testPlayer}); }());
+    CHECK_NOTHROW([&]{ child = root.addChild(std::make_unique<TestType>(testMove, testPlayer)); }());
     REQUIRE(root.children().size() == 1);
     CHECK(child->move() == testMove);
     CHECK(child == root.children().front().get());
@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("Finding untried moves", "[node]", UCBNode<int>, EXPNode<int>
     SECTION("After expanding available moves") {
         while (legalMoves.size() > 0) {
             auto move = --legalMoves.end();
-            root.addChild(new TestType{*move, testPlayer});
+            root.addChild(std::make_unique<TestType>(*move, testPlayer));
             legalMoves.erase(move);
             REQUIRE(root.untriedMoves(legalMoves) == legalMoves);
         }

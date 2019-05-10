@@ -25,6 +25,7 @@ template<class Move, class _ExecutionPolicy = Sequential>
 class MOSolver : public SolverBase<Move>, public _ExecutionPolicy
 {
 public:
+    using _ExecutionPolicy::_ExecutionPolicy;
     using _ExecutionPolicy::numThreads;
     using NodePtr = typename Node<Move>::Ptr;
 
@@ -33,18 +34,6 @@ public:
 
     // The set of tree maps, one for each thread
     using TreeList = std::vector<TreeMap>;
-
-explicit MOSolver(std::size_t iterationCount = 1000)
-        : SolverBase<Move>{}
-        , _ExecutionPolicy(iterationCount)
-        , m_trees{numThreads()}
-    {}
-
-explicit MOSolver(std::chrono::duration<double> iterationTime)
-        : SolverBase<Move>{}
-        , _ExecutionPolicy(iterationTime)
-        , m_trees{numThreads()}
-    {}
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
@@ -57,8 +46,8 @@ explicit MOSolver(std::chrono::duration<double> iterationTime)
             t.join();
 
         std::vector<NodePtr> currentPlayerTrees(numThreads());
-        std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](TreeMap &set){
-            return set[rootState.currentPlayer()];
+        std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](auto &map){
+            return map[rootState.currentPlayer()];
         });
         return MOSolver::template bestMove<Move>(currentPlayerTrees);
     }
@@ -71,7 +60,7 @@ explicit MOSolver(std::chrono::duration<double> iterationTime)
 protected:
     using NodePtrMap = std::map<unsigned int, Node<Move>*>;
 
-    mutable TreeList m_trees;
+    mutable TreeList m_trees {numThreads()};
 
     void iterate(TreeMap &trees, const Game<Move> &state) const
     {
@@ -118,9 +107,8 @@ protected:
 
     static Node<Move> *findOrAddChild(Node<Move> *node, Game<Move> &state, const Move &move)
     {
-        using Child = typename Node<Move>::ChildPtr;
         const auto &children = node->children();
-        const auto pos = std::find_if(children.begin(), children.end(), [&](const Child &c){ return c->move() == move; });
+        const auto pos = std::find_if(children.begin(), children.end(), [&](const auto &c){ return c->move() == move; });
         return pos < children.end() ? pos->get() : MOSolver::addChild(node, state, move);
     }
 

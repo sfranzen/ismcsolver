@@ -130,7 +130,7 @@ std::vector<Card> KnockoutWhist::validMoves() const
 
     const auto leadCard = m_currentTrick.front().second;
     Hand cardsInSuit;
-    std::copy_if(hand.begin(), hand.end(), std::back_inserter(cardsInSuit), [&](const Card &c){ return c.suit == leadCard.suit; });
+    std::copy_if(hand.begin(), hand.end(), std::back_inserter(cardsInSuit), [&](const auto &c){ return c.suit == leadCard.suit; });
     return cardsInSuit.empty() ? hand : cardsInSuit;
 }
 
@@ -162,7 +162,7 @@ void KnockoutWhist::finishTrick()
 void KnockoutWhist::finishRound()
 {
     m_players.erase(
-        std::remove_if(m_players.begin(), m_players.end(), [&](Player p){ return m_tricksTaken[p] == 0; }),
+        std::remove_if(m_players.begin(), m_players.end(), [&](auto p){ return m_tricksTaken[p] == 0; }),
         m_players.end()
     );
     if (m_players.size() > 1) {
@@ -197,14 +197,14 @@ KnockoutWhist::Player KnockoutWhist::trickWinner() const
 KnockoutWhist::Player KnockoutWhist::roundWinner() const
 {
     auto players = m_players;
-    std::sort(players.begin(), players.end(), [&](Player p1, Player p2){
+    std::sort(players.begin(), players.end(), [&](auto p1, auto p2){
         return m_tricksTaken[p1] > m_tricksTaken[p2];
     });
     const auto maxTricksTaken = m_tricksTaken[players[0]];
-    const unsigned playersTied = 1 + std::count_if(players.begin() + 1, players.end(), [&](Player p){
+    const std::size_t playersTied = 1 + std::count_if(players.begin() + 1, players.end(), [&](auto p){
         return m_tricksTaken[p] == maxTricksTaken;
     });
-    std::uniform_int_distribution<unsigned> randPlayer {0, playersTied - 1};
+    std::uniform_int_distribution<std::size_t> randPlayer {0, playersTied - 1};
     return players[randPlayer(prng())];
 }
 

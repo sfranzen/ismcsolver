@@ -23,7 +23,7 @@ const auto iterationTime {milliseconds(5)};
 
 // In this state, player 1 has to choose between move 2, ending in a draw, and
 // move 0, ending in a loss
-struct P1DrawOrLose : public MnkGame 
+struct P1DrawOrLose : public MnkGame
 {
     P1DrawOrLose()
         : MnkGame{}
@@ -87,7 +87,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
 
     auto solver = GENERATE(TestType{iterationCount}, TestType{iterationTime});
     SECTION(calls % 2 == 0 ? "By iteration count" : "By iteration time") {
-        CHECK_NOTHROW([&](){ move = solver(game); }());
+        CHECK_NOTHROW([&]{ move = solver(game); }());
         REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
     }
     ++calls;

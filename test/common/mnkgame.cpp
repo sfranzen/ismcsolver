@@ -95,7 +95,7 @@ bool MnkGame::isWinningMove(int move, Player player) const
         {-1, 1} // ascending diagonal
     } };
 
-    return std::any_of(strides.begin(), strides.end(), [&](const Stride &stride) {
+    return std::any_of(strides.begin(), strides.end(), [&](const auto &stride) {
         return hasWinningSequence(move, stride, player);
     });
 }
