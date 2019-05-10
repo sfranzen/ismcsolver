@@ -6,7 +6,6 @@
 #ifndef ISMCTS_SOLVERBASE_H
 #define ISMCTS_SOLVERBASE_H
 
-#include "execution.h"
 #include "game.h"
 #include "tree/nodetypes.h"
 #include "tree/policies.h"

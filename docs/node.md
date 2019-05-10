@@ -24,6 +24,18 @@ Returns the children of this node.
 
 ---
 ```cpp
+std::size_t depth() const;
+```
+Returns the depth of the node, which is the number of edges (steps) to the root node.
+
+---
+```cpp
+std::size_t height() const;
+```
+Returns the height of the node, which is the length of the path to its most distant descendant.
+
+---
+```cpp
 virtual operator std::string() const;
 ```
 Returns a string representation of the node. The output depends on the actual node type and is as follows:

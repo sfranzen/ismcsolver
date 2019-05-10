@@ -36,6 +36,8 @@ public:
     const std::vector<ChildPtr> &children() const { return m_children; }
     const Move &move() const { return m_move; }
     unsigned int visits() const { return m_visits; }
+    std::size_t depth() const { return depth(0); }
+    std::size_t height() const { return height(0); }
 
     Node *addChild(ChildPtr child)
     {
@@ -91,6 +93,20 @@ private:
         for (unsigned int i = 0; i < indent; ++i)
             s += "| ";
         return s + std::string(*this) + "\n";
+    }
+
+    std::size_t depth(std::size_t start) const
+    {
+        return m_parent ? m_parent->depth(start + 1) : start;
+    }
+
+    std::size_t height(std::size_t start) const
+    {
+        if (m_children.empty())
+            return start;
+        std::vector<std::size_t> heights(m_children.size());
+        std::transform(m_children.begin(), m_children.end(), heights.begin(), [=](auto &c){ return c->height(start + 1); });
+        return *std::max_element(heights.begin(), heights.end());
     }
 };
 

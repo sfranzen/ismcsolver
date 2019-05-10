@@ -25,8 +25,8 @@ class SOSolver : public SolverBase<Move, _ExecutionPolicy>
 {
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
+    using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
     using _ExecutionPolicy::numThreads;
-    using NodePtr = typename Node<Move>::Ptr;
     using TreeList = std::vector<NodePtr>;
 
     virtual Move operator()(const Game<Move> &rootState) const override
@@ -44,8 +44,7 @@ public:
         return SOSolver::template bestMove<Move>(m_trees);
     }
 
-
-    TreeList &currentTrees() const
+    TreeList currentTrees() const
     {
         return m_trees;
     }

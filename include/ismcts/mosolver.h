@@ -26,8 +26,8 @@ class MOSolver : public SolverBase<Move,_ExecutionPolicy>
 {
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
+    using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
     using _ExecutionPolicy::numThreads;
-    using NodePtr = typename Node<Move>::Ptr;
 
     // The search trees for the current observer, one per player
     using TreeMap = std::map<unsigned int, NodePtr>;
@@ -52,7 +52,7 @@ public:
         return MOSolver::template bestMove<Move>(currentPlayerTrees);
     }
 
-    TreeList &currentTrees() const
+    TreeList currentTrees() const
     {
         return m_trees;
     }
@@ -60,7 +60,7 @@ public:
 protected:
     using NodePtrMap = std::map<unsigned int, Node<Move>*>;
 
-    mutable TreeList m_trees {numThreads()};
+    mutable TreeList m_trees;
 
     void iterate(TreeMap &trees, const Game<Move> &state) const
     {
@@ -133,12 +133,13 @@ protected:
     void setupTrees(const Game<Move> &rootState) const
     {
         const auto &state = dynamic_cast<const POMGame<Move>&>(rootState);
-
-        for (auto &tree : m_trees) {
-            tree.clear();
+        m_trees.resize(numThreads());
+        std::generate(m_trees.begin(), m_trees.end(), [&]{
+            TreeMap map;
             for (auto player : state.players())
-                tree.emplace(player, MOSolver::newNode(rootState));
-        }
+                map.emplace(player, MOSolver::newNode(state));
+            return map;
+        });
     }
 };
 
