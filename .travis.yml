@@ -5,8 +5,8 @@ compiler:
   - gcc
 script:
   - cmake -S .. -B .
-  - cmake -DCODE_COVERAGE=ON --build build
-  - cmake -E chdir build ctest -V --output-on-failure
+  - cmake -DCODE_COVERAGE=ON --build .
+  - ctest -V --output-on-failure
 addons:
   apt:
     sources:
