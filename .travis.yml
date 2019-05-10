@@ -4,9 +4,10 @@ compiler:
   - clang
   - gcc
 script: 
+  - cmake -E make_directory build
   - cmake -S . -B build
   - cmake -DCODE_COVERAGE=ON --build build
-  - cmake -E build ctest -V --output-on-failure
+  - cmake -E chdir build ctest -V --output-on-failure
 addons:
   apt:
     sources:
