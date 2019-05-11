@@ -35,6 +35,7 @@ public:
     Node *parent() const { return m_parent; }
     const std::vector<ChildPtr> &children() const { return m_children; }
     const Move &move() const { return m_move; }
+    unsigned int player() const { return m_playerJustMoved; }
     unsigned int visits() const { return m_visits; }
     std::size_t depth() const { return depth(0); }
     std::size_t height() const { return height(0); }
@@ -79,14 +80,13 @@ public:
         return out << std::string(node);
     }
 
-protected:
+private:
     Node *m_parent = nullptr;
     std::vector<ChildPtr> m_children;
     const Move m_move;
     const unsigned int m_playerJustMoved;
     unsigned int m_visits {0};
 
-private:
     std::string indentSelf(unsigned int indent) const
     {
         std::string s;

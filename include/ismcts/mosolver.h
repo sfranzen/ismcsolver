@@ -60,8 +60,6 @@ public:
 protected:
     using NodePtrMap = std::map<unsigned int, Node<Move>*>;
 
-    mutable TreeList m_trees;
-
     void iterate(TreeMap &trees, const Game<Move> &state) const
     {
         const auto iterations = this->iterationCount();
@@ -129,6 +127,9 @@ protected:
         for (auto node : nodes)
             SolverBase<Move,_ExecutionPolicy>::backPropagate(node.second, state);
     }
+
+private:
+    mutable TreeList m_trees;
 
     void setupTrees(const Game<Move> &rootState) const
     {

@@ -25,8 +25,8 @@ public:
 
     void updateData(const Game<Move> &terminalState) override
     {
-        if (this->m_parent)
-            m_score += terminalState.getResult(this->m_playerJustMoved);
+        if (this->parent())
+            m_score += terminalState.getResult(this->player());
     }
 
     void markAvailable()
@@ -36,14 +36,14 @@ public:
 
     double ucbScore(double exploration) const
     {
-        return m_score / this->m_visits + exploration * std::sqrt(std::log(m_available) / this->m_visits);
+        return m_score / this->visits() + exploration * std::sqrt(std::log(m_available) / this->visits());
     }
 
     operator std::string() const override
     {
         std::ostringstream oss;
-        oss << "[M:" << this->m_move << " by " << this->m_playerJustMoved << ", S/V/A: ";
-        oss << std::fixed << std::setprecision(1) << this->m_visits << "/" << m_score << "/" << m_available << "]";
+        oss << "[M:" << this->move() << " by " << this->player() << ", S/V/A: ";
+        oss << std::fixed << std::setprecision(1) << this->visits() << "/" << m_score << "/" << m_available << "]";
         return oss.str();
     }
 

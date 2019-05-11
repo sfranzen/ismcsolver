@@ -35,8 +35,6 @@ public:
         setIterationTime(iterationTime);
     }
 
-    virtual ~ExecutionPolicy() = default;
-
     std::size_t iterationCount() const
     {
         return m_iterCount;
@@ -88,11 +86,11 @@ public:
 
 class RootParallel : public ExecutionPolicy {
 public:
-    RootParallel(std::size_t iterationCount)
+    explicit RootParallel(std::size_t iterationCount = 1000)
         : ExecutionPolicy{iterationCount, std::thread::hardware_concurrency()}
     {}
 
-    RootParallel(Duration iterationTime)
+    explicit RootParallel(Duration iterationTime)
         : ExecutionPolicy{iterationTime, std::thread::hardware_concurrency()}
     {}
 

@@ -50,8 +50,6 @@ public:
     }
 
 protected:
-    mutable TreeList m_trees;
-
     void iterate(Node<Move> &root, const Game<Move> &state) const
     {
         const auto iterations = this->iterationCount();
@@ -97,6 +95,9 @@ protected:
             state.doMove(move);
         }
     }
+
+private:
+    mutable TreeList m_trees;
 };
 
 } // ISMCTS

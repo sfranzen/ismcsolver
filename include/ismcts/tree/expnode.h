@@ -27,15 +27,15 @@ public:
 
     void updateData(const Game<Move> &terminalState) override
     {
-        if (this->m_parent)
-            m_score += terminalState.getResult(this->m_playerJustMoved) / m_probability;
+        if (this->parent())
+            m_score += terminalState.getResult(this->player()) / m_probability;
     }
 
     operator std::string() const override
     {
         std::ostringstream oss;
-        oss << "[M:" << this->m_move << " by " << this->m_playerJustMoved << ", V/S/P: " << std::fixed << std::setprecision(1);
-        oss << this->m_visits << "/" << m_score << "/" << std::setprecision(2) << m_probability << "]";
+        oss << "[M:" << this->move() << " by " << this->player() << ", V/S/P: " << std::fixed << std::setprecision(1);
+        oss << this->visits() << "/" << m_score << "/" << std::setprecision(2) << m_probability << "]";
         return oss.str();
     }
 

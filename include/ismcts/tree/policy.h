@@ -14,6 +14,7 @@ namespace ISMCTS
 template<class Node>
 struct ITreePolicy
 {
+    virtual ~ITreePolicy() = default;
     virtual Node *operator()(const std::vector<Node*> &nodes) const = 0;
 };
 
