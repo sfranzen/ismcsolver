@@ -1,22 +1,31 @@
 language: cpp
 dist: xenial
-compiler:
-  - clang
-  - gcc
+matrix:
+  include:
+    # GCC 7
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    # Clang - default version on Xenial suffices
+    - os: linux
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++"
+before_install:
+  - eval "${MATRIX_EVAL}"
 script:
-  - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
-  - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
   - mkdir -p build && cd build
   - cmake -DCODE_COVERAGE=ON ..
   - make && make test
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
       - lcov
-      - gcc-7
-      - g++-7
 after_success:
   # Create lcov report
   # capture coverage info
