@@ -53,8 +53,6 @@ public:
         updateData(terminalState);
     }
 
-    virtual void updateData(const Game<Move> &terminalState) = 0;
-
     std::vector<Move> untriedMoves(const std::vector<Move> &legalMoves) const
     {
         std::vector<Move> untried;
@@ -86,6 +84,8 @@ private:
     const Move m_move;
     const unsigned int m_playerJustMoved;
     unsigned int m_visits {0};
+
+    virtual void updateData(const Game<Move> &terminalState) = 0;
 
     std::string indentSelf(unsigned int indent) const
     {
