@@ -122,3 +122,16 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]"
     SolverTester tester {numGames};
     REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
 }
+
+TEST_CASE("Speed", "[SOSolver]")
+{
+    SolverTester tester {50};
+    SECTION("Sequential") {
+        SOSolver<Card> seq {iterationCount};
+        tester.run(KnockoutWhist{2}, seq, seq);
+    }
+    SECTION("RootParallel") {
+        SOSolver<Card, RootParallel> par {iterationCount};
+        tester.run(KnockoutWhist{2}, par, par);
+    }
+}

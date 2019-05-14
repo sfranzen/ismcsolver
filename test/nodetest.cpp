@@ -12,44 +12,40 @@
 namespace
 {
 using namespace ISMCTS;
-const Card testMove {Card::Ace, Card::Spades};
-const unsigned int testPlayer {0};
+constexpr Card testMove {Card::Ace, Card::Spades};
+constexpr unsigned int testPlayer {1};
 }
 
-TEMPLATE_TEST_CASE("Node instantiation", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("Constructor", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
-    SECTION("Default constructor") {
-        TestType node;
+    TestType node;
 
-        CHECK(node.parent() == nullptr);
-        CHECK(node.move() == Card{});
-        CHECK(node.visits() == 0);
-        REQUIRE(node.children().empty());
-    }
-    SECTION("Non-default constructor") {
-        TestType parent;
-        auto node = parent.addChild(std::make_unique<TestType>(testMove, testPlayer));
-
-        CHECK(node->parent() == &parent);
-        CHECK(node->move() == testMove);
-        CHECK(node->visits() == 0);
-        REQUIRE(node->children().empty());
-    }
+    CHECK(node.parent() == nullptr);
+    CHECK(node.children().empty());
+    CHECK(node.move() == Card{});
+    CHECK(node.player() == 0);
+    CHECK(node.visits() == 0);
+    CHECK(node.depth() == 0);
+    CHECK(node.height() == 0);
+    REQUIRE(std::string(node) != "");
 }
 
-TEMPLATE_TEST_CASE("Adding children", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("addChild", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     TestType root;
     Node<Card>* child {nullptr};
 
     CHECK_NOTHROW([&]{ child = root.addChild(std::make_unique<TestType>(testMove, testPlayer)); }());
-    REQUIRE(root.children().size() == 1);
+    CHECK(child->parent() == &root);
     CHECK(child->move() == testMove);
-    CHECK(child == root.children().front().get());
-    REQUIRE(child->parent() == &root);
+    CHECK(child->player() == testPlayer);
+    CHECK(child->depth() == 1);
+    CHECK(root.height() == 1);
+    REQUIRE(root.children().size() == 1);
+    REQUIRE(child == root.children().front().get());
 }
 
-TEMPLATE_TEST_CASE("Updating node statistics", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("update", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     TestType node {testMove, testPlayer};
     KnockoutWhist game;
@@ -58,7 +54,7 @@ TEMPLATE_TEST_CASE("Updating node statistics", "[node]", UCBNode<Card>, EXPNode<
     REQUIRE(node.visits() == 1);
 }
 
-TEMPLATE_TEST_CASE("Finding untried moves", "[node]", UCBNode<int>, EXPNode<int>)
+TEMPLATE_TEST_CASE("untriedMoves", "[node]", UCBNode<int>, EXPNode<int>)
 {
     TestType root;
     std::vector<int> legalMoves(10);
