@@ -17,15 +17,12 @@ matrix:
       env:
         - MATRIX_EVAL="CC=clang && CXX=clang++"
 before_install:
+  - sudo apt-get install -y lcov
   - eval "${MATRIX_EVAL}"
 script:
   - mkdir -p build && cd build
   - cmake -DCODE_COVERAGE=ON ..
   - make && make test
-addons:
-  apt:
-    packages:
-      - lcov
 after_success:
   # Create lcov report
   # capture coverage info
