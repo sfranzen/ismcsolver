@@ -15,7 +15,6 @@
 #include <memory>
 #include <vector>
 #include <thread>
-#include <chrono>
 
 namespace ISMCTS
 {

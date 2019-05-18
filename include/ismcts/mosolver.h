@@ -16,7 +16,6 @@
 #include <vector>
 #include <map>
 #include <thread>
-#include <chrono>
 
 namespace ISMCTS
 {
@@ -60,18 +59,6 @@ public:
 
 protected:
     using NodePtrMap = std::map<unsigned int, Node<Move>*>;
-
-    void iterate(TreeMap &trees, const Game<Move> &state) const
-    {
-        thread_local auto func = [&]{ search(trees, state); };
-        if (this->iterationCount() > 0) {
-            static std::atomic_size_t counter;
-            counter = this->iterationCount() * numThreads();
-            executeFor(counter, func);
-        } else {
-            executeFor(this->iterationTime(), func);
-        }
-    }
 
     void search(TreeMap &trees, const Game<Move> &rootState) const
     {

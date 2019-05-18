@@ -9,10 +9,10 @@
 #include "tree/node.h"
 #include "utility.h"
 
+#include <memory>
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <chrono>
 #include <thread>
 #include <atomic>
 #include <cmath>
@@ -116,6 +116,7 @@ class Sequential : public ExecutionPolicy {
 public:
     using ExecutionPolicy::ExecutionPolicy;
 
+protected:
     template<class Move>
     static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
     {
@@ -138,6 +139,7 @@ public:
         : ExecutionPolicy{iterationTime, std::thread::hardware_concurrency()}
     {}
 
+protected:
     // Return best move from a number of trees holding results for the same
     // player
     template<class Move>
