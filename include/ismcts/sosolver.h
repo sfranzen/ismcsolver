@@ -32,12 +32,12 @@ public:
     virtual Move operator()(const Game<Move> &rootState) const override
     {
         std::vector<std::thread> threads(numThreads());
-        m_trees = TreeList(numThreads());
-        for (auto &t : m_trees)
-            t = SOSolver::newNode(rootState);
+        m_trees.resize(numThreads());
+        std::generate(m_trees.begin(), m_trees.end(), [&]{ return SOSolver::newNode(rootState); });
 
-        for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&SOSolver::iterate, this, std::ref(*m_trees[t]), std::ref(rootState));
+        std::transform(m_trees.begin(), m_trees.end(), threads.begin(), [&](auto &node){
+            return this->launch([&]{ search(node.get(), rootState); });
+        });
         for (auto &t : threads)
             t.join();
 
@@ -50,23 +50,6 @@ public:
     }
 
 protected:
-    void iterate(Node<Move> &root, const Game<Move> &state) const
-    {
-        const auto iterations = this->iterationCount();
-        if (iterations > 0) {
-            for (std::size_t i {0}; i < iterations; ++i)
-                search(&root, state);
-        } else {
-            auto duration = this->iterationTime();
-            while (duration.count() > 0) {
-                using namespace std::chrono;
-                const auto start = high_resolution_clock::now();
-                search(&root, state);
-                duration -= high_resolution_clock::now() - start;
-            }
-        }
-    }
-
     void search(Node<Move> *rootNode, const Game<Move> &rootState) const
     {
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());

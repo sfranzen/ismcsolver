@@ -46,7 +46,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
     SECTION("By iteration count") {
         TestType solver {iterationCount};
         CHECK(solver.iterationTime() == Duration::zero());
-        REQUIRE(solver.iterationCount() == iterationCount / solver.numThreads());
+        REQUIRE(solver.iterationCount() == iterationCount);
     }
 
     SECTION("By iteration time") {
@@ -66,7 +66,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
         solver.setIterationCount(newIterationCount);
 
         CHECK(solver.iterationTime() == Duration::zero());
-        REQUIRE(solver.iterationCount() == newIterationCount / solver.numThreads());
+        REQUIRE(solver.iterationCount() == newIterationCount);
     }
     SECTION("Modifying iteration time") {
         const auto newIterationTime = 2 * iterationTime;
@@ -85,9 +85,9 @@ TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
     const auto validMoves = game.validMoves();
     Card move;
 
-    auto solver = GENERATE(TestType{iterationCount}, TestType{iterationTime});
+    auto solver = GENERATE(std::make_shared<TestType>(iterationCount), std::make_shared<TestType>(iterationTime));
     SECTION(calls % 2 == 0 ? "By iteration count" : "By iteration time") {
-        CHECK_NOTHROW([&]{ move = solver(game); }());
+        CHECK_NOTHROW([&]{ move = (*solver)(game); }());
         REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
     }
     ++calls;

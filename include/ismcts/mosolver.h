@@ -40,8 +40,9 @@ public:
         std::vector<std::thread> threads(numThreads());
         setupTrees(rootState);
 
-        for (std::size_t t = 0; t < numThreads(); ++t)
-            threads[t] = std::thread(&MOSolver::iterate, this, std::ref(m_trees[t]), std::ref(rootState));
+        std::transform(m_trees.begin(), m_trees.end(), threads.begin(), [&](auto &map){
+            return this->launch([&]{ search(map, rootState); });
+        });
         for (auto &t : threads)
             t.join();
 
@@ -62,18 +63,13 @@ protected:
 
     void iterate(TreeMap &trees, const Game<Move> &state) const
     {
-        const auto iterations = this->iterationCount();
-        if (iterations > 0) {
-            for (std::size_t i {0}; i < iterations; ++i)
-                search(trees, state);
+        thread_local auto func = [&]{ search(trees, state); };
+        if (this->iterationCount() > 0) {
+            static std::atomic_size_t counter;
+            counter = this->iterationCount() * numThreads();
+            executeFor(counter, func);
         } else {
-            auto duration = this->iterationTime();
-            while (duration.count() > 0) {
-                using namespace std::chrono;
-                const auto start = high_resolution_clock::now();
-                search(trees, state);
-                duration -= high_resolution_clock::now() - start;
-            }
+            executeFor(this->iterationTime(), func);
         }
     }
 

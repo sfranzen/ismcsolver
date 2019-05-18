@@ -7,11 +7,15 @@
 #define ISMCTS_EXECUTION_H
 
 #include "tree/node.h"
+#include "utility.h"
 
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <chrono>
 #include <thread>
+#include <atomic>
+#include <cmath>
 
 namespace ISMCTS
 {
@@ -24,16 +28,19 @@ public:
     using NodePtr = typename Node<Move>::Ptr;
 
     explicit ExecutionPolicy(std::size_t iterationCount = 1000, unsigned int numThreads = 1)
-        : m_numThreads{numThreads}
     {
+        setThreadCount(numThreads);
         setIterationCount(iterationCount);
     }
 
     explicit ExecutionPolicy(Duration iterationTime, unsigned int numThreads = 1)
-        : m_numThreads{numThreads}
     {
+        setThreadCount(numThreads);
         setIterationTime(iterationTime);
     }
+
+    ExecutionPolicy(const ExecutionPolicy &) = delete;
+    ExecutionPolicy &operator=(const ExecutionPolicy &) = delete;
 
     std::size_t iterationCount() const
     {
@@ -42,8 +49,14 @@ public:
 
     void setIterationCount(std::size_t count)
     {
-        m_iterCount = count / m_numThreads;
+        m_iterCount = count;
         m_iterTime = Duration::zero();
+        if (m_numThreads == 1)
+            m_chunkSize = count;
+        else
+            // Increase chunk size with number of threads and iterations to
+            // reduce contention on m_counter
+            m_chunkSize = std::max(std::size_t(5), count * m_numThreads / 800);
     }
 
     Duration iterationTime() const
@@ -62,10 +75,41 @@ public:
         return m_numThreads;
     }
 
+protected:
+    template<class Callable>
+    std::thread launch(Callable &&f) const
+    {
+        if (m_iterCount > 0) {
+            setCounter();
+            return std::thread{[&,f]{
+                executeFor(m_counter, m_chunkSize, f);
+                m_isCounterSet = false;
+            }};
+        } else {
+            return std::thread{[&,f]{ executeFor(m_iterTime, f); }};
+        }
+    }
+
 private:
     std::size_t m_iterCount;
     Duration m_iterTime;
     unsigned int m_numThreads;
+    unsigned int m_chunkSize {1};
+    mutable std::atomic_size_t m_counter;
+    mutable std::atomic_bool m_isCounterSet {false};
+
+    void setThreadCount(unsigned int count)
+    {
+        m_numThreads = std::max(count, 1u);
+    }
+
+    void setCounter() const
+    {
+        if (m_isCounterSet)
+            return;
+        m_counter = m_iterCount;
+        m_isCounterSet = true;
+    }
 };
 
 class Sequential : public ExecutionPolicy {
