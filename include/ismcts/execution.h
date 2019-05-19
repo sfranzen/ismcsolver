@@ -107,8 +107,8 @@ private:
     {
         if (m_isCounterSet)
             return;
-        m_counter = m_iterCount;
         m_isCounterSet = true;
+        m_counter = m_iterCount;
     }
 };
 
