@@ -25,12 +25,6 @@ public:
     void setProbability(double p) { m_probability = p; }
     double score() const { return m_score; }
 
-    void updateData(const Game<Move> &terminalState) override
-    {
-        if (this->parent())
-            m_score += terminalState.getResult(this->player()) / m_probability;
-    }
-
     operator std::string() const override
     {
         std::ostringstream oss;
@@ -42,6 +36,12 @@ public:
 private:
     double m_probability {1};
     double m_score {0};
+
+    void updateData(const Game<Move> &terminalState) override
+    {
+        if (this->parent())
+            m_score += terminalState.getResult(this->player()) / m_probability;
+    }
 };
 
 } // ISMCTS

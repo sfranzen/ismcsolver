@@ -23,12 +23,6 @@ class UCBNode : public Node<Move>
 public:
     using Node<Move>::Node;
 
-    void updateData(const Game<Move> &terminalState) override
-    {
-        if (this->parent())
-            m_score += terminalState.getResult(this->player());
-    }
-
     void markAvailable()
     {
         ++m_available;
@@ -50,6 +44,12 @@ public:
 private:
     double m_score {0};
     unsigned int m_available {1};
+
+    void updateData(const Game<Move> &terminalState) override
+    {
+        if (this->parent())
+            m_score += terminalState.getResult(this->player());
+    }
 };
 
 } // ISMCTS
