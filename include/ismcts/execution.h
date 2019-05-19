@@ -13,7 +13,6 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <thread>
 #include <future>
 #include <atomic>
 #include <cmath>
@@ -78,27 +77,17 @@ public:
 
 protected:
     template<class Callable>
-    std::thread launch(Callable &&f) const
+    std::future<void> launch(Callable &&f) const
     {
         if (m_iterCount > 0) {
             setCounter();
-            return std::thread{[&,f]{
-                executeFor(m_counter, m_chunkSize, f);
+            return std::async(std::launch::async, [=]{
+                executeFor(m_counter, m_chunkSize, std::move(f));
                 m_isCounterSet = false;
-            }};
+            });
         } else {
-            return std::thread{[&,f]{ executeFor(m_iterTime, f); }};
+            return std::async(std::launch::async, [=]{ executeFor(m_iterTime, std::move(f)); });
         }
-    }
-
-    template<class Callable>
-    std::future<void> testLaunch(Callable &&f) const
-    {
-        setCounter();
-        return std::async(std::launch::async, [=]{
-            executeFor(m_counter, m_chunkSize, std::move(f));
-            m_isCounterSet = false;
-        });
     }
 
 private:

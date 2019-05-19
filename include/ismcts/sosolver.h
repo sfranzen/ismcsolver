@@ -14,7 +14,6 @@
 
 #include <memory>
 #include <vector>
-#include <thread>
 #include <future>
 
 namespace ISMCTS
@@ -36,7 +35,7 @@ public:
         std::generate(m_trees.begin(), m_trees.end(), [&]{ return SOSolver::newNode(rootState); });
 
         std::transform(m_trees.begin(), m_trees.end(), futures.begin(), [&](auto &node){
-            return this->testLaunch([&]{ search(node.get(), rootState); });
+            return this->launch([&]{ search(node.get(), rootState); });
         });
         for (auto &f : futures)
             f.get();
