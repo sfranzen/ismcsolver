@@ -14,7 +14,7 @@
 
 #include <memory>
 #include <vector>
-#include <thread>
+#include <future>
 
 namespace ISMCTS
 {
@@ -30,15 +30,15 @@ public:
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
-        std::vector<std::thread> threads(numThreads());
+        std::vector<std::future<void>> futures(numThreads());
         m_trees.resize(numThreads());
         std::generate(m_trees.begin(), m_trees.end(), [&]{ return SOSolver::newNode(rootState); });
 
-        std::transform(m_trees.begin(), m_trees.end(), threads.begin(), [&](auto &node){
+        std::transform(m_trees.begin(), m_trees.end(), futures.begin(), [&](auto &node){
             return this->launch([&]{ search(node.get(), rootState); });
         });
-        for (auto &t : threads)
-            t.join();
+        for (auto &f : futures)
+            f.get();
 
         return SOSolver::template bestMove<Move>(m_trees);
     }

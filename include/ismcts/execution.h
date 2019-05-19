@@ -13,7 +13,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-#include <thread>
+#include <future>
 #include <atomic>
 #include <cmath>
 
@@ -56,7 +56,7 @@ public:
         else
             // Increase chunk size with number of threads and iterations to
             // reduce contention on m_counter
-            m_chunkSize = std::max(std::size_t(5), count * m_numThreads / 800);
+            m_chunkSize = std::max(std::size_t(1), count * m_numThreads / 1000);
     }
 
     Duration iterationTime() const
@@ -77,16 +77,16 @@ public:
 
 protected:
     template<class Callable>
-    std::thread launch(Callable &&f) const
+    std::future<void> launch(Callable &&f) const
     {
         if (m_iterCount > 0) {
             setCounter();
-            return std::thread{[&,f]{
-                executeFor(m_counter, m_chunkSize, f);
+            return std::async(std::launch::async, [=]{
+                executeFor(m_counter, m_chunkSize, std::move(f));
                 m_isCounterSet = false;
-            }};
+            });
         } else {
-            return std::thread{[&,f]{ executeFor(m_iterTime, f); }};
+            return std::async(std::launch::async, [=]{ executeFor(m_iterTime, std::move(f)); });
         }
     }
 
@@ -107,8 +107,8 @@ private:
     {
         if (m_isCounterSet)
             return;
-        m_counter = m_iterCount;
         m_isCounterSet = true;
+        m_counter = m_iterCount;
     }
 };
 

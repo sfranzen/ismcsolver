@@ -15,7 +15,7 @@
 #include <memory>
 #include <vector>
 #include <map>
-#include <thread>
+#include <future>
 
 namespace ISMCTS
 {
@@ -36,14 +36,14 @@ public:
 
     virtual Move operator()(const Game<Move> &rootState) const override
     {
-        std::vector<std::thread> threads(numThreads());
+        std::vector<std::future<void>> futures(numThreads());
         setupTrees(rootState);
 
-        std::transform(m_trees.begin(), m_trees.end(), threads.begin(), [&](auto &map){
+        std::transform(m_trees.begin(), m_trees.end(), futures.begin(), [&](auto &map){
             return this->launch([&]{ search(map, rootState); });
         });
-        for (auto &t : threads)
-            t.join();
+        for (auto &f : futures)
+            f.get();
 
         std::vector<NodePtr> currentPlayerTrees(numThreads());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](auto &map){
