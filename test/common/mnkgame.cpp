@@ -105,7 +105,7 @@ bool MnkGame::isWinningMove(int move, Player player) const
 // enough positions to win the game.
 bool MnkGame::hasWinningSequence(int move, Stride stride, Player player) const
 {
-    unsigned count {1};
+    auto count {1};
     const auto r0 {row(move)};
     const auto c0 {column(move)};
 
@@ -123,7 +123,7 @@ bool MnkGame::continueCounting(int row, int col, Player player) const
     if (row < 0 || col < 0 || row >= m_n || col >= m_m)
         return false;
 
-    return m_board[row][col] == player;
+    return unsigned(m_board[row][col]) == player;
 }
 
 std::ostream& operator<<(std::ostream &out, const MnkGame &g)

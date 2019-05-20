@@ -36,7 +36,7 @@ public:
     operator std::string() const override
     {
         std::ostringstream oss;
-        oss << "[M:" << this->move() << " by " << this->player() << ", S/V/A: ";
+        oss << "[M:" << this->move() << " by " << this->player() << ", V/S/A: ";
         oss << std::fixed << std::setprecision(1) << this->visits() << "/" << m_score << "/" << m_available << "]";
         return oss.str();
     }

@@ -45,7 +45,7 @@ public:
             return playGame(std::forward<Game>(game), std::forward<G1>(generator1), std::forward<G2>(generator2));
         });
         report();
-    };
+    }
 
 private:
     using Clock = std::chrono::high_resolution_clock;
@@ -94,12 +94,12 @@ private:
             cout << setw(3) << setprecision(2) << pair.first << ": " << setw(countWidth) << pair.second
                 << " times (" << setprecision(3) << pair.second * 100. / m_numGames << "%)\n";
 
-        cout << setiosflags(flags) << setprecision(precision);
         for (unsigned p : {0, 1}) {
-            const auto time_us = duration_cast<microseconds>(m_times[p]).count();
-            cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << time_us
-            << " µs, average " << double(time_us) / m_numCalls[p] << " µs per move.\n";
+            const double time_ms = duration_cast<microseconds>(m_times[p]).count() / 1000.;
+            cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
+            << time_ms << " ms, average " << double(time_ms) / m_numCalls[p] << " ms per move.\n";
         }
+        cout << setiosflags(flags) << setprecision(precision);
         cout << separator;
     }
 };

@@ -11,9 +11,20 @@ find_package(Threads REQUIRED)
 add_library(ismcsolver INTERFACE)
 target_compile_features(ismcsolver INTERFACE cxx_std_14)
 target_link_libraries(ismcsolver INTERFACE Threads::Threads)
-target_include_directories(ismcsolver INTERFACE
+target_include_directories(ismcsolver SYSTEM INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+)
+
+target_compile_options(ismcsolver INTERFACE
+    $<BUILD_INTERFACE:
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:
+            -Wall -Wextra -Werror -pedantic-errors
+        >
+        $<$<CXX_COMPILER_ID:MSVC>:
+            /WX /W4
+        >
+    >
 )
 
 include(GNUInstallDirs)

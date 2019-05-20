@@ -112,9 +112,16 @@ private:
     }
 };
 
-class Sequential : public ExecutionPolicy {
+class Sequential : public ExecutionPolicy
+{
 public:
-    using ExecutionPolicy::ExecutionPolicy;
+    explicit Sequential(std::size_t iterationCount = 1000)
+        : ExecutionPolicy{iterationCount}
+    {}
+
+    explicit Sequential(Duration iterationTime)
+        : ExecutionPolicy{iterationTime}
+    {}
 
 protected:
     template<class Move>

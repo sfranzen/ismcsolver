@@ -44,7 +44,7 @@ unsigned PhantomMnkGame::undoMoves(Player player)
     const auto &opponentMoves = m_available[1 - player];
     for (int move = 0; move < m_m * m_n; ++move) {
         auto &pos = m_board[row(move)][column(move)];
-        if (pos == player && std::binary_search(opponentMoves.begin(), opponentMoves.end(), move)) {
+        if (unsigned(pos) == player && std::binary_search(opponentMoves.begin(), opponentMoves.end(), move)) {
             pos = -1;
             ourMoves.emplace_back(move);
             m_moves.emplace_back(move);
