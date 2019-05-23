@@ -51,7 +51,7 @@ private:
 
     static double sumDifferences(const std::vector<Node*> &nodes, double score, double eta)
     {
-        return std::accumulate(nodes.begin(), nodes.end(), 0, [=](double sum, const Node *node){
+        return std::accumulate(nodes.begin(), nodes.end(), 0., [=](double sum, const Node *node){
             return sum + std::exp(eta * (node->score() - score));
         });
     }
