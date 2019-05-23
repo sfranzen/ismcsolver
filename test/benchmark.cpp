@@ -31,8 +31,8 @@ const unsigned int iterationCount {2000};
 class SolverTester
 {
 public:
-    explicit SolverTester(unsigned numGames = 100)
-        : m_numGames{numGames}
+    explicit SolverTester(unsigned games = 100)
+        : m_numGames{games}
     {}
 
     template<class Game, class G1, class G2>
@@ -87,7 +87,7 @@ private:
 
         auto flags = cout.flags();
         auto precision = cout.precision();
-        auto countWidth = std::floor(1 + std::log10(m_numGames));
+        auto countWidth = int(std::floor(1 + std::log10(m_numGames)));
 
         cout << separator << "First player score stats after " << m_numGames << " games:\n";
         for (auto &pair : counts)
