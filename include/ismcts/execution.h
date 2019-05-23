@@ -150,7 +150,7 @@ protected:
     // Return best move from a number of trees holding results for the same
     // player
     template<class Move>
-    static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
+    static Move bestMove(const std::vector<NodePtr<Move>> &trees)
     {
         const auto results = compileVisitCounts<Move>(trees);
         const auto &mostVisited = *std::max_element(results.begin(), results.end(), [](const auto &a, const auto &b){
