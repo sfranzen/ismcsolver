@@ -11,6 +11,8 @@
 #include <atomic>
 #include <utility>
 #include <chrono>
+#include <vector>
+#include <random>
 
 namespace ISMCTS
 {
@@ -44,6 +46,14 @@ inline void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&.
         f(std::forward<Args>(args)...);
         time -= clock::now() - start;
     }
+}
+
+template<class T>
+inline const T &randomElement(const std::vector<T> &v)
+{
+    thread_local static std::mt19937 prng {std::random_device{}()};
+    std::uniform_int_distribution<std::size_t> randIdx {0, v.size() - 1};
+    return v[randIdx(prng)];
 }
 
 } // ISMCTS

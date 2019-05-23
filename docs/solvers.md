@@ -25,17 +25,18 @@ The multiple observer solvers implement the MO-ISMCTS algorithm, which builds a 
 
 ## Member types
 
-| Type      | Definition                            |
-|:----------|:--------------------------------------|
-|`Duration` | `std::chrono::duration<double>`       |
-|`EXP3`     | `ISMCTS::TreePolicy<EXPNode<Move>>`   |
-|`UCB1`     | `ISMCTS::TreePolicy<UCBNode<Move>>`   |
-|`NodePtr`  | `std::shared_ptr<Node<Move>>`         |
-|*SOSolver:*|                                       |
-|`TreeList` | `std::vector<NodePtr> `               |
-|*MOsolver:*|                                       |
-|`TreeMap`  | `std::map<unsigned int, NodePtr>`     |
-|`TreeList` | `std::vector<TreeMap>`                |
+| Type          | Definition                                            |
+|:--------------|:------------------------------------------------------|
+|`Duration`     |`std::chrono::duration<double>`                        |
+|`EXP3`         |`ISMCTS::TreePolicy<EXPNode<Move>>`                    |
+|`UCB1`         |`ISMCTS::TreePolicy<UCBNode<Move>>`                    |
+|`DefaultPolicy`|`std::function<const Move& (const std::vector<Move>&)>`|
+|`NodePtr`      |`std::shared_ptr<Node<Move>>`                          |
+|*SOSolver:*    |                                                       |
+|`TreeList`     |`std::vector<NodePtr> `                                |
+|*MOsolver:*    |                                                       |
+|`TreeMap`      |`std::map<unsigned int, NodePtr>`                      |
+|`TreeList`     |`std::vector<TreeMap>`                                 |
 
 ## Member functions
 ### Constructors
@@ -81,6 +82,17 @@ Sets a new EXP3 tree policy, which is applied at nodes where the game has simult
 void setUCBPolicy(UCB1 &&policy);
 ```
 Sets a new UCB1 tree policy, which is applied at nodes where the game uses sequential moves.
+
+---
+```cpp
+void setDefaultPolicy(DefaultPolicy &&policy);
+```
+Sets a new default policy. The default policy is used to select moves during the simulation stage of the algorithm. The `policy` parameter has to be a function template (or functor with a templated operator) returning a reference to one of the elements of the vector passed to it, like the following:
+```cpp
+template<class Move>
+const Move& policyFunction(const std::vector<Move> &moves);
+```
+The *default* default policy has no preference, selecting moves at random.
 
 ### Observers
 ```cpp

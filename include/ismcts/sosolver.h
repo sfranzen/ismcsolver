@@ -11,6 +11,7 @@
 #include "tree/nodetypes.h"
 #include "tree/policies.h"
 #include "execution.h"
+#include "utility.h"
 
 #include <memory>
 #include <vector>
@@ -72,7 +73,7 @@ protected:
     {
         const auto untriedMoves = node->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
-            const auto move = this->randomMove(untriedMoves);
+            const auto move = randomElement(untriedMoves);
             node = SOSolver::addChild(node, state, move);
             state.doMove(move);
         }

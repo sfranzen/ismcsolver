@@ -11,6 +11,7 @@
 #include "tree/nodetypes.h"
 #include "tree/policies.h"
 #include "execution.h"
+#include "utility.h"
 
 #include <memory>
 #include <vector>
@@ -98,7 +99,7 @@ protected:
         const auto player = state.currentPlayer();
         const auto untriedMoves = nodes[player]->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
-            const auto move = this->randomMove(untriedMoves);
+            const auto move = randomElement(untriedMoves);
             for (auto &node : nodes)
                 node.second = MOSolver::findOrAddChild(node.second, state, move);
             state.doMove(move);

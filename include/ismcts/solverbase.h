@@ -9,9 +9,10 @@
 #include "game.h"
 #include "tree/nodetypes.h"
 #include "tree/policies.h"
+#include "utility.h"
 
-#include <random>
 #include <vector>
+#include <functional>
 
 namespace ISMCTS
 {
@@ -24,6 +25,7 @@ public:
     using NodePtr = typename Node<Move>::Ptr;
     using EXP3 = TreePolicy<EXPNode<Move>>;
     using UCB1 = TreePolicy<UCBNode<Move>>;
+    using DefaultPolicy = std::function<const Move &(const std::vector<Move> &)>;
 
     virtual ~SolverBase() = default;
 
@@ -39,12 +41,17 @@ public:
         m_UCB1 = policy;
     }
 
+    void setDefaultPolicy(DefaultPolicy &&policy)
+    {
+        m_defaultPolicy = policy;
+    }
+
 protected:
     void simulate(Game<Move> &state) const
     {
         const auto moves = state.validMoves();
         if (!moves.empty()) {
-            state.doMove(this->randomMove(moves));
+            state.doMove(m_defaultPolicy(moves));
             simulate(state);
         }
     }
@@ -84,18 +91,6 @@ protected:
         }
     }
 
-    const Move &randomMove(const std::vector<Move> &moves) const
-    {
-        std::uniform_int_distribution<std::size_t> dist {0, moves.size() - 1};
-        return moves[dist(prng())];
-    }
-
-    virtual std::mt19937 &prng() const
-    {
-        thread_local static std::mt19937 prng {std::random_device{}()};
-        return prng;
-    }
-
     static NodePtr newNode(const Game<Move> &state)
     {
         if (state.currentMoveSimultaneous())
@@ -107,6 +102,7 @@ protected:
 private:
     EXP3 m_EXP3 {};
     UCB1 m_UCB1 {};
+    DefaultPolicy m_defaultPolicy {randomElement<Move>};
 
     template<class Type>
     static std::vector<Type*> legalChildren(const Node<Move> *node, const std::vector<Move> &legalMoves)
