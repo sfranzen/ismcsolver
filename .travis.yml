@@ -2,7 +2,7 @@ language: cpp
 dist: xenial
 matrix:
   include:
-    # GCC 7
+    # GCC
     - os: linux
       addons:
         apt:
@@ -21,7 +21,7 @@ matrix:
       env:
         - MATRIX_EVAL="CC=clang && CXX=clang++"
 before_install:
-  - sudo apt-get install -y lcov
+  - [ $TRAVIS_OS_NAME = linux ] && sudo apt-get -y lcov
   - eval "${MATRIX_EVAL}"
 script:
   - mkdir -p build && cd build
