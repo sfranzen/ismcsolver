@@ -1,7 +1,4 @@
-# ismcsolver
-[![Build Status](https://travis-ci.org/sfranzen/ismcsolver.svg?branch=master)](https://travis-ci.org/sfranzen/ismcsolver)
-[![Build status](https://ci.appveyor.com/api/projects/status/3rbi2an9u3t06029?svg=true)](https://ci.appveyor.com/project/sfranzen/ismcsolver)
-[![codecov](https://codecov.io/gh/sfranzen/ismcsolver/branch/master/graph/badge.svg)](https://codecov.io/gh/sfranzen/ismcsolver)
+# ismcsolver [![Build Status][travis-badge]][travis] [![Build Status][appveyor-badge]][appveyor] [![codecov][codecov-badge]][codecov]
 
 ismcsolver is a header-only C++14 library providing [information set Monte Carlo tree search][ISMCTS] (ISMCTS) algorithms. Monte Carlo tree search is a (game) AI decision making algorithm noted for its applicability to many different games of perfect information, requiring no domain-specific knowledge and only little information about a game's state. ISMCTS is an elegant extension of this technique to imperfect information games, where not all information is visible to all players, possibly combined with factors of randomness.
 
@@ -10,6 +7,12 @@ Strengths of the algorithm include being *anytime:* it can be given as much or a
 This code was originally part of a Qt game I wrote to explore game AI. I eventually wanted to test it with a simpler game, so I extracted it and also decided to port it to standard C++ to make it more useful any future projects. It now provides class templates that allow applying the algorithm to a generic game using a generic type of move.
 
 [ISMCTS]: https://pure.york.ac.uk/portal/files/13014166/CowlingPowleyWhitehouse2012.pdf
+[travis-badge]: https://travis-ci.org/sfranzen/ismcsolver.svg?branch=master
+[travis]: https://travis-ci.org/sfranzen/ismcsolver
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/3rbi2an9u3t06029?svg=true
+[appveyor]: https://ci.appveyor.com/project/sfranzen/ismcsolver
+[codecov-badge]: https://codecov.io/gh/sfranzen/ismcsolver/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/sfranzen/ismcsolver
 
 ## Installation
 Due to the nature of header-only libraries, no installation is technically necessary. You can use the headers in three ways:
