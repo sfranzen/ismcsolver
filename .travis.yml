@@ -14,8 +14,6 @@ matrix:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
     - os: osx    
       osx_image: xcode10.2
-      env:
-        - MATRIX_EVAL="brew update-reset && brew install gcc@7 && CC=gcc-7 && CXX=g++-7"
     # Clang - default version on Xenial suffices
     - os: linux
       env:
@@ -28,8 +26,10 @@ script:
   - cmake -DCODE_COVERAGE=ON ..
   - make && make test
 after_success:
-  # Capture, filter and upload coverage info
-  - lcov --directory . --capture --output-file coverage.info
-  - lcov --remove coverage.info '/usr/*' '*/catch.hpp' --output-file coverage.info
-  - lcov --list coverage.info
-  - bash <(curl -s https://codecov.io/bash) -f coverage.info
+  - if [ $TRAVIS_OS_NAME = linux ]; then
+    # Capture, filter and upload coverage info
+    - lcov --directory . --capture --output-file coverage.info
+    - lcov --remove coverage.info '/usr/*' '*/catch.hpp' --output-file coverage.info
+    - lcov --list coverage.info
+    - bash <(curl -s https://codecov.io/bash) -f coverage.info
+  - fi
