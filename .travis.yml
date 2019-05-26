@@ -21,7 +21,7 @@ matrix:
       env:
         - MATRIX_EVAL="CC=clang && CXX=clang++"
 before_install:
-  - [ $TRAVIS_OS_NAME = linux ] && sudo apt-get -y lcov
+  - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get -y lcov; fi
   - eval "${MATRIX_EVAL}"
 script:
   - mkdir -p build && cd build
