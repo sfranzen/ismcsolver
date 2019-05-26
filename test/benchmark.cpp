@@ -5,10 +5,12 @@
  */
 #include <ismcts/sosolver.h>
 #include <ismcts/mosolver.h>
+#include <ismcts/utility.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
 #include "common/phantommnkgame.h"
+#include "common/goofspiel.h"
 
 #include <chrono>
 #include <vector>
@@ -99,18 +101,14 @@ private:
             cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
             << time_ms << " ms, average " << double(time_ms) / m_numCalls[p] << " ms per move.\n";
         }
-        cout << setiosflags(flags) << setprecision(precision);
-        cout << separator;
+        cout << setiosflags(flags) << setprecision(precision) << separator;
     }
 };
 
 template<class Move>
 Move randomMove(const Game<Move> &game)
 {
-    static thread_local std::mt19937 rng {std::random_device{}()};
-    const auto moves = game.validMoves();
-    std::uniform_int_distribution<std::size_t> randomMove {0, moves.size() - 1};
-    return moves[randomMove(rng)];
+   return randomElement(game.validMoves());
 }
 
 } // namespace
@@ -119,8 +117,12 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]"
                            (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
-    SolverTester tester {numGames};
-    REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
+    SolverTester tester {100};
+
+    SECTION("Knockout Whist")
+        REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
+    SECTION("Goofspiel")
+        REQUIRE_NOTHROW(tester.run(Goofspiel{}, solver, randomMove<Card>));
 }
 
 TEST_CASE("Speed", "[SOSolver]")

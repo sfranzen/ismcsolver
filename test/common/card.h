@@ -18,6 +18,9 @@ struct Card {
     };
 
     Card() = default;
+    constexpr Card(Card::Rank rank, Card::Suit suit)
+        : rank(rank), suit(suit)
+    {}
 
     Rank rank;
     Suit suit;

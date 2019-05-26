@@ -7,6 +7,7 @@
 #include "common/mnkgame.h"
 #include "common/phantommnkgame.h"
 #include "common/knockoutwhist.h"
+#include "common/goofspiel.h"
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -87,7 +88,8 @@ const std::vector<std::vector<int>> MNKP0WinSequences {
     {2,0,4,1,6}
 };
 
-const std::vector<unsigned> expectedPlayers {0, 1};
+const std::vector<unsigned> expectedPlayers2P {0, 1};
+const std::vector<unsigned> expectedPlayers3P {0, 1, 2};
 
 }
 
@@ -95,7 +97,7 @@ TEST_CASE("Knockout Whist instantiates correctly", "[KnockoutWhist]")
 {
     KnockoutWhist game {numPlayers};
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.players() == expectedPlayers);
+    CHECK(game.players() == expectedPlayers2P);
     REQUIRE(game.validMoves().size() == 7);
 }
 
@@ -103,8 +105,16 @@ TEMPLATE_TEST_CASE("M-n-k games instantiate correctly", "[MnkGame][PhantomMnkGam
 {
     TestType game;
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.players() == expectedPlayers);
+    CHECK(game.players() == expectedPlayers2P);
     REQUIRE(game.validMoves().size() == 9);
+}
+
+TEST_CASE("Goofspiel constructor", "[Goofspiel]")
+{
+    Goofspiel game;
+    CHECK(game.currentPlayer() == 2);
+    CHECK(game.players() == expectedPlayers3P);
+    CHECK(game.validMoves().size() == 1);
 }
 
 TEMPLATE_TEST_CASE("Games handle valid moves correctly", "[KnockoutWhist][MnkGame][PhantomMnkGame]",
@@ -179,6 +189,40 @@ TEMPLATE_TEST_CASE("M-n-k games function correctly", "[MnkGame][PhantomMnkGame]"
                 REQUIRE(game.getResult(0) == 1);
             }
         }
+    }
+}
+
+TEST_CASE("Goofspiel functions correctly", "[Goofspiel]")
+{
+    Goofspiel game;
+
+    // Set up initial prize
+    doValidMove(game);
+
+    SECTION("Players and hands") {
+        for (unsigned player : {0, 1}) {
+            DYNAMIC_SECTION("Player " << player) {
+                CHECK(game.currentPlayer() == player);
+                CHECK(game.validMoves().size() == 13);
+            }
+            doValidMove(game);
+        }
+        REQUIRE(game.currentPlayer() == 2);
+    }
+
+    SECTION("Equal bids give equal scores") {
+        for (int i {0}; i < 3; ++i)
+            doValidMove(game);
+        CHECK(game.getResult(0) == 0.5);
+        REQUIRE(game.getResult(1) == 0.5);
+    }
+
+    SECTION("Unequal bids give unequal scores") {
+        for (int i : {0, 1})
+            game.doMove(game.validMoves()[i]);
+        doValidMove(game);
+        CHECK(game.getResult(0) == 0);
+        REQUIRE(game.getResult(1) == 1);
     }
 }
 
