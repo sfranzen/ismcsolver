@@ -19,10 +19,10 @@ target_include_directories(ismcsolver SYSTEM INTERFACE
 target_compile_options(ismcsolver INTERFACE
     $<BUILD_INTERFACE:
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:
-            -Wall -Wextra -Werror -pedantic-errors
+            -Wall -Wextra -pedantic-errors
         >
         $<$<CXX_COMPILER_ID:MSVC>:
-            /WX /W4
+            /W4
         >
     >
 )
