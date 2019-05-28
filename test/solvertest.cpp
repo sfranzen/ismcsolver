@@ -3,12 +3,17 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
+
 #include <ismcts/sosolver.h>
 #include <ismcts/mosolver.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/mnkgame.h"
+#include "common/goofspiel.h"
+#include "common/utility.h"
+
 #include <vector>
+#include <memory>
 
 namespace
 {
@@ -40,7 +45,7 @@ struct P1DrawOrLose : public MnkGame
 
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Solvers construct properly", "[SOSolver][MOSolver]",
     (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     SECTION("By iteration count") {
@@ -56,7 +61,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver instantiation", "[SOSolver][MOSolver]",
     }
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolver]",
     (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
@@ -77,23 +82,37 @@ TEMPLATE_PRODUCT_TEST_CASE("Modification of settings", "[SOSolver][MOSolver]",
     }
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Search execution", "[SOSolver][MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolver][MOSolver]",
     (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
-    static unsigned int calls = 0;
-    KnockoutWhist game {numPlayers};
-    const auto validMoves = game.validMoves();
+    auto solver = GENERATE(std::make_shared<TestType>(iterationCount), std::make_shared<TestType>(iterationTime));
     Card move;
 
-    auto solver = GENERATE(std::make_shared<TestType>(iterationCount), std::make_shared<TestType>(iterationTime));
-    SECTION(calls % 2 == 0 ? "By iteration count" : "By iteration time") {
-        CHECK_NOTHROW([&]{ move = (*solver)(game); }());
-        REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) < validMoves.end());
+    auto testSection = [&](auto &game){
+        SECTION(solver->iterationCount() != 0 ? "By iteration count" : "By iteration time") {
+            const auto validMoves = game.validMoves();
+            CHECK_NOTHROW([&]{ move = (*solver)(game); }());
+            REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) != validMoves.end());
+        }
+    };
+
+    // Test UCB1 policy using Whist, which has sequential moves
+    SECTION("UCB1 policy") {
+        KnockoutWhist game {numPlayers};
+        testSection(game);
     }
-    ++calls;
+
+    // Test EXP3 policy using Goofspiel, which has simultaneous moves
+    SECTION("EXP3 policy") {
+        Goofspiel game;
+
+        // Advance to regular player before testing
+        doValidMove(game);
+        testSection(game);
+    }
 }
 
-TEMPLATE_PRODUCT_TEST_CASE("Choosing the right move", "[SOSolver][MOSolver]",
+TEMPLATE_PRODUCT_TEST_CASE("Solvers select the most rewarding final move", "[SOSolver][MOSolver]",
     (SOSolver, MOSolver), (int, (int, RootParallel)))
 {
     P1DrawOrLose game;

@@ -3,10 +3,13 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
+
 #include <ismcts/tree/nodetypes.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
+
+#include <vector>
 #include <numeric>
 
 namespace
@@ -16,7 +19,7 @@ constexpr Card testMove {Card::Ace, Card::Spades};
 constexpr unsigned int testPlayer {1};
 }
 
-TEMPLATE_TEST_CASE("Constructor", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("Nodes are constructed properly", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     TestType node;
 
@@ -30,7 +33,7 @@ TEMPLATE_TEST_CASE("Constructor", "[node]", UCBNode<Card>, EXPNode<Card>)
     REQUIRE(std::string(node) != "");
 }
 
-TEMPLATE_TEST_CASE("addChild", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("Node::addChild works", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     TestType root;
     Node<Card>* child {nullptr};
@@ -45,7 +48,7 @@ TEMPLATE_TEST_CASE("addChild", "[node]", UCBNode<Card>, EXPNode<Card>)
     REQUIRE(child == root.children().front().get());
 }
 
-TEMPLATE_TEST_CASE("update", "[node]", UCBNode<Card>, EXPNode<Card>)
+TEMPLATE_TEST_CASE("Node::update works", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
     TestType node {testMove, testPlayer};
     KnockoutWhist game;
@@ -54,7 +57,7 @@ TEMPLATE_TEST_CASE("update", "[node]", UCBNode<Card>, EXPNode<Card>)
     REQUIRE(node.visits() == 1);
 }
 
-TEMPLATE_TEST_CASE("untriedMoves", "[node]", UCBNode<int>, EXPNode<int>)
+TEMPLATE_TEST_CASE("Node::untriedMoves returns expected values", "[node]", UCBNode<int>, EXPNode<int>)
 {
     TestType root;
     std::vector<int> legalMoves(10);
