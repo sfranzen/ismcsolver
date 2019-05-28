@@ -3,12 +3,15 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
+
 #include "common/catch.hpp"
 #include "common/mnkgame.h"
 #include "common/phantommnkgame.h"
 #include "common/knockoutwhist.h"
+#include "common/goofspiel.h"
+#include "common/utility.h"
+
 #include <vector>
-#include <string>
 #include <stdexcept>
 
 namespace
@@ -69,12 +72,6 @@ struct MockPhantomGame : public PhantomMnkGame
     }
 };
 
-template<class Move>
-inline void doValidMove(ISMCTS::Game<Move> &game)
-{
-    game.doMove(game.validMoves().front());
-}
-
 // Sequences that should give player 0 a win, one for each row/column/diagonal
 const std::vector<std::vector<int>> MNKP0WinSequences {
     {0,3,1,4,2},
@@ -87,48 +84,53 @@ const std::vector<std::vector<int>> MNKP0WinSequences {
     {2,0,4,1,6}
 };
 
-const std::vector<unsigned> expectedPlayers {0, 1};
+const std::vector<unsigned> expectedPlayers2P {0, 1};
+const std::vector<unsigned> expectedPlayers3P {0, 1, 2};
 
 }
 
-TEST_CASE("Knockout Whist instantiates correctly", "[KnockoutWhist]")
+TEST_CASE("KnockoutWhist is constructed properly", "[KnockoutWhist]")
 {
     KnockoutWhist game {numPlayers};
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.players() == expectedPlayers);
+    CHECK(game.players() == expectedPlayers2P);
     REQUIRE(game.validMoves().size() == 7);
 }
 
-TEMPLATE_TEST_CASE("M-n-k games instantiate correctly", "[MnkGame][PhantomMnkGame]", MnkGame, PhantomMnkGame)
+TEMPLATE_TEST_CASE("M-n-k games are constructed properly", "[MnkGame][PhantomMnkGame]", MnkGame, PhantomMnkGame)
 {
     TestType game;
     CHECK(game.currentPlayer() == 0);
-    CHECK(game.players() == expectedPlayers);
+    CHECK(game.players() == expectedPlayers2P);
     REQUIRE(game.validMoves().size() == 9);
 }
 
-TEMPLATE_TEST_CASE("Games handle valid moves correctly", "[KnockoutWhist][MnkGame][PhantomMnkGame]",
-                   KnockoutWhist, MnkGame, PhantomMnkGame)
+TEST_CASE("Goofspiel is constructed properly", "[Goofspiel]")
 {
-    TestType game;
-    SECTION("Valid move is accepted") {
-        REQUIRE_NOTHROW(doValidMove(game));
-        SECTION("Current player has advanced")
-            REQUIRE(game.currentPlayer() == 1);
-    }
+    Goofspiel game;
+    CHECK(game.currentPlayer() == 2);
+    CHECK(game.players() == expectedPlayers3P);
+    CHECK(game.validMoves().size() == 1);
 }
 
-TEST_CASE("Knockout Whist functions correctly", "[KnockoutWhist]")
+TEST_CASE("KnockoutWhist::doMove works", "[KnockoutWhist]")
 {
-    MockWhist game;
+    KnockoutWhist game {numPlayers};
+
+    SECTION("Valid move is accepted and changes the current player") {
+        CHECK_NOTHROW(doValidMove(game));
+        REQUIRE(game.currentPlayer() == 1);
+    }
+
     // Note: invalid means any card not held by the player as the game does not
     // check for failures to follow suit
-    SECTION("Invalid move causes out of range exception") {
+    SECTION("Invalid move gives exception") {
         const Card invalidMove {Card::Seven, Card::Diamonds};
         REQUIRE_THROWS_AS(game.doMove(invalidMove), std::out_of_range);
     }
 
-    SECTION("Tricks are evaluated correctly") {
+    SECTION("Tricks are evaluated properly") {
+        MockWhist game;
         SECTION("Player 1 follows suit") {
             CHECK_NOTHROW(game.doMove({Card::Eight, Card::Diamonds}));
             SECTION("Player 1 does not beat card led") {
@@ -160,19 +162,41 @@ TEST_CASE("Knockout Whist functions correctly", "[KnockoutWhist]")
             }
         }
     }
+
+    SECTION("A game completes in a limited number of turns")
+    {
+        // Maximum number of turns is nPlayers * (7 + 6 + ... + 1) + 6 (selection turns)
+        const unsigned int maxTurns {6 + numPlayers * 28};
+        unsigned int turns {0};
+
+        while (!game.validMoves().empty() && turns < maxTurns) {
+            doValidMove(game);
+            ++turns;
+        }
+        INFO("Number of turns: " << turns);
+        REQUIRE(game.validMoves().empty());
+    }
 }
 
-TEMPLATE_TEST_CASE("M-n-k games function correctly", "[MnkGame][PhantomMnkGame]", MnkGame, PhantomMnkGame)
+TEMPLATE_TEST_CASE("M-n-k games' doMove function works", "[MnkGame][PhantomMnkGame]",
+                   MnkGame, PhantomMnkGame)
 {
     TestType game;
-    SECTION("Invalid move causes out of range exception") {
+
+    SECTION("Valid move is accepted and changes the current player") {
+        CHECK_NOTHROW(doValidMove(game));
+        REQUIRE(game.currentPlayer() == 1);
+    }
+
+    SECTION("Invalid move gives exception") {
         REQUIRE_THROWS_AS(game.doMove(9), std::out_of_range);
     }
-    SECTION("Wins are detected properly") {
-        int seqNum = 0;
+
+    SECTION("Scoring k in a row results in a win") {
+        auto seqNum = 0;
         for (auto &sequence : MNKP0WinSequences) {
             DYNAMIC_SECTION("Checking test sequence " << ++seqNum) {
-                game = TestType{};
+                TestType game;
                 for (auto move : sequence)
                     game.doMove(move);
                 CHECK(game.validMoves().empty());
@@ -182,12 +206,64 @@ TEMPLATE_TEST_CASE("M-n-k games function correctly", "[MnkGame][PhantomMnkGame]"
     }
 }
 
+TEST_CASE("Goofspiel::doMove works", "[Goofspiel]")
+{
+    Goofspiel game;
+
+    SECTION("Valid move is accepted and changes the current player") {
+        CHECK_NOTHROW(doValidMove(game));
+        REQUIRE(game.currentPlayer() == 0);
+    }
+
+    // Set up initial prize
+    doValidMove(game);
+
+    SECTION("Players initially have 13 cards each") {
+        for (unsigned player : {0, 1}) {
+            DYNAMIC_SECTION("Player " << player) {
+                CHECK(game.currentPlayer() == player);
+                CHECK(game.validMoves().size() == 13);
+            }
+            doValidMove(game);
+        }
+    }
+
+    SECTION("Equal bids give equal scores") {
+        for (int i {0}; i < 3; ++i)
+            doValidMove(game);
+        CHECK(game.getResult(0) == 0.5);
+        REQUIRE(game.getResult(1) == 0.5);
+    }
+
+    SECTION("Unequal bids give unequal scores") {
+        for (int i : {0, 1})
+            game.doMove(game.validMoves()[i]);
+        doValidMove(game);
+        CHECK(game.getResult(0) == 0);
+        REQUIRE(game.getResult(1) == 1);
+    }
+
+    SECTION("A game takes 13 turns") {
+        unsigned int constexpr expectedTurns {13};
+        unsigned int turns {0};
+
+        while (!game.validMoves().empty() && turns <= expectedTurns) {
+            if (game.currentPlayer() == 0)
+                ++turns;
+            doValidMove(game);
+        }
+
+        CHECK(turns == expectedTurns);
+        REQUIRE(game.validMoves().empty());
+    }
+}
+
 // Test game with a sequence of moves that leads to the board state
 //  1 -1  1
 // -1  0 -1
 //  0 -1 -1,
 // with player 0 not knowing any of player 1's positions
-TEST_CASE("Phantom m-n-k game clones correctly", "[PhantomMnkGame]")
+TEST_CASE("PhantomMnkGame::cloneAndRandomise does not modify known positions", "[PhantomMnkGame]")
 {
     MockPhantomGame game;
     const std::vector<int> sequence {4,4,0,6,2};
@@ -202,19 +278,4 @@ TEST_CASE("Phantom m-n-k game clones correctly", "[PhantomMnkGame]")
     CHECK(game.moves().size() == rClone.moves().size());
     REQUIRE(rClone.board()[1][1] == 0);
     REQUIRE(rClone.board()[2][0] == 0);
-}
-
-TEST_CASE("Knockout Whist terminates correctly", "[KnockoutWhist]")
-{
-    KnockoutWhist game {numPlayers};
-    // Maximum number of turns is nPlayers * (7 + 6 + ... + 1) + 6 (selection turns)
-    const unsigned int maxTurns {6 + numPlayers * 28};
-    unsigned int turn {0};
-
-    while (!game.validMoves().empty() && turn < maxTurns) {
-        doValidMove(game);
-        ++turn;
-    }
-    INFO("Number of turns: " << turn);
-    REQUIRE(game.validMoves().empty());
 }

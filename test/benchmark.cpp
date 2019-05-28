@@ -3,12 +3,15 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
+
 #include <ismcts/sosolver.h>
 #include <ismcts/mosolver.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
 #include "common/phantommnkgame.h"
+#include "common/goofspiel.h"
+#include "common/utility.h"
 
 #include <chrono>
 #include <vector>
@@ -16,7 +19,6 @@
 #include <map>
 #include <iostream>
 #include <iomanip>
-#include <random>
 #include <string>
 #include <cmath>
 
@@ -97,21 +99,11 @@ private:
         for (unsigned p : {0, 1}) {
             const double time_ms = duration_cast<microseconds>(m_times[p]).count() / 1000.;
             cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
-            << time_ms << " ms, average " << double(time_ms) / m_numCalls[p] << " ms per move.\n";
+            << time_ms << " ms, average " << time_ms / m_numCalls[p] << " ms per move.\n";
         }
-        cout << setiosflags(flags) << setprecision(precision);
-        cout << separator;
+        cout << setiosflags(flags) << setprecision(precision) << separator;
     }
 };
-
-template<class Move>
-Move randomMove(const Game<Move> &game)
-{
-    static thread_local std::mt19937 rng {std::random_device{}()};
-    const auto moves = game.validMoves();
-    std::uniform_int_distribution<std::size_t> randomMove {0, moves.size() - 1};
-    return moves[randomMove(rng)];
-}
 
 } // namespace
 
@@ -119,8 +111,12 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]"
                            (SOSolver, MOSolver), (Card, (Card, RootParallel)))
 {
     TestType solver {iterationCount};
-    SolverTester tester {numGames};
-    REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
+    SolverTester tester {100};
+
+    SECTION("Knockout Whist")
+        REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
+    SECTION("Goofspiel")
+        REQUIRE_NOTHROW(tester.run(Goofspiel{}, solver, randomMove<Card>));
 }
 
 TEST_CASE("Speed", "[SOSolver]")

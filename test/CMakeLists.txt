@@ -13,6 +13,7 @@ set(game_src
     common/knockoutwhist.cpp
     common/mnkgame.cpp
     common/phantommnkgame.cpp
+    common/goofspiel.cpp
 )
 set(testlibs testmain ismcsolver coverage_config)
 
