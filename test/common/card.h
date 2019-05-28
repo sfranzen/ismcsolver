@@ -25,12 +25,12 @@ struct Card {
     Rank rank;
     Suit suit;
 
-    bool operator==(const Card &other) const
+    bool operator==(Card const &other) const
     {
         return rank == other.rank && suit == other.suit;
     }
 
-    bool operator!=(const Card &other) const
+    bool operator!=(Card const &other) const
     {
         return !(*this == other);
     }
@@ -42,8 +42,8 @@ struct Card {
 
     operator std::string() const
     {
-        static const std::string ranks {"23456789TJQKA"};
-        static const std::string suits {"CDHS"};
+        std::string static const ranks {"23456789TJQKA"};
+        std::string static const suits {"CDHS"};
         std::string s {ranks.at(rank)};
         return s + suits.at(suit);
     }
@@ -54,7 +54,7 @@ struct Card {
     }
 };
 
-inline bool operator<(const Card &a, const Card &b)
+inline bool operator<(Card const &a, Card const &b)
 {
     return int(a) < int(b);
 }

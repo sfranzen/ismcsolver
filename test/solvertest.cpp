@@ -22,9 +22,9 @@ using namespace std::chrono;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
-const unsigned int numPlayers {2};
-const unsigned int iterationCount {10};
-const auto iterationTime {milliseconds(5)};
+unsigned int constexpr numPlayers {2};
+unsigned int constexpr iterationCount {10};
+auto constexpr iterationTime {milliseconds(5)};
 
 // In this state, player 1 has to choose between move 2, ending in a draw, and
 // move 0, ending in a loss
@@ -67,14 +67,14 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolv
     TestType solver {iterationCount};
 
     SECTION("Modifying iteration count") {
-        const auto newIterationCount = 2 * iterationCount;
+        auto const newIterationCount = 2 * iterationCount;
         solver.setIterationCount(newIterationCount);
 
         CHECK(solver.iterationTime() == Duration::zero());
         REQUIRE(solver.iterationCount() == newIterationCount);
     }
     SECTION("Modifying iteration time") {
-        const auto newIterationTime = 2 * iterationTime;
+        auto const newIterationTime = 2 * iterationTime;
         solver.setIterationTime(newIterationTime);
 
         CHECK(solver.iterationCount() == 0);
@@ -90,7 +90,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolve
 
     auto testSection = [&](auto &game){
         SECTION(solver->iterationCount() != 0 ? "By iteration count" : "By iteration time") {
-            const auto validMoves = game.validMoves();
+            auto const validMoves = game.validMoves();
             CHECK_NOTHROW([&]{ move = (*solver)(game); }());
             REQUIRE(std::find(validMoves.begin(), validMoves.end(), move) != validMoves.end());
         }
@@ -117,6 +117,6 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers select the most rewarding final move", "[SOS
 {
     P1DrawOrLose game;
     TestType solver {16};
-    const auto move = solver(game);
+    auto const move = solver(game);
     REQUIRE(move == 2);
 }

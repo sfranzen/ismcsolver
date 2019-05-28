@@ -19,15 +19,15 @@ public:
     virtual Player currentPlayer() const override;
     virtual std::vector<Player> players() const override;
     virtual std::vector<Card> validMoves() const override;
-    virtual void doMove(const Card move) override;
+    virtual void doMove(Card const move) override;
     virtual double getResult(Player player) const override;
-    friend std::ostream &operator<<(std::ostream &out, const KnockoutWhist &g);
+    friend std::ostream &operator<<(std::ostream &out, KnockoutWhist const &g);
 
 protected:
     using Hand = std::vector<Card>;
     using Play = std::pair<Player,Card>;
 
-    const static unsigned int s_deckSize {52};
+    unsigned const static int s_deckSize {52};
     std::vector<Card> m_deck {s_deckSize};
     std::vector<Card> m_unknownCards;
     std::vector<Player> m_players;

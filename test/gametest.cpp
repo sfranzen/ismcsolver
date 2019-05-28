@@ -17,7 +17,7 @@
 namespace
 {
 
-const unsigned numPlayers = 2;
+unsigned constexpr numPlayers {2};
 
 // Game with two players having known cards
 struct MockWhist : public KnockoutWhist
@@ -73,7 +73,7 @@ struct MockPhantomGame : public PhantomMnkGame
 };
 
 // Sequences that should give player 0 a win, one for each row/column/diagonal
-const std::vector<std::vector<int>> MNKP0WinSequences {
+std::vector<std::vector<int>> const MNKP0WinSequences {
     {0,3,1,4,2},
     {3,0,4,1,5},
     {6,0,7,1,8},
@@ -84,8 +84,8 @@ const std::vector<std::vector<int>> MNKP0WinSequences {
     {2,0,4,1,6}
 };
 
-const std::vector<unsigned> expectedPlayers2P {0, 1};
-const std::vector<unsigned> expectedPlayers3P {0, 1, 2};
+std::vector<unsigned> const expectedPlayers2P {0, 1};
+std::vector<unsigned> const expectedPlayers3P {0, 1, 2};
 
 }
 
@@ -125,7 +125,7 @@ TEST_CASE("KnockoutWhist::doMove works", "[KnockoutWhist]")
     // Note: invalid means any card not held by the player as the game does not
     // check for failures to follow suit
     SECTION("Invalid move gives exception") {
-        const Card invalidMove {Card::Seven, Card::Diamonds};
+        Card const invalidMove {Card::Seven, Card::Diamonds};
         REQUIRE_THROWS_AS(game.doMove(invalidMove), std::out_of_range);
     }
 
@@ -166,7 +166,7 @@ TEST_CASE("KnockoutWhist::doMove works", "[KnockoutWhist]")
     SECTION("A game completes in a limited number of turns")
     {
         // Maximum number of turns is nPlayers * (7 + 6 + ... + 1) + 6 (selection turns)
-        const unsigned int maxTurns {6 + numPlayers * 28};
+        unsigned int constexpr maxTurns {6 + numPlayers * 28};
         unsigned int turns {0};
 
         while (!game.validMoves().empty() && turns < maxTurns) {
@@ -266,7 +266,7 @@ TEST_CASE("Goofspiel::doMove works", "[Goofspiel]")
 TEST_CASE("PhantomMnkGame::cloneAndRandomise does not modify known positions", "[PhantomMnkGame]")
 {
     MockPhantomGame game;
-    const std::vector<int> sequence {4,4,0,6,2};
+    std::vector<int> const sequence {4,4,0,6,2};
 
     for (auto move : sequence)
         game.doMove(move);

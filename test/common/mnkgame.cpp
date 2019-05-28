@@ -3,9 +3,12 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
+
 #include "mnkgame.h"
+
 #include <algorithm>
 #include <numeric>
+#include <memory>
 #include <array>
 #include <ostream>
 #include <iomanip>
@@ -30,12 +33,12 @@ MnkGame::MnkGame(int m, int n, int k)
 
 MnkGame::Ptr MnkGame::cloneAndRandomise(unsigned) const
 {
-    return Ptr{new MnkGame{*this}};
+    return std::make_unique<MnkGame>(*this);
 }
 
 void MnkGame::doMove(const int move)
 {
-    const auto loc = std::find(m_moves.begin(), m_moves.end(), move);
+    auto const loc = std::find(m_moves.begin(), m_moves.end(), move);
     if (loc == m_moves.end())
         throw std::out_of_range("Illegal move");
 
@@ -88,14 +91,14 @@ int MnkGame::column(int move) const
 bool MnkGame::isWinningMove(int move, Player player) const
 {
     // Strides representing the directions in which to look for sequences
-    static constexpr std::array<const Stride, 4> strides { {
+    std::array<const Stride, 4> static constexpr strides { {
         {0, 1}, // horizontal
         {1, 0}, // vertical
         {1, 1}, // descending diagonal
         {-1, 1} // ascending diagonal
     } };
 
-    return std::any_of(strides.begin(), strides.end(), [&](const auto &stride) {
+    return std::any_of(strides.begin(), strides.end(), [&](auto const &stride) {
         return hasWinningSequence(move, stride, player);
     });
 }
@@ -106,8 +109,8 @@ bool MnkGame::isWinningMove(int move, Player player) const
 bool MnkGame::hasWinningSequence(int move, Stride stride, Player player) const
 {
     auto count {1};
-    const auto r0 {row(move)};
-    const auto c0 {column(move)};
+    auto const r0 {row(move)};
+    auto const c0 {column(move)};
 
     for (int i : {-1, 1}) {
         auto r = r0, c = c0;
@@ -126,9 +129,9 @@ bool MnkGame::continueCounting(int row, int col, Player player) const
     return unsigned(m_board[row][col]) == player;
 }
 
-std::ostream& operator<<(std::ostream &out, const MnkGame &g)
+std::ostream& operator<<(std::ostream &out, MnkGame const &g)
 {
-    for (const auto &row : g.m_board) {
+    for (auto const &row : g.m_board) {
         for (auto p : row)
             out << std::setw(3) << p;
         out << "\n";

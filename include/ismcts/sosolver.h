@@ -29,7 +29,7 @@ public:
     using _ExecutionPolicy::numThreads;
     using TreeList = std::vector<NodePtr>;
 
-    virtual Move operator()(const Game<Move> &rootState) const override
+    virtual Move operator()(Game<Move> const &rootState) const override
     {
         std::vector<std::future<void>> futures(numThreads());
         m_trees.resize(numThreads());
@@ -50,7 +50,7 @@ public:
     }
 
 protected:
-    void search(Node<Move> *rootNode, const Game<Move> &rootState) const
+    void search(Node<Move> *rootNode, Game<Move> const &rootState) const
     {
         auto randomState = rootState.cloneAndRandomise(rootState.currentPlayer());
         select(rootNode, *randomState);
@@ -61,7 +61,7 @@ protected:
 
     void select(Node<Move> *&node, Game<Move> &state) const
     {
-        const auto validMoves = state.validMoves();
+        auto const validMoves = state.validMoves();
         if (!SOSolver::selectNode(node, validMoves)) {
             node = this->selectChild(node, state, validMoves);
             state.doMove(node->move());
@@ -71,9 +71,9 @@ protected:
 
     void expand(Node<Move> *&node, Game<Move> &state) const
     {
-        const auto untriedMoves = node->untriedMoves(state.validMoves());
+        auto const untriedMoves = node->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
-            const auto move = randomElement(untriedMoves);
+            auto const move = randomElement(untriedMoves);
             node = SOSolver::addChild(node, state, move);
             state.doMove(move);
         }

@@ -29,8 +29,8 @@ PhantomMnkGame::PhantomMnkGame(int m, int n, int k)
 PhantomMnkGame::Ptr PhantomMnkGame::cloneAndRandomise(Player observer) const
 {
     auto clone = new PhantomMnkGame{*this};
-    const auto opponent = 1 - observer;
-    const auto numMoves = clone->undoMoves(opponent);
+    auto const opponent = 1 - observer;
+    auto const numMoves = clone->undoMoves(opponent);
     clone->randomReplay(opponent, numMoves);
     return Ptr{clone};
 }
@@ -41,7 +41,7 @@ unsigned PhantomMnkGame::undoMoves(Player player)
 {
     unsigned numMoves {0};
     auto &ourMoves = m_available[player];
-    const auto &opponentMoves = m_available[1 - player];
+    auto const &opponentMoves = m_available[1 - player];
     for (int move = 0; move < m_m * m_n; ++move) {
         auto &pos = m_board[row(move)][column(move)];
         if (unsigned(pos) == player && std::binary_search(opponentMoves.begin(), opponentMoves.end(), move)) {
@@ -58,7 +58,7 @@ unsigned PhantomMnkGame::undoMoves(Player player)
 
 void PhantomMnkGame::randomReplay(Player player, unsigned numMoves)
 {
-    static thread_local std::mt19937 prng {std::random_device{}()};
+    std::mt19937 static thread_local prng {std::random_device{}()};
     auto newState = *this;
     auto moves = m_moves;
     std::shuffle(moves.begin(), moves.end(), prng);
@@ -79,7 +79,7 @@ void PhantomMnkGame::randomReplay(Player player, unsigned numMoves)
     *this = std::move(newState);
 }
 
-void PhantomMnkGame::doMove(const int move)
+void PhantomMnkGame::doMove(int const move)
 {
     auto &available = m_available[m_player];
     auto loc = std::find(available.begin(), available.end(), move);

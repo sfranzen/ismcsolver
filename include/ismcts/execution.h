@@ -39,8 +39,8 @@ public:
         setIterationTime(iterationTime);
     }
 
-    ExecutionPolicy(const ExecutionPolicy &) = delete;
-    ExecutionPolicy &operator=(const ExecutionPolicy &) = delete;
+    ExecutionPolicy(ExecutionPolicy const &) = delete;
+    ExecutionPolicy &operator=(ExecutionPolicy const &) = delete;
 
     std::size_t iterationCount() const
     {
@@ -125,11 +125,11 @@ public:
 
 protected:
     template<class Move>
-    static const Move &bestMove(const std::vector<NodePtr<Move>> &trees)
+    Move static const &bestMove(std::vector<NodePtr<Move>> const &trees)
     {
         // Sequential solvers use a vector with only one tree
-        const auto &children = trees.front()->children();
-        const auto &mostVisited = *std::max_element(children.begin(), children.end(), [](const auto &a, const auto &b){
+        auto const &children = trees.front()->children();
+        auto const &mostVisited = *std::max_element(children.begin(), children.end(), [](auto const &a, auto const &b){
             return a->visits() < b->visits();
         });
         return mostVisited->move();
@@ -150,10 +150,10 @@ protected:
     // Return best move from a number of trees holding results for the same
     // player
     template<class Move>
-    static Move bestMove(const std::vector<NodePtr<Move>> &trees)
+    Move static bestMove(std::vector<NodePtr<Move>> const &trees)
     {
-        const auto results = compileVisitCounts<Move>(trees);
-        const auto &mostVisited = *std::max_element(results.begin(), results.end(), [](const auto &a, const auto &b){
+        auto const results = compileVisitCounts<Move>(trees);
+        auto const &mostVisited = *std::max_element(results.begin(), results.end(), [](auto const &a, auto const &b){
             return a.second < b.second;
         });
         return mostVisited.first;
@@ -164,14 +164,14 @@ private:
     using VisitMap = std::map<Move, unsigned int>;
 
     template<class Move>
-    static VisitMap<Move> compileVisitCounts(const std::vector<NodePtr<Move>> &trees)
+    VisitMap<Move> static compileVisitCounts(std::vector<NodePtr<Move>> const &trees)
     {
         VisitMap<Move> results;
         for (auto &node : trees.front()->children())
             results.emplace(node->move(), node->visits());
         for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
             for (auto &node : (*t)->children()) {
-                const auto result = results.emplace(node->move(), node->visits());
+                auto const result = results.emplace(node->move(), node->visits());
                 if (!result.second)
                     (*result.first).second += node->visits();
             }

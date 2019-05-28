@@ -15,8 +15,8 @@
 namespace
 {
 using namespace ISMCTS;
-constexpr Card testMove {Card::Ace, Card::Spades};
-constexpr unsigned int testPlayer {1};
+Card constexpr testMove {Card::Ace, Card::Spades};
+unsigned int constexpr testPlayer {1};
 }
 
 TEMPLATE_TEST_CASE("Nodes are constructed properly", "[node]", UCBNode<Card>, EXPNode<Card>)

@@ -26,7 +26,7 @@ struct Game
 
     virtual std::vector<Move> validMoves() const = 0;
 
-    virtual void doMove(const Move move) = 0;
+    virtual void doMove(Move const move) = 0;
 
     virtual double getResult(Player player) const = 0;
 

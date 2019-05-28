@@ -25,9 +25,9 @@ public:
     virtual Player currentPlayer() const override;
     virtual std::vector<Player> players() const override;
     virtual std::vector<int> validMoves() const override;
-    virtual void doMove(const int move) override;
+    virtual void doMove(int const move) override;
     virtual double getResult(Player player) const override;
-    friend std::ostream &operator<<(std::ostream &out, const MnkGame &g);
+    friend std::ostream &operator<<(std::ostream &out, MnkGame const &g);
 
 protected:
     using Stride = std::pair<int,int>;

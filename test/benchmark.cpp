@@ -26,8 +26,8 @@ namespace
 {
 
 using namespace ISMCTS;
-const unsigned int numGames {100};
-const unsigned int iterationCount {1000};
+unsigned int constexpr numGames {100};
+unsigned int constexpr iterationCount {1000};
 
 // Test one "move generator" against another in a given game
 class SolverTester
@@ -64,12 +64,12 @@ private:
         auto newGame = game;
 
         while (!newGame.validMoves().empty()) {
-            const auto player = newGame.currentPlayer();
+            auto const player = newGame.currentPlayer();
             if (player > 1) {
                 doValidMove(newGame);
                 continue;
             }
-            const auto t0 = Clock::now();
+            auto const t0 = Clock::now();
             auto move = player == 0 ? generator1(newGame) : generator2(newGame);
             m_times[player] += Clock::now() - t0;
             ++m_numCalls[player];
@@ -82,7 +82,7 @@ private:
     {
         using namespace std;
         using namespace std::chrono;
-        static const auto separator = std::string(79, '-') + "\n";
+        auto static const separator = std::string(79, '-') + "\n";
 
         std::map<double,unsigned> scoreCounts;
         for (auto score : m_p0Scores) {
@@ -101,7 +101,7 @@ private:
                 << " times (" << setprecision(3) << pair.second * 100. / m_numGames << "%)\n";
 
         for (unsigned p : {0, 1}) {
-            const double time_ms = duration_cast<microseconds>(m_times[p]).count() / 1000.;
+            double const time_ms = duration_cast<microseconds>(m_times[p]).count() / 1000.;
             cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
             << time_ms << " ms, average " << time_ms / m_numCalls[p] << " ms per move.\n";
         }

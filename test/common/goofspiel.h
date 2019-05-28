@@ -29,7 +29,7 @@ public:
 
     Ptr cloneAndRandomise(Player observer) const override;
     Player currentPlayer() const override;
-    void doMove(const Card move) override;
+    void doMove(Card const move) override;
     double getResult(Player player) const override;
     std::vector<Player> players() const override;
     std::vector<Card> validMoves() const override;

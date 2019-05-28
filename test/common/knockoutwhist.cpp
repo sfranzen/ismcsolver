@@ -26,7 +26,7 @@ inline std::vector<Card> trumpChoices()
 
 inline std::mt19937 &prng()
 {
-    static thread_local std::mt19937 prng;
+    std::mt19937 static thread_local prng;
     return prng;
 }
 
@@ -47,7 +47,7 @@ KnockoutWhist::KnockoutWhist(unsigned players)
     // Deal, then remove one of the remaining cards to choose the initial trump
     // suit
     deal();
-    const auto choice = m_unknownCards.end() - 1;
+    auto const choice = m_unknownCards.end() - 1;
     m_trumpSuit = choice->suit;
     m_unknownCards.erase(choice);
 }
@@ -59,7 +59,7 @@ KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(Player observer) const
     for (auto p : m_players) {
         if (p == observer)
             continue;
-        const auto &hand = m_playerCards[p];
+        auto const &hand = m_playerCards[p];
         unseenCards.insert(unseenCards.end(), hand.begin(), hand.end());
     }
     std::shuffle(unseenCards.begin(), unseenCards.end(), prng());
@@ -82,7 +82,7 @@ KnockoutWhist::Player KnockoutWhist::currentPlayer() const
 KnockoutWhist::Player KnockoutWhist::nextPlayer(Player p) const
 {
     ++p %= m_numPlayers;
-    const auto next = std::find(m_players.begin(), m_players.end(), p);
+    auto const next = std::find(m_players.begin(), m_players.end(), p);
     return next < m_players.end() ? *next : nextPlayer(p);
 }
 
@@ -91,7 +91,7 @@ std::vector<KnockoutWhist::Player> KnockoutWhist::players() const
     return m_players;
 }
 
-void KnockoutWhist::doMove(const Card move)
+void KnockoutWhist::doMove(Card const move)
 {
     if (m_requestTrump) {
         m_trumpSuit = move.suit;
@@ -101,7 +101,7 @@ void KnockoutWhist::doMove(const Card move)
     }
     m_currentTrick.emplace_back(m_player, move);
     auto &hand = m_playerCards[m_player];
-    const auto pos = std::find(hand.begin(), hand.end(), move);
+    auto const pos = std::find(hand.begin(), hand.end(), move);
     if (pos < hand.end())
         hand.erase(pos);
     else
@@ -124,13 +124,13 @@ std::vector<Card> KnockoutWhist::validMoves() const
     if (m_requestTrump)
         return trumpChoices();
 
-    const auto &hand = m_playerCards[m_player];
+    auto const &hand = m_playerCards[m_player];
     if (m_currentTrick.empty() || hand.size() < 2)
         return hand;
 
-    const auto leadCard = m_currentTrick.front().second;
+    auto const leadCard = m_currentTrick.front().second;
     Hand cardsInSuit;
-    std::copy_if(hand.begin(), hand.end(), std::back_inserter(cardsInSuit), [&](const auto &c){ return c.suit == leadCard.suit; });
+    std::copy_if(hand.begin(), hand.end(), std::back_inserter(cardsInSuit), [&](auto const &c){ return c.suit == leadCard.suit; });
     return cardsInSuit.empty() ? hand : cardsInSuit;
 }
 
@@ -153,7 +153,7 @@ void KnockoutWhist::deal()
 
 void KnockoutWhist::finishTrick()
 {
-    const auto winner = trickWinner();
+    auto const winner = trickWinner();
     ++m_tricksTaken[winner];
     m_currentTrick.clear();
     m_player = winner;
@@ -182,8 +182,8 @@ KnockoutWhist::Player KnockoutWhist::trickWinner() const
 {
     auto winner = m_currentTrick.begin();
     for (auto p = winner + 1; p < m_currentTrick.end(); ++p) {
-        const auto card = p->second;
-        const auto winningCard = winner->second;
+        auto const card = p->second;
+        auto const winningCard = winner->second;
         if (card.suit == winningCard.suit) {
             if(card.rank > winningCard.rank)
                 winner = p;
@@ -200,23 +200,23 @@ KnockoutWhist::Player KnockoutWhist::roundWinner() const
     std::sort(players.begin(), players.end(), [&](auto p1, auto p2){
         return m_tricksTaken[p1] > m_tricksTaken[p2];
     });
-    const auto maxTricksTaken = m_tricksTaken[players[0]];
-    const std::size_t playersTied = 1 + std::count_if(players.begin() + 1, players.end(), [&](auto p){
+    auto const maxTricksTaken = m_tricksTaken[players[0]];
+    std::size_t const playersTied = 1 + std::count_if(players.begin() + 1, players.end(), [&](auto p){
         return m_tricksTaken[p] == maxTricksTaken;
     });
     std::uniform_int_distribution<std::size_t> randPlayer {0, playersTied - 1};
     return players[randPlayer(prng())];
 }
 
-std::ostream& operator<<(std::ostream &out, const KnockoutWhist &g)
+std::ostream& operator<<(std::ostream &out, KnockoutWhist const &g)
 {
-    const auto player = g.m_player;
-    const auto &hand = g.m_playerCards[player];
+    auto const player = g.m_player;
+    auto const &hand = g.m_playerCards[player];
     out << "Round " << g.m_tricksLeft << " | P" << player << ": ";
     std::copy(hand.begin(), hand.end(), std::ostream_iterator<Card>(out, ","));
     out << " | Tricks: " << g.m_tricksTaken[player];
     out << " | Trump: " << g.m_trumpSuit << " | Trick: [";
-    for (const auto &pair : g.m_currentTrick)
+    for (auto const &pair : g.m_currentTrick)
         out << pair.first << ":" << pair.second << ",";
     return out << "]";
 }

@@ -37,7 +37,7 @@ private:
     double m_probability {1};
     double m_score {0};
 
-    void updateData(const Game<Move> &terminalState) override
+    void updateData(Game<Move> const &terminalState) override
     {
         if (this->parent())
             m_score += terminalState.getResult(this->player()) / m_probability;

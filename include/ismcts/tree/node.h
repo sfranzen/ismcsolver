@@ -25,7 +25,7 @@ public:
     using Ptr = std::shared_ptr<Node>;
     using ChildPtr = std::unique_ptr<Node>;
 
-    explicit Node(const Move &move = {}, unsigned int player = 0)
+    explicit Node(Move const &move = {}, unsigned int player = 0)
         : m_move{move}
         , m_playerJustMoved{player}
     {}
@@ -33,8 +33,8 @@ public:
     virtual ~Node() = default;
 
     Node *parent() const { return m_parent; }
-    const std::vector<ChildPtr> &children() const { return m_children; }
-    const Move &move() const { return m_move; }
+    std::vector<ChildPtr> const &children() const { return m_children; }
+    Move const &move() const { return m_move; }
     unsigned int player() const { return m_playerJustMoved; }
     unsigned int visits() const { return m_visits; }
     std::size_t depth() const { return depth(0); }
@@ -47,18 +47,18 @@ public:
         return m_children.back().get();
     }
 
-    virtual void update(const Game<Move> &terminalState) final
+    virtual void update(Game<Move> const &terminalState) final
     {
         ++m_visits;
         updateData(terminalState);
     }
 
-    std::vector<Move> untriedMoves(const std::vector<Move> &legalMoves) const
+    std::vector<Move> untriedMoves(std::vector<Move> const &legalMoves) const
     {
         std::vector<Move> untried;
         untried.reserve(legalMoves.size());
-        std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](const auto &m){
-            return std::none_of(m_children.begin(), m_children.end(), [&](const auto &c){ return c->m_move == m; });
+        std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](auto const &m){
+            return std::none_of(m_children.begin(), m_children.end(), [&](auto const &c){ return c->m_move == m; });
         });
         return untried;
     }
@@ -73,7 +73,7 @@ public:
         return s;
     }
 
-    friend std::ostream &operator<<(std::ostream &out, const Node &node)
+    friend std::ostream &operator<<(std::ostream &out, Node const &node)
     {
         return out << std::string(node);
     }
@@ -81,11 +81,11 @@ public:
 private:
     Node *m_parent = nullptr;
     std::vector<ChildPtr> m_children;
-    const Move m_move;
-    const unsigned int m_playerJustMoved;
+    Move const m_move;
+    unsigned const int m_playerJustMoved;
     unsigned int m_visits {0};
 
-    virtual void updateData(const Game<Move> &terminalState) = 0;
+    virtual void updateData(Game<Move> const &terminalState) = 0;
 
     std::string indentSelf(unsigned int indent) const
     {

@@ -25,11 +25,11 @@ public:
     using NodePtr = typename Node<Move>::Ptr;
     using EXP3 = TreePolicy<EXPNode<Move>>;
     using UCB1 = TreePolicy<UCBNode<Move>>;
-    using DefaultPolicy = std::function<const Move &(const std::vector<Move> &)>;
+    using DefaultPolicy = std::function<Move const &(std::vector<Move> const &)>;
 
     virtual ~SolverBase() = default;
 
-    virtual Move operator()(const Game<Move> &rootState) const = 0;
+    virtual Move operator()(Game<Move> const &rootState) const = 0;
 
     void setEXPPolicy(EXP3 &&policy)
     {
@@ -49,14 +49,14 @@ public:
 protected:
     void simulate(Game<Move> &state) const
     {
-        const auto moves = state.validMoves();
+        auto const moves = state.validMoves();
         if (!moves.empty()) {
             state.doMove(m_defaultPolicy(moves));
             simulate(state);
         }
     }
 
-    static void backPropagate(Node<Move> *node, const Game<Move> &state)
+    void static backPropagate(Node<Move> *node, Game<Move> const &state)
     {
         while (node) {
             node->update(state);
@@ -64,12 +64,12 @@ protected:
         }
     }
 
-    static bool selectNode(const Node<Move> *node, const std::vector<Move> &moves)
+    bool static selectNode(Node<Move> const *node, std::vector<Move> const &moves)
     {
         return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
-    static Node<Move> *addChild(Node<Move> *node, const Game<Move> &state, const Move &move)
+    Node<Move> static *addChild(Node<Move> *node, Game<Move> const &state, Move const &move)
     {
         using ChildPtr = typename Node<Move>::ChildPtr;
         ChildPtr child;
@@ -80,18 +80,18 @@ protected:
         return node->addChild(std::move(child));
     }
 
-    Node<Move> *selectChild(const Node<Move> *node, const Game<Move> &state, const std::vector<Move> &moves) const
+    Node<Move> *selectChild(Node<Move> const *node, Game<Move> const &state, std::vector<Move> const &moves) const
     {
         if (state.currentMoveSimultaneous()) {
-            const auto children = legalChildren<EXPNode<Move>>(node, moves);
+            auto const children = legalChildren<EXPNode<Move>>(node, moves);
             return m_EXP3(children);
         } else {
-            const auto children = legalChildren<UCBNode<Move>>(node, moves);
+            auto const children = legalChildren<UCBNode<Move>>(node, moves);
             return m_UCB1(children);
         }
     }
 
-    static NodePtr newNode(const Game<Move> &state)
+    NodePtr static newNode(Game<Move> const &state)
     {
         if (state.currentMoveSimultaneous())
             return std::make_shared<EXPNode<Move>>();
@@ -105,12 +105,12 @@ private:
     DefaultPolicy m_defaultPolicy {randomElement<Move>};
 
     template<class Type>
-    static std::vector<Type*> legalChildren(const Node<Move> *node, const std::vector<Move> &legalMoves)
+    std::vector<Type*> static legalChildren(Node<Move> const *node, std::vector<Move> const &legalMoves)
     {
         std::vector<Type*> legalChildren;
         legalChildren.reserve(legalMoves.size());
         for(auto &c : node->children()) {
-            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](const auto &move){ return c->move() == move; }))
+            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](auto const &move){ return c->move() == move; }))
                 legalChildren.emplace_back(static_cast<Type*>(c.get()));
         }
         return legalChildren;

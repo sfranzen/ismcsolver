@@ -42,16 +42,16 @@ inline void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&.
 {
     using clock = std::chrono::high_resolution_clock;
     while (time.count() > 0) {
-        const auto start = clock::now();
+        auto const start = clock::now();
         f(std::forward<Args>(args)...);
         time -= clock::now() - start;
     }
 }
 
 template<class T>
-inline const T &randomElement(const std::vector<T> &v)
+inline const T &randomElement(std::vector<T> const &v)
 {
-    thread_local static std::mt19937 prng {std::random_device{}()};
+    std::mt19937 thread_local static prng {std::random_device{}()};
     std::uniform_int_distribution<std::size_t> randIdx {0, v.size() - 1};
     return v[randIdx(prng)];
 }

@@ -20,38 +20,38 @@ struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
 {
     using Node = EXPNode<Move>;
 
-    Node *operator()(const std::vector<Node*> &nodes) const override
+    Node *operator()(std::vector<Node*> const &nodes) const override
     {
-        static thread_local std::mt19937 prng {std::random_device{}()};
-        const auto weights = probabilities(nodes);
+        std::mt19937 static thread_local prng {std::random_device{}()};
+        auto const weights = probabilities(nodes);
         std::discrete_distribution<std::size_t> dist {weights.begin(), weights.end()};
         return nodes[dist(prng)];
     }
 
 private:
-    static std::vector<double> probabilities(const std::vector<Node*> &nodes)
+    std::vector<double> static probabilities(std::vector<Node*> const &nodes)
     {
-        const auto K = nodes.size();
+        auto const K = nodes.size();
         std::vector<double> probabilities(K);
         std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](Node *node){
-            const auto gamma = std::min(1., coefficient(K, node->visits()));
-            const auto eta = gamma / K;
-            const auto p = eta + (1 - gamma) / sumDifferences(nodes, node->score(), eta);
+            auto const gamma = std::min(1., coefficient(K, node->visits()));
+            auto const eta = gamma / K;
+            auto const p = eta + (1 - gamma) / sumDifferences(nodes, node->score(), eta);
             node->setProbability(p);
             return p;
         });
         return probabilities;
     }
 
-    static double coefficient(std::size_t K, double maxReward)
+    double static coefficient(std::size_t K, double maxReward)
     {
-        static const double factor { 1 / (std::exp(1) - 1) };
+        double static const factor { 1 / (std::exp(1) - 1) };
         return std::sqrt(K * std::log(K) * factor / maxReward);
     }
 
-    static double sumDifferences(const std::vector<Node*> &nodes, double score, double eta)
+    double static sumDifferences(std::vector<Node*> const &nodes, double score, double eta)
     {
-        return std::accumulate(nodes.begin(), nodes.end(), 0., [=](double sum, const Node *node){
+        return std::accumulate(nodes.begin(), nodes.end(), 0., [=](double sum, Node const *node){
             return sum + std::exp(eta * (node->score() - score));
         });
     }
@@ -66,17 +66,17 @@ struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
     : m_exploration{std::max(0., exploration)}
     {}
 
-    Node *operator()(const std::vector<Node*> &nodes) const override
+    Node *operator()(std::vector<Node*> const &nodes) const override
     {
         for (auto &node : nodes)
             node->markAvailable();
-        return *std::max_element(nodes.begin(), nodes.end(), [&](const Node *a, const Node *b){
+        return *std::max_element(nodes.begin(), nodes.end(), [&](Node const *a, Node const *b){
             return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
         });
     }
 
 private:
-    const double m_exploration;
+    double const m_exploration;
 };
 
 } // ISMCTS
