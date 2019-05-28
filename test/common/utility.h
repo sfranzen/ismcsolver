@@ -19,7 +19,7 @@ inline Move randomMove(ISMCTS::Game<Move> const &game)
 template<class Game>
 inline void doValidMove(Game &game)
 {
-    game.doMove(game.validMoves().front());
+    game.doMove(randomMove(game));
 }
 
 #endif
