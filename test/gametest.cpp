@@ -230,7 +230,7 @@ TEST_CASE("Goofspiel::doMove works", "[Goofspiel]")
 
     SECTION("Equal bids give equal scores") {
         for (int i {0}; i < 3; ++i)
-            doValidMove(game);
+            game.doMove(game.validMoves().front());
         CHECK(game.getResult(0) == 0.5);
         REQUIRE(game.getResult(1) == 0.5);
     }
