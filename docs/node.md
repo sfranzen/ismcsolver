@@ -18,7 +18,7 @@ Returns a pointer to the parent node or `nullptr` if this node is a root.
 
 ---
 ```cpp
-const std::vector<ChildPtr> &children() const;
+std::vector<ChildPtr> const &children() const;
 ```
 Returns the children of this node.
 
@@ -50,6 +50,6 @@ Returns a string representation of the entire (sub)tree starting at the given no
 
 ### Non-member functions
 ```cpp
-std::ostream &operator<<(std::ostream &out, const Node &node);
+std::ostream &operator<<(std::ostream &out, Node const &node);
 ```
 Writes the string representation of a node to the given output stream.

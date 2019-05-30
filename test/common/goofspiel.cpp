@@ -117,7 +117,7 @@ void Goofspiel::handleP2Turn(Card const &move)
 double Goofspiel::getResult(Player player) const
 {
     if (player == 2)
-        return 1;
+        return 0;
     else if (m_scores[0] == m_scores[1])
         return 0.5;
     else

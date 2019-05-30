@@ -12,7 +12,7 @@ struct ITreePolicy;
 ```
 Abstract interface for tree policies, defining a single member function:
 ```cpp
-virtual Node *operator()(const std::vector<Node*> &nodes) const = 0;
+virtual Node *operator()(std::vector<Node*> const &nodes) const = 0;
 ```
 which should select a single `Node *` from the provided candidate `nodes`.
 

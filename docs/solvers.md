@@ -25,18 +25,18 @@ The multiple observer solvers implement the MO-ISMCTS algorithm, which builds a 
 
 ## Member types
 
-| Type          | Definition                                            |
-|:--------------|:------------------------------------------------------|
-|`Duration`     |`std::chrono::duration<double>`                        |
-|`EXP3`         |`ISMCTS::TreePolicy<EXPNode<Move>>`                    |
-|`UCB1`         |`ISMCTS::TreePolicy<UCBNode<Move>>`                    |
-|`DefaultPolicy`|`std::function<const Move& (const std::vector<Move>&)>`|
-|`NodePtr`      |`std::shared_ptr<Node<Move>>`                          |
-|*SOSolver:*    |                                                       |
-|`TreeList`     |`std::vector<NodePtr> `                                |
-|*MOsolver:*    |                                                       |
-|`TreeMap`      |`std::map<unsigned int, NodePtr>`                      |
-|`TreeList`     |`std::vector<TreeMap>`                                 |
+| Type          | Definition                                                |
+|:--------------|:----------------------------------------------------------|
+|`Duration`     |`std::chrono::duration<double>`                            |
+|`EXP3`         |`ISMCTS::TreePolicy<EXPNode<Move>>`                        |
+|`UCB1`         |`ISMCTS::TreePolicy<UCBNode<Move>>`                        |
+|`DefaultPolicy`|`std::function<Move const &(std::vector<Move> const &)>`   |
+|`NodePtr`      |`std::shared_ptr<Node<Move>>`                              |
+|*SOSolver:*    |                                                           |
+|`TreeList`     |`std::vector<NodePtr> `                                    |
+|*MOsolver:*    |                                                           |
+|`TreeMap`      |`std::map<unsigned int, NodePtr>`                          |
+|`TreeList`     |`std::vector<TreeMap>`                                     |
 
 ## Member functions
 ### Constructors
@@ -55,7 +55,7 @@ Constructs a solver that will iterate for the given duration per search operatio
 
 ### Search
 ```cpp
-Move operator()(const Game<Move> &rootState) const;
+Move operator()(Game<Move> const &rootState) const;
 ```
 Returns the most promising move from the given game state.
 
@@ -90,7 +90,7 @@ void setDefaultPolicy(DefaultPolicy &&policy);
 Sets a new default policy. The default policy is used to select moves during the simulation stage of the algorithm. The `policy` parameter has to be a function template (or functor with a templated operator) returning a reference to one of the elements of the vector passed to it, like the following:
 ```cpp
 template<class Move>
-const Move& policyFunction(const std::vector<Move> &moves);
+Move const & policyFunction(std::vector<Move> const &moves);
 ```
 The *default* default policy has no preference, selecting moves at random.
 
