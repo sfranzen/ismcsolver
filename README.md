@@ -109,27 +109,30 @@ The basic algorithm can be applied, modified and executed in different ways. Thi
 These are two variants of the algorithm, respectively Single-Observer and Multiple-Observer. The former is implemented in `ISMCTS::SOSolver` and, as its name implies, observes the game from only one perspective: that of the player conducting the search. It only builds a tree for that player and treats all opponent moves as fully observable. While that is indeed the case in many games, some additionally feature actions that are hidden from the other players. MO-ISMCTS, implemented in `ISMCTS::MOSolver`, is intended for such games; it builds a tree for each player to model the presence of this extra hidden information.
 
 ### Multithreading
-Several approaches to parallel tree searching exist, see e.g. [Parallelization of Information Set Monte Carlo Tree Search][par] by Nick Sephton and the authors of ISMCTS. At present, this library provides the most straightforward method of root parallelisation. It distributes the iterations over the system threads, with each thread searching a separate tree. The statistics from the root of each tree are then combined to find the overall best move. This method is very fast as it avoids synchronisation issues and the additional work is limited to a single layer of nodes in each tree.
+Several approaches to parallel tree searching exist, see e.g. [Parallelization of Information Set Monte Carlo Tree Search][par] by Nick Sephton and the authors of ISMCTS.
 
-This is implemented using the `std::thread` class and can be used by providing the optional second `ExecutionPolicy` parameter to either class template. Template specialisations are provided for two policies, defined in [execution.h]: `ISMCTS::Sequential` (the default) and `ISMCTS::RootParallel`. For example, the following instantiates a parallel `MOSolver` for a two player game where `int` represents a move:
+These are implemented using `std::async` and can be used by providing the optional second `ExecutionPolicy` parameter to either class template. For example, the following instantiates a RootParallel `SOSolver` for some game where `int` represents a move:
+
 ```cpp
-ISMCTS::MOSolver<int, ISMCTS::RootParallel> solver {2};
+ISMCTS::SOSolver<int, ISMCTS::RootParallel> solver;
 ```
+
+Template specialisations are provided for three policies, defined in [execution.h]:
+* `ISMCTS::Sequential`: no multithreading, the default;
+* `ISMCTS::RootParallel`: each system thread searches a separate tree structure. The statistics from the root of each tree are then combined to find the overall best move. This method is very fast as it avoids synchronisation issues and the overhead for finding a move is limited to a single layer of nodes per tree.
+* `ISMCTS::TreeParallel`: the threads share a single tree structure. This is slightly slower, because threads may compete for access to nodes. However, the difference is typically small because the nodes quickly outnumber the threads.
+
 [execution.h]: include/ismcts/execution.h
 [par]: https://www-users.cs.york.ac.uk/~nsephton/papers/wcci2014-ismcts-parallelization.pdf
 
 ### Time-limited execution
-Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other instead letting it search for a fixed length of time (a `std::chrono::duration<double>`). Both the mode of operation and the length of the search can be changed after instantiation. A duration can be created using any of the convenience typedefs in [`std::chrono`][chrono], e.g.:
+Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other instead letting it search for a fixed length of time (a `std::chrono::duration<double>`). Both the mode of operation and the length of the search can be changed after instantiation. Durations can be conveniently created by including [`std::chrono`][chrono] and using the `std::chrono_literals`, e.g.:
 
-```cpp
-using namespace std::chrono;
-ISMCTS::SOSolver<int> solver {milliseconds(5)};
-```
-or even shorter with literal operators, since C++14:
 ```cpp
 using namespace std::chrono_literals;
 ISMCTS::SOSolver<int> solver {5ms};
 ```
+
 [chrono]: https://en.cppreference.com/w/cpp/header/chrono
 
 ## License
