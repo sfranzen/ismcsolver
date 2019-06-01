@@ -46,7 +46,7 @@ struct P1DrawOrLose : public MnkGame
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers construct properly", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     SECTION("By iteration count") {
         TestType solver {iterationCount};
@@ -62,7 +62,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers construct properly", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     TestType solver {iterationCount};
 
@@ -83,7 +83,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolv
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel)))
+    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     auto solver = GENERATE(std::make_shared<TestType>(iterationCount), std::make_shared<TestType>(iterationTime));
     Card move;
@@ -113,7 +113,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolve
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers select the most rewarding final move", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (int, (int, RootParallel)))
+    (SOSolver, MOSolver), (int, (int, RootParallel), (int, TreeParallel)))
 {
     P1DrawOrLose game;
     TestType solver {16};

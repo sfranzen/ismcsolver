@@ -8,11 +8,14 @@
 
 #include "node.h"
 #include "../game.h"
+#include "../utility.h"
+
 #include <algorithm>
 #include <cmath>
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <atomic>
 
 namespace ISMCTS
 {
@@ -30,7 +33,7 @@ public:
 
     double ucbScore(double exploration) const
     {
-        return m_score / this->visits() + exploration * std::sqrt(std::log(m_available) / this->visits());
+        return m_score / this->visits() + exploration * std::sqrt(std::log(m_available.load()) / this->visits());
     }
 
     operator std::string() const override
@@ -42,8 +45,8 @@ public:
     }
 
 private:
-    double m_score {0};
-    unsigned int m_available {1};
+    std::atomic<double> m_score {0};
+    std::atomic_uint m_available {1};
 
     void updateData(Game<Move> const &terminalState) override
     {

@@ -111,8 +111,8 @@ private:
 
 } // namespace
 
-TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]",
-                           (SOSolver, MOSolver), (Card, (Card, RootParallel)))
+TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]", (SOSolver, MOSolver),
+                           (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     TestType solver {iterationCount};
     SolverTester tester {numGames};
@@ -126,12 +126,18 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]"
 TEST_CASE("Speed", "[SOSolver]")
 {
     SolverTester tester {numGames};
+    KnockoutWhist game {2};
+
     SECTION("Sequential") {
-        SOSolver<Card> seq {iterationCount};
-        tester.run(KnockoutWhist{2}, seq, seq);
+        SOSolver<Card> solver {iterationCount};
+        tester.run(game, solver, solver);
     }
     SECTION("RootParallel") {
-        SOSolver<Card, RootParallel> par {iterationCount};
-        tester.run(KnockoutWhist{2}, par, par);
+        SOSolver<Card, RootParallel> solver {iterationCount};
+        tester.run(game, solver, solver);
+    }
+    SECTION("TreeParallel") {
+        SOSolver<Card, TreeParallel> solver {iterationCount};
+        tester.run(game, solver, solver);
     }
 }

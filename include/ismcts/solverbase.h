@@ -11,8 +11,9 @@
 #include "tree/policies.h"
 #include "utility.h"
 
-#include <vector>
 #include <functional>
+#include <memory>
+#include <vector>
 
 namespace ISMCTS
 {
@@ -69,29 +70,18 @@ protected:
         return moves.empty() || !node->untriedMoves(moves).empty();
     }
 
-    Node<Move> static *addChild(Node<Move> *node, Game<Move> const &state, Move const &move)
-    {
-        using ChildPtr = typename Node<Move>::ChildPtr;
-        ChildPtr child;
-        if (state.currentMoveSimultaneous())
-            child = std::make_unique<EXPNode<Move>>(move, state.currentPlayer());
-        else
-            child = std::make_unique<UCBNode<Move>>(move, state.currentPlayer());
-        return node->addChild(std::move(child));
-    }
-
     Node<Move> *selectChild(Node<Move> const *node, Game<Move> const &state, std::vector<Move> const &moves) const
     {
         if (state.currentMoveSimultaneous()) {
-            auto const children = legalChildren<EXPNode<Move>>(node, moves);
+            auto const children = node->template legalChildren<EXPNode<Move>>(moves);
             return m_EXP3(children);
         } else {
-            auto const children = legalChildren<UCBNode<Move>>(node, moves);
+            auto const children = node->template legalChildren<UCBNode<Move>>(moves);
             return m_UCB1(children);
         }
     }
 
-    NodePtr static newNode(Game<Move> const &state)
+    NodePtr static newRoot(Game<Move> const &state)
     {
         if (state.currentMoveSimultaneous())
             return std::make_shared<EXPNode<Move>>();
@@ -99,22 +89,18 @@ protected:
             return std::make_shared<UCBNode<Move>>();
     }
 
+    std::unique_ptr<Node<Move>> static newChild(Move const &move, Game<Move> const &state)
+    {
+        if (state.currentMoveSimultaneous())
+            return std::make_unique<EXPNode<Move>>(move, state.currentPlayer());
+        else
+            return std::make_unique<UCBNode<Move>>(move, state.currentPlayer());
+    }
+
 private:
     EXP3 m_EXP3 {};
     UCB1 m_UCB1 {};
     DefaultPolicy m_defaultPolicy {randomElement<Move>};
-
-    template<class Type>
-    std::vector<Type*> static legalChildren(Node<Move> const *node, std::vector<Move> const &legalMoves)
-    {
-        std::vector<Type*> legalChildren;
-        legalChildren.reserve(legalMoves.size());
-        for(auto &c : node->children()) {
-            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](auto const &move){ return c->move() == move; }))
-                legalChildren.emplace_back(static_cast<Type*>(c.get()));
-        }
-        return legalChildren;
-    }
 };
 
 } // ISMCTS
