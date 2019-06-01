@@ -16,7 +16,6 @@
 #include <memory>
 #include <vector>
 #include <map>
-#include <future>
 
 namespace ISMCTS
 {
@@ -27,7 +26,6 @@ class MOSolver : public SolverBase<Move,_ExecutionPolicy>
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
     using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
-    using _ExecutionPolicy::numThreads;
 
     // The search trees for the current observer, one per player
     using TreeMap = std::map<unsigned int, NodePtr>;
@@ -37,16 +35,11 @@ public:
 
     virtual Move operator()(Game<Move> const &rootState) const override
     {
-        std::vector<std::future<void>> futures(numThreads());
-        setupTrees(rootState);
+        auto treeSearch = [this](TreeMap &map, Game<Move> const &state){ search(map, state); };
+        auto treeGenerator = [&rootState]{ return newTree(rootState); };
+        m_trees = MOSolver::execute(treeSearch, treeGenerator, rootState);
 
-        std::transform(m_trees.begin(), m_trees.end(), futures.begin(), [&](auto &map){
-            return this->launch([&]{ search(map, rootState); });
-        });
-        for (auto &f : futures)
-            f.get();
-
-        std::vector<NodePtr> currentPlayerTrees(numThreads());
+        std::vector<NodePtr> currentPlayerTrees(m_trees.size());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](auto &map){
             return map[rootState.currentPlayer()];
         });
@@ -79,19 +72,13 @@ protected:
         auto const player = state.currentPlayer();
         auto const &targetNode = nodes[player];
         if (!MOSolver::selectNode(targetNode, validMoves)) {
-            auto const selection = this->selectChild(targetNode, state, validMoves);
+            auto const &move = this->selectChild(targetNode, state, validMoves)->move();
+            auto makeChild = [&move, &state]{ return MOSolver::newChild(move, state); };
             for (auto &node : nodes)
-                node.second = MOSolver::findOrAddChild(node.second, state, selection->move());
-            state.doMove(selection->move());
+                node.second = node.second->findOrAddChild(move, makeChild);
+            state.doMove(move);
             select(nodes, state);
         }
-    }
-
-    Node<Move> static *findOrAddChild(Node<Move> *node, Game<Move> &state, Move const &move)
-    {
-        auto const &children = node->children();
-        auto const pos = std::find_if(children.begin(), children.end(), [&](auto const &c){ return c->move() == move; });
-        return pos < children.end() ? pos->get() : MOSolver::addChild(node, state, move);
     }
 
     void expand(NodePtrMap &nodes, Game<Move> &state) const
@@ -100,8 +87,9 @@ protected:
         auto const untriedMoves = nodes[player]->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
             auto const move = randomElement(untriedMoves);
+            auto makeChild = [&move, &state]{ return MOSolver::newChild(move, state); };
             for (auto &node : nodes)
-                node.second = MOSolver::findOrAddChild(node.second, state, move);
+                node.second = node.second->findOrAddChild(move, makeChild);
             state.doMove(move);
         }
     }
@@ -115,16 +103,13 @@ protected:
 private:
     mutable TreeList m_trees;
 
-    void setupTrees(Game<Move> const &rootState) const
+    TreeMap static newTree(Game<Move> const &rootState)
     {
         auto const &state = dynamic_cast<POMGame<Move> const &>(rootState);
-        m_trees.resize(numThreads());
-        std::generate(m_trees.begin(), m_trees.end(), [&]{
-            TreeMap map;
-            for (auto player : state.players())
-                map.emplace(player, MOSolver::newNode(state));
-            return map;
-        });
+        TreeMap map;
+        for (auto player : state.players())
+            map.emplace(player, MOSolver::newRoot(state));
+        return map;
     }
 };
 

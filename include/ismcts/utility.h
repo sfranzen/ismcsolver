@@ -29,6 +29,16 @@ inline T decrement(std::atomic<T> &count, T chunk)
     return chunk;
 }
 
+inline double operator+=(std::atomic<double> &d, double other)
+{
+    double old {d};
+    double newValue;
+    do {
+        newValue = old + other;
+    } while (!d.compare_exchange_weak(old, newValue));
+    return newValue;
+}
+
 template<class Callable, class... Args>
 inline void executeFor(std::atomic_size_t &count, std::size_t chunk, Callable&& f, Args&&... args)
 {

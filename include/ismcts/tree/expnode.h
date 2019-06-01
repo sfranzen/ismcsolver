@@ -8,10 +8,13 @@
 
 #include "node.h"
 #include "../game.h"
+#include "../utility.h"
+
 #include <numeric>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <atomic>
 
 namespace ISMCTS
 {
@@ -34,8 +37,8 @@ public:
     }
 
 private:
-    double m_probability {1};
-    double m_score {0};
+    std::atomic<double> m_probability {1};
+    std::atomic<double> m_score {0};
 
     void updateData(Game<Move> const &terminalState) override
     {

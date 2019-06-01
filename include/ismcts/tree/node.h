@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <string>
 #include <ostream>
+#include <mutex>
+#include <atomic>
+#include <iostream>
 
 namespace ISMCTS
 {
@@ -42,9 +45,16 @@ public:
 
     Node *addChild(ChildPtr child)
     {
-        child->m_parent = this;
-        m_children.emplace_back(std::move(child));
-        return m_children.back().get();
+        Lock lock {m_mutex};
+        return addChildLocked(std::move(child));
+    }
+
+    template<class Generator>
+    Node *findOrAddChild(Move const &move, Generator &&g)
+    {
+        Lock lock {m_mutex};
+        auto const pos = std::find_if(m_children.begin(), m_children.end(), [&](const auto &c){ return c->move() == move; });
+        return pos < m_children.end() ? pos->get() : addChildLocked(g());
     }
 
     virtual void update(Game<Move> const &terminalState) final
@@ -53,10 +63,24 @@ public:
         updateData(terminalState);
     }
 
+    template<class Type>
+    std::vector<Type*> legalChildren(std::vector<Move> const &legalMoves) const
+    {
+        std::vector<Type*> legalChildren;
+        legalChildren.reserve(legalMoves.size());
+        Lock lock {m_mutex};
+        for(auto &c : m_children) {
+            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](auto const &move){ return c->move() == move; }))
+                legalChildren.emplace_back(static_cast<Type*>(c.get()));
+        }
+        return legalChildren;
+    }
+
     std::vector<Move> untriedMoves(std::vector<Move> const &legalMoves) const
     {
         std::vector<Move> untried;
         untried.reserve(legalMoves.size());
+        Lock lock {m_mutex};
         std::copy_if(legalMoves.begin(), legalMoves.end(), std::back_inserter(untried), [&](auto const &m){
             return std::none_of(m_children.begin(), m_children.end(), [&](auto const &c){ return c->m_move == m; });
         });
@@ -79,11 +103,22 @@ public:
     }
 
 private:
+    using Lock = std::lock_guard<std::mutex>;
+
     Node *m_parent = nullptr;
+    mutable std::mutex m_mutex;
     std::vector<ChildPtr> m_children;
     Move const m_move;
     unsigned const int m_playerJustMoved;
-    unsigned int m_visits {0};
+    std::atomic_uint m_visits {0};
+
+    // m_mutex assumed locked
+    Node *addChildLocked(ChildPtr child)
+    {
+        child->m_parent = this;
+        m_children.emplace_back(std::move(child));
+        return m_children.back().get();
+    }
 
     virtual void updateData(Game<Move> const &terminalState) = 0;
 

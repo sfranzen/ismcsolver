@@ -15,7 +15,6 @@
 
 #include <memory>
 #include <vector>
-#include <future>
 
 namespace ISMCTS
 {
@@ -26,21 +25,13 @@ class SOSolver : public SolverBase<Move, _ExecutionPolicy>
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
     using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
-    using _ExecutionPolicy::numThreads;
     using TreeList = std::vector<NodePtr>;
 
     virtual Move operator()(Game<Move> const &rootState) const override
     {
-        std::vector<std::future<void>> futures(numThreads());
-        m_trees.resize(numThreads());
-        std::generate(m_trees.begin(), m_trees.end(), [&]{ return SOSolver::newNode(rootState); });
-
-        std::transform(m_trees.begin(), m_trees.end(), futures.begin(), [&](auto &node){
-            return this->launch([&]{ search(node.get(), rootState); });
-        });
-        for (auto &f : futures)
-            f.get();
-
+        auto treeGenerator = [&rootState]{ return SOSolver::newRoot(rootState); };
+        auto treeSearch = [this](NodePtr &node, Game<Move> const &state){ search(node.get(), state); };
+        m_trees = SOSolver::execute(treeSearch, treeGenerator, rootState);
         return SOSolver::template bestMove<Move>(m_trees);
     }
 
@@ -73,8 +64,8 @@ protected:
     {
         auto const untriedMoves = node->untriedMoves(state.validMoves());
         if (!untriedMoves.empty()) {
-            auto const move = randomElement(untriedMoves);
-            node = SOSolver::addChild(node, state, move);
+            auto const &move = randomElement(untriedMoves);
+            node = node->addChild(SOSolver::newChild(move, state));
             state.doMove(move);
         }
     }
