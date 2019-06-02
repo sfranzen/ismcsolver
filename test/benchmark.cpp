@@ -14,13 +14,13 @@
 #include "common/utility.h"
 
 #include <chrono>
-#include <vector>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
+#include <string>
 #include <array>
 #include <map>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
+#include <vector>
 
 namespace
 {
@@ -38,7 +38,7 @@ public:
     {}
 
     template<class... Args>
-    void run(Args &&... args)
+    std::string run(Args &&... args)
     {
         m_p0Scores.resize(m_numGames);
         m_numCalls.fill(0);
@@ -46,7 +46,7 @@ public:
         std::generate(m_p0Scores.begin(), m_p0Scores.end(), [&]{
             return playGame(std::forward<Args>(args)...);
         });
-        report();
+        return report();
     }
 
 private:
@@ -78,11 +78,13 @@ private:
         return newGame.getResult(0);
     }
 
-    void report() const
+    std::string report() const
     {
         using namespace std;
         using namespace std::chrono;
-        auto static const separator = std::string(79, '-') + "\n";
+
+        auto static const separator = std::string(77, '-') + "\n";
+        std::ostringstream oss;
 
         std::map<double,unsigned> scoreCounts;
         for (auto score : m_p0Scores) {
@@ -91,21 +93,20 @@ private:
                 ++ret.first->second;
         }
 
-        auto flags = cout.flags();
-        auto precision = cout.precision();
-        auto countWidth = int(std::floor(1 + std::log10(m_numGames)));
+        auto const countWidth = int(std::floor(1 + std::log10(m_numGames)));
 
-        cout << separator << "First player score stats after " << m_numGames << " games:\n";
+        oss << separator << "First player score stats after " << m_numGames << " games:\n";
         for (auto &pair : scoreCounts)
-            cout << setw(3) << setprecision(2) << pair.first << ": " << setw(countWidth) << pair.second
+            oss << setw(3) << setprecision(2) << pair.first << ": " << setw(countWidth) << pair.second
                 << " times (" << setprecision(3) << pair.second * 100. / m_numGames << "%)\n";
 
         for (unsigned p : {0, 1}) {
             double const time_ms = duration_cast<microseconds>(m_times[p]).count() / 1000.;
-            cout << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
-            << time_ms << " ms, average " << time_ms / m_numCalls[p] << " ms per move.\n";
+            oss << "Player " << p << " selected " << m_numCalls[p] << " moves in " << setprecision(4)
+                << time_ms << " ms, average " << time_ms / m_numCalls[p] << " ms per move.\n";
         }
-        cout << setiosflags(flags) << setprecision(precision) << separator;
+        oss << separator;
+        return oss.str();
     }
 };
 
@@ -118,9 +119,9 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]"
     SolverTester tester {numGames};
 
     SECTION("Knockout Whist")
-        REQUIRE_NOTHROW(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
+        WARN(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
     SECTION("Goofspiel")
-        REQUIRE_NOTHROW(tester.run(Goofspiel{}, solver, randomMove<Card>));
+        WARN(tester.run(Goofspiel{}, solver, randomMove<Card>));
 }
 
 TEST_CASE("Speed", "[SOSolver]")
@@ -130,14 +131,14 @@ TEST_CASE("Speed", "[SOSolver]")
 
     SECTION("Sequential") {
         SOSolver<Card> solver {iterationCount};
-        tester.run(game, solver, solver);
+        WARN(tester.run(game, solver, solver));
     }
     SECTION("RootParallel") {
         SOSolver<Card, RootParallel> solver {iterationCount};
-        tester.run(game, solver, solver);
+        WARN(tester.run(game, solver, solver));
     }
     SECTION("TreeParallel") {
         SOSolver<Card, TreeParallel> solver {iterationCount};
-        tester.run(game, solver, solver);
+        WARN(tester.run(game, solver, solver));
     }
 }
