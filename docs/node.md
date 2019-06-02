@@ -7,7 +7,7 @@ The structure of the tree is simple, with each node holding a raw pointer to its
 
 | Type      | Definition                |
 |:----------|:--------------------------|
-|`Ptr`      |`std::shared_ptr<Node>`    |
+|`RootPtr`  |`std::shared_ptr<Node>`    |
 |`ChildPtr` |`std::unique_ptr<Node>`    |
 
 ### Member functions

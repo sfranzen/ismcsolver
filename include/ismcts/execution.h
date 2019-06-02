@@ -15,7 +15,6 @@
 #include <cmath>
 #include <future>
 #include <memory>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <map>
@@ -27,8 +26,9 @@ class ExecutionPolicy
 {
 public:
     using Duration = std::chrono::duration<double>;
+
     template<class Move>
-    using NodePtr = typename Node<Move>::Ptr;
+    using TreeList = std::vector<typename Node<Move>::RootPtr>;
 
     explicit ExecutionPolicy(std::size_t iterationCount = 1000, unsigned int numThreads = 1)
     {
@@ -80,9 +80,9 @@ public:
 
 protected:
     template<class Generator>
-    auto static makeTrees(Generator &&g, unsigned int count)
+    auto makeTrees(Generator &&g) const
     {
-        std::vector<std::result_of_t<Generator()>> trees(count);
+        std::vector<decltype(g())> trees(m_numThreads);
         std::generate(trees.begin(), trees.end(), g);
         return trees;
     }
@@ -93,16 +93,16 @@ protected:
         if (m_iterCount > 0) {
             setCounter();
             return std::async(std::launch::async, [=]{
-                executeFor(m_counter, m_chunkSize, std::move(f));
+                executeFor(m_counter, m_chunkSize, f);
                 m_isCounterSet = false;
             });
         } else {
-            return std::async(std::launch::async, [=]{ executeFor(m_iterTime, std::move(f)); });
+            return std::async(std::launch::async, [=]{ executeFor(m_iterTime, f); });
         }
     }
 
     template<class Move>
-    Move static const &bestMove(std::vector<NodePtr<Move>> const &trees)
+    Move static const &bestMove(TreeList<Move> const &trees)
     {
         // Sequential/TreeParallel solvers use a vector with only one tree
         auto const &children = trees.front()->children();
@@ -149,7 +149,7 @@ protected:
     template<class SearchOp, class TreeGenerator, class Game>
     auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
     {
-        auto trees = makeTrees(g, 1);
+        auto trees = makeTrees(g);
         launch([&]{ search(trees[0], rootState); }).get();
         return trees;
     }
@@ -170,7 +170,7 @@ protected:
     template<class SearchOp, class TreeGenerator, class Game>
     auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
     {
-        auto trees = makeTrees(g, 1);
+        auto trees = makeTrees(g);
         std::vector<std::future<void>> futures(numThreads());
         std::generate(futures.begin(), futures.end(), [&]{
             return launch([&]{ search(trees[0], rootState); });
@@ -190,7 +190,7 @@ protected:
     template<class SearchOp, class TreeGenerator, class Game>
     auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
     {
-        auto trees = makeTrees(g, numThreads());
+        auto trees = makeTrees(g);
         std::vector<std::future<void>> futures(numThreads());
         std::transform(trees.begin(), trees.end(), futures.begin(), [&](auto &tree){
             return launch([&]{ search(tree, rootState); });
@@ -203,7 +203,7 @@ protected:
     // Return best move from a number of trees holding results for the same
     // player
     template<class Move>
-    Move static bestMove(std::vector<NodePtr<Move>> const &trees)
+    Move static bestMove(TreeList<Move> const &trees)
     {
         auto const results = compileVisitCounts<Move>(trees);
         auto const &mostVisited = *std::max_element(results.begin(), results.end(), [](auto const &a, auto const &b){
@@ -214,12 +214,9 @@ protected:
 
 private:
     template<class Move>
-    using VisitMap = std::map<Move, unsigned int>;
-
-    template<class Move>
-    VisitMap<Move> static compileVisitCounts(std::vector<NodePtr<Move>> const &trees)
+    auto static compileVisitCounts(TreeList<Move> const &trees)
     {
-        VisitMap<Move> results;
+        std::map<Move, unsigned int> results;
         for (auto &node : trees.front()->children())
             results.emplace(node->move(), node->visits());
         for (auto t = trees.begin() + 1; t < trees.end(); ++t) {

@@ -10,11 +10,11 @@
 #include "../game.h"
 #include "../utility.h"
 
-#include <numeric>
-#include <cmath>
-#include <sstream>
-#include <iomanip>
 #include <atomic>
+#include <cmath>
+#include <numeric>
+#include <iomanip>
+#include <sstream>
 
 namespace ISMCTS
 {

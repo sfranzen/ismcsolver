@@ -23,14 +23,10 @@ class SolverBase : public _ExecutionPolicy
 {
 public:
     using _ExecutionPolicy::_ExecutionPolicy;
-    using NodePtr = typename Node<Move>::Ptr;
+    using RootPtr = typename Node<Move>::RootPtr;
     using EXP3 = TreePolicy<EXPNode<Move>>;
     using UCB1 = TreePolicy<UCBNode<Move>>;
     using DefaultPolicy = std::function<Move const &(std::vector<Move> const &)>;
-
-    virtual ~SolverBase() = default;
-
-    virtual Move operator()(Game<Move> const &rootState) const = 0;
 
     void setEXPPolicy(EXP3 &&policy)
     {
@@ -81,7 +77,7 @@ protected:
         }
     }
 
-    NodePtr static newRoot(Game<Move> const &state)
+    RootPtr static newRoot(Game<Move> const &state)
     {
         if (state.currentMoveSimultaneous())
             return std::make_shared<EXPNode<Move>>();

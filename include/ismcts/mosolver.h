@@ -25,21 +25,21 @@ class MOSolver : public SolverBase<Move,_ExecutionPolicy>
 {
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
-    using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
+    using typename SolverBase<Move,_ExecutionPolicy>::RootPtr;
 
     // The search trees for the current observer, one per player
-    using TreeMap = std::map<unsigned int, NodePtr>;
+    using TreeMap = std::map<unsigned int, RootPtr>;
 
     // The set of tree maps, one for each thread
     using TreeList = std::vector<TreeMap>;
 
-    virtual Move operator()(Game<Move> const &rootState) const override
+    Move operator()(POMGame<Move> const &rootState) const
     {
         auto treeSearch = [this](TreeMap &map, Game<Move> const &state){ search(map, state); };
         auto treeGenerator = [&rootState]{ return newTree(rootState); };
         m_trees = MOSolver::execute(treeSearch, treeGenerator, rootState);
 
-        std::vector<NodePtr> currentPlayerTrees(m_trees.size());
+        std::vector<RootPtr> currentPlayerTrees(m_trees.size());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](auto &map){
             return map[rootState.currentPlayer()];
         });
@@ -103,9 +103,8 @@ protected:
 private:
     mutable TreeList m_trees;
 
-    TreeMap static newTree(Game<Move> const &rootState)
+    TreeMap static newTree(POMGame<Move> const &state)
     {
-        auto const &state = dynamic_cast<POMGame<Move> const &>(rootState);
         TreeMap map;
         for (auto player : state.players())
             map.emplace(player, MOSolver::newRoot(state));

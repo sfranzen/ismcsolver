@@ -8,9 +8,11 @@
 
 #include "policy.h"
 #include "nodetypes.h"
-#include <vector>
+
 #include <algorithm>
+#include <cmath>
 #include <random>
+#include <vector>
 
 namespace ISMCTS
 {
@@ -45,8 +47,8 @@ private:
 
     double static coefficient(std::size_t K, double maxReward)
     {
-        double static const factor { 1 / (std::exp(1) - 1) };
-        return std::sqrt(K * std::log(K) * factor / maxReward);
+        auto static const factor = std::expm1(1);
+        return std::sqrt(K * std::log(K) / factor / maxReward);
     }
 
     double static sumDifferences(std::vector<Node*> const &nodes, double score, double eta)
@@ -63,7 +65,7 @@ struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
     using Node = UCBNode<Move>;
 
     explicit TreePolicy(double exploration = 0.7)
-    : m_exploration{std::max(0., exploration)}
+        : m_exploration{std::max(0., exploration)}
     {}
 
     Node *operator()(std::vector<Node*> const &nodes) const override

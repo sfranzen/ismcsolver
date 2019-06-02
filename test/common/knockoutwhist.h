@@ -27,7 +27,7 @@ protected:
     using Hand = std::vector<Card>;
     using Play = std::pair<Player,Card>;
 
-    unsigned const static int s_deckSize {52};
+    unsigned int static constexpr s_deckSize {52};
     std::vector<Card> m_deck {s_deckSize};
     std::vector<Card> m_unknownCards;
     std::vector<Player> m_players;

@@ -6,13 +6,13 @@
 #ifndef ISMCTS_UTILITY_H
 #define ISMCTS_UTILITY_H
 
-#include <cstdint>
-#include <cmath>
 #include <atomic>
-#include <utility>
+#include <cmath>
 #include <chrono>
-#include <vector>
+#include <cstdint>
 #include <random>
+#include <utility>
+#include <vector>
 
 namespace ISMCTS
 {

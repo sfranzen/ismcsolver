@@ -6,14 +6,13 @@
 #ifndef ISMCTS_NODE_H
 #define ISMCTS_NODE_H
 
-#include <vector>
-#include <memory>
 #include <algorithm>
-#include <string>
-#include <ostream>
-#include <mutex>
 #include <atomic>
-#include <iostream>
+#include <memory>
+#include <mutex>
+#include <ostream>
+#include <string>
+#include <vector>
 
 namespace ISMCTS
 {
@@ -25,7 +24,7 @@ template<class Move>
 class Node
 {
 public:
-    using Ptr = std::shared_ptr<Node>;
+    using RootPtr = std::shared_ptr<Node>;
     using ChildPtr = std::unique_ptr<Node>;
 
     explicit Node(Move const &move = {}, unsigned int player = 0)
@@ -109,7 +108,7 @@ private:
     mutable std::mutex m_mutex;
     std::vector<ChildPtr> m_children;
     Move const m_move;
-    unsigned const int m_playerJustMoved;
+    unsigned int const m_playerJustMoved;
     std::atomic_uint m_visits {0};
 
     // m_mutex assumed locked

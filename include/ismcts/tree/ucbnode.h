@@ -11,11 +11,11 @@
 #include "../utility.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
+#include <iomanip>
 #include <string>
 #include <sstream>
-#include <iomanip>
-#include <atomic>
 
 namespace ISMCTS
 {

@@ -31,11 +31,11 @@ The multiple observer solvers implement the MO-ISMCTS algorithm, which builds a 
 |`EXP3`         |`ISMCTS::TreePolicy<EXPNode<Move>>`                        |
 |`UCB1`         |`ISMCTS::TreePolicy<UCBNode<Move>>`                        |
 |`DefaultPolicy`|`std::function<Move const &(std::vector<Move> const &)>`   |
-|`NodePtr`      |`std::shared_ptr<Node<Move>>`                              |
+|`RootPtr`      |`std::shared_ptr<Node<Move>>`                              |
 |*SOSolver:*    |                                                           |
-|`TreeList`     |`std::vector<NodePtr> `                                    |
+|`TreeList`     |`std::vector<RootPtr> `                                    |
 |*MOsolver:*    |                                                           |
-|`TreeMap`      |`std::map<unsigned int, NodePtr>`                          |
+|`TreeMap`      |`std::map<unsigned int, RootPtr>`                          |
 |`TreeList`     |`std::vector<TreeMap>`                                     |
 
 ## Member functions
@@ -55,7 +55,8 @@ Constructs a solver that will iterate for the given duration per search operatio
 
 ### Search
 ```cpp
-Move operator()(Game<Move> const &rootState) const;
+Move SOSolver::operator()(Game<Move> const &rootState) const;
+Move MOSolver::operator()(POMGame<Move> const &rootState) const;
 ```
 Returns the most promising move from the given game state.
 
@@ -110,7 +111,7 @@ Returns the current iteration time length, which is `Duration::zero()` if the it
 ```cpp
 unsigned int numThreads() const;
 ```
-Returns the number of threads used for execution of the algorithm, which is 1 for the `Sequential` policy and equal to `std::thread::hardware_concurrency()` for `RootParallel`.
+Returns the number of threads used for execution of the algorithm, which is 1 for the `Sequential` policy and equal to `std::thread::hardware_concurrency()` for `RootParallel` and `TreeParallel`.
 
 ---
 ```cpp

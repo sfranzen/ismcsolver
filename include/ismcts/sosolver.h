@@ -24,13 +24,13 @@ class SOSolver : public SolverBase<Move, _ExecutionPolicy>
 {
 public:
     using SolverBase<Move,_ExecutionPolicy>::SolverBase;
-    using typename SolverBase<Move,_ExecutionPolicy>::NodePtr;
-    using TreeList = std::vector<NodePtr>;
+    using typename SolverBase<Move,_ExecutionPolicy>::RootPtr;
+    using TreeList = typename _ExecutionPolicy::template TreeList<Move>;
 
-    virtual Move operator()(Game<Move> const &rootState) const override
+    Move operator()(Game<Move> const &rootState) const
     {
         auto treeGenerator = [&rootState]{ return SOSolver::newRoot(rootState); };
-        auto treeSearch = [this](NodePtr &node, Game<Move> const &state){ search(node.get(), state); };
+        auto treeSearch = [this](RootPtr &root, Game<Move> const &state){ search(root.get(), state); };
         m_trees = SOSolver::execute(treeSearch, treeGenerator, rootState);
         return SOSolver::template bestMove<Move>(m_trees);
     }
