@@ -30,18 +30,6 @@ public:
     template<class Move>
     using TreeList = std::vector<typename Node<Move>::RootPtr>;
 
-    explicit ExecutionPolicy(std::size_t iterationCount = 1000, unsigned int numThreads = 1)
-    {
-        setThreadCount(numThreads);
-        setIterationCount(iterationCount);
-    }
-
-    explicit ExecutionPolicy(Duration iterationTime, unsigned int numThreads = 1)
-    {
-        setThreadCount(numThreads);
-        setIterationTime(iterationTime);
-    }
-
     ExecutionPolicy(ExecutionPolicy const &) = delete;
     ExecutionPolicy &operator=(ExecutionPolicy const &) = delete;
 
@@ -79,11 +67,47 @@ public:
     }
 
 protected:
+    auto static hwThreadCount() { return std::thread::hardware_concurrency(); }
+
+    template<typename T>
+    T static validateCount(T count) { return std::max(count, T{1}); }
+
+    ExecutionPolicy(unsigned int numThreads, unsigned int numTrees)
+        : m_numThreads{validateCount(numThreads)}
+        , m_numTrees{validateCount(numTrees)}
+    {}
+
+    explicit ExecutionPolicy(std::size_t iterationCount = 1000, unsigned int numThreads = 1, unsigned int numTrees = 1)
+        : ExecutionPolicy{numThreads, numTrees}
+    {
+        setIterationCount(iterationCount);
+    }
+
+    explicit ExecutionPolicy(Duration iterationTime, unsigned int numThreads = 1, unsigned int numTrees = 1)
+        : ExecutionPolicy{numThreads, numTrees}
+    {
+        setIterationTime(iterationTime);
+    }
+
     template<class Generator>
     auto makeTrees(Generator &&g) const
     {
-        std::vector<decltype(g())> trees(m_numThreads);
+        std::vector<decltype(g())> trees(m_numTrees);
         std::generate(trees.begin(), trees.end(), g);
+        return trees;
+    }
+
+    // Works for both Sequential and TreeParallel
+    template<class SearchOp, class TreeGenerator, class Game>
+    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
+    {
+        auto trees = makeTrees(g);
+        std::vector<std::future<void>> futures(m_numThreads);
+        std::generate(futures.begin(), futures.end(), [&]{
+            return launch([&]{ search(trees[0], rootState); });
+        });
+        for (auto &f : futures)
+            f.get();
         return trees;
     }
 
@@ -115,15 +139,11 @@ protected:
 private:
     std::size_t m_iterCount;
     Duration m_iterTime;
-    unsigned int m_numThreads;
+    unsigned int const m_numThreads;
+    unsigned int const m_numTrees;
     unsigned int m_chunkSize {1};
     mutable std::atomic_size_t m_counter;
     mutable std::atomic_bool m_isCounterSet {false};
-
-    void setThreadCount(unsigned int count)
-    {
-        m_numThreads = std::max(count, 1u);
-    }
 
     void setCounter() const
     {
@@ -144,47 +164,30 @@ public:
     explicit Sequential(Duration iterationTime)
         : ExecutionPolicy{iterationTime}
     {}
-
-protected:
-    template<class SearchOp, class TreeGenerator, class Game>
-    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
-    {
-        auto trees = makeTrees(g);
-        launch([&]{ search(trees[0], rootState); }).get();
-        return trees;
-    }
 };
 
 class TreeParallel : public ExecutionPolicy
 {
 public:
     explicit TreeParallel(std::size_t iterationCount = 1000)
-        : ExecutionPolicy{iterationCount, std::thread::hardware_concurrency()}
+        : ExecutionPolicy{iterationCount, hwThreadCount()}
     {}
 
     explicit TreeParallel(Duration iterationTime)
-        : ExecutionPolicy{iterationTime, std::thread::hardware_concurrency()}
+        : ExecutionPolicy{iterationTime, hwThreadCount()}
     {}
-
-protected:
-    template<class SearchOp, class TreeGenerator, class Game>
-    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
-    {
-        auto trees = makeTrees(g);
-        std::vector<std::future<void>> futures(numThreads());
-        std::generate(futures.begin(), futures.end(), [&]{
-            return launch([&]{ search(trees[0], rootState); });
-        });
-        for (auto &f : futures)
-            f.get();
-        return trees;
-    }
 };
 
-class RootParallel : public TreeParallel
+class RootParallel : public ExecutionPolicy
 {
 public:
-    using TreeParallel::TreeParallel;
+    explicit RootParallel(std::size_t iterationCount = 1000)
+        : ExecutionPolicy{iterationCount, hwThreadCount(), hwThreadCount()}
+    {}
+
+    explicit RootParallel(Duration iterationTime)
+        : ExecutionPolicy{iterationTime, hwThreadCount(), hwThreadCount()}
+    {}
 
 protected:
     template<class SearchOp, class TreeGenerator, class Game>
