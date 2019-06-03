@@ -220,13 +220,11 @@ private:
     auto static compileVisitCounts(TreeList<Move> const &trees)
     {
         std::map<Move, unsigned int> results;
-        for (auto &node : trees.front()->children())
-            results.emplace(node->move(), node->visits());
-        for (auto t = trees.begin() + 1; t < trees.end(); ++t) {
-            for (auto &node : (*t)->children()) {
+        for (auto &tree : trees) {
+            for (auto &node : tree->children()) {
                 auto const result = results.emplace(node->move(), node->visits());
                 if (!result.second)
-                    (*result.first).second += node->visits();
+                    result.first->second += node->visits();
             }
         }
         return results;
