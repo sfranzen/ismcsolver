@@ -1,7 +1,26 @@
 # Nodes and trees
-Although nodes are not primarily intended for use outside the algorithm, the `currentTrees` function provided by the solvers returns the `std::shared_ptr<Node<Move>>` instances holding the root nodes of the generated information trees. These may be used to query information about the tree using the functions below.
+Although nodes are not primarily intended for use outside the algorithm, the `currentTrees` function provided by the solvers returns the `std::shared_ptr<Node<Move>>` instances holding the root nodes of the generated information trees. These may be used to query information about the tree using the functions below. The structure of the tree is simple, with each node holding a raw pointer to its parent and a vector of `std::unique_ptr<Node>` storing zero or more children.
 
-The structure of the tree is simple, with each node holding a raw pointer to its parent and a vector of `std::unique_ptr<Node>` storing zero or more children.
+As an example, consider the perfect information [m-n-k game], for which this algorithm is certainly not the best approach, although it does work. A game state with a winning move available to player 0 may look like this:
+```
+1  0  0
+1  0 -1
+-1  1 -1
+```
+where the moves are numbered 0 through 8 and -1 represents available moves. A tree search of 1000 iterations from this state might produce the following `treeToString` result:
+```
+[M:0 by -1, V/S/A: 1000/0.0/1]
+| [M:6 by 0, V/S/A: 988/988.0/998]
+| [M:8 by 0, V/S/A: 5/1.0/998]
+| | [M:6 by 1, V/S/A: 3/3.0/3]
+| | [M:5 by 1, V/S/A: 1/0.0/3]
+| [M:5 by 0, V/S/A: 7/2.0/998]
+| | [M:8 by 1, V/S/A: 1/0.0/5]
+| | [M:6 by 1, V/S/A: 5/5.0/5]
+```
+indicating that move 6 was the most visited and would therefore be selected.
+
+[m-n-k game]: https://github.com/sfranzen/ismcsolver/tree/master/test/common/mnkgame.cpp
 
 ### Member types
 

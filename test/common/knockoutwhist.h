@@ -11,6 +11,12 @@
 
 #include <vector>
 
+/*
+ * The card game Knockout Whist
+ *
+ * Based on the example code at
+ * https://gist.github.com/kjlubick/8ea239ede6a026a61f4d
+ */
 class KnockoutWhist : public ISMCTS::POMGame<Card>
 {
 public:
