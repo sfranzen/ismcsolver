@@ -15,12 +15,12 @@ namespace ISMCTS
 template<class Move>
 struct Game
 {
-    using Ptr = std::unique_ptr<Game>;
+    using Clone = std::unique_ptr<Game>;
     using Player = unsigned int;
 
     virtual ~Game() = default;
 
-    virtual Ptr cloneAndRandomise(Player observer) const = 0;
+    virtual Clone cloneAndRandomise(Player observer) const = 0;
 
     virtual Player currentPlayer() const = 0;
 

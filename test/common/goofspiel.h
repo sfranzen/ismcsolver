@@ -26,7 +26,7 @@ class Goofspiel : public ISMCTS::POMGame<Card>
 public:
     explicit Goofspiel();
 
-    Ptr cloneAndRandomise(Player observer) const override;
+    Clone cloneAndRandomise(Player observer) const override;
     Player currentPlayer() const override;
     void doMove(Card const move) override;
     double getResult(Player player) const override;

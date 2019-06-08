@@ -21,7 +21,7 @@ class MnkGame : public ISMCTS::POMGame<int>
 {
 public:
     explicit MnkGame(int m = 3, int n = 3, int k = 3);
-    virtual Ptr cloneAndRandomise(Player observer) const override;
+    virtual Clone cloneAndRandomise(Player observer) const override;
     virtual Player currentPlayer() const override;
     virtual std::vector<Player> players() const override;
     virtual std::vector<int> validMoves() const override;

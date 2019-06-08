@@ -21,7 +21,7 @@ class PhantomMnkGame : public MnkGame
 {
 public:
     explicit PhantomMnkGame(int m = 3, int n = 3, int k = 3);
-    Ptr cloneAndRandomise(Player observer) const override;
+    Clone cloneAndRandomise(Player observer) const override;
     void doMove(int const move) override;
     std::vector<int> validMoves() const override;
 

@@ -5,6 +5,7 @@
  */
 #include "phantommnkgame.h"
 #include <algorithm>
+#include <memory>
 #include <numeric>
 #include <random>
 
@@ -26,13 +27,13 @@ PhantomMnkGame::PhantomMnkGame(int m, int n, int k)
  * Given these constraints, generate a cloned game state with a random sampling
  * of the hidden information.
  */
-PhantomMnkGame::Ptr PhantomMnkGame::cloneAndRandomise(Player observer) const
+PhantomMnkGame::Clone PhantomMnkGame::cloneAndRandomise(Player observer) const
 {
-    auto clone = new PhantomMnkGame{*this};
+    auto clone = std::make_unique<PhantomMnkGame>(*this);
     auto const opponent = 1 - observer;
     auto const numMoves = clone->undoMoves(opponent);
     clone->randomReplay(opponent, numMoves);
-    return Ptr{clone};
+    return clone;
 }
 
 // Only undo those moves that are still marked as available in the opponent's

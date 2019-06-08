@@ -31,7 +31,7 @@ MnkGame::MnkGame(int m, int n, int k)
     std::iota(m_moves.begin(), m_moves.end(), 0);
 }
 
-MnkGame::Ptr MnkGame::cloneAndRandomise(unsigned) const
+MnkGame::Clone MnkGame::cloneAndRandomise(unsigned) const
 {
     return std::make_unique<MnkGame>(*this);
 }

@@ -6,12 +6,13 @@
 #include "knockoutwhist.h"
 
 #include <algorithm>
-#include <iostream>
-#include <string>
-#include <iterator>
-#include <stdexcept>
-#include <random>
+#include <memory>
 #include <numeric>
+#include <iterator>
+#include <iostream>
+#include <random>
+#include <stdexcept>
+#include <string>
 
 namespace
 {
@@ -52,9 +53,9 @@ KnockoutWhist::KnockoutWhist(unsigned players)
     m_unknownCards.erase(choice);
 }
 
-KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(Player observer) const
+KnockoutWhist::Clone KnockoutWhist::cloneAndRandomise(Player observer) const
 {
-    auto clone = new KnockoutWhist(*this);
+    auto clone = std::make_unique<KnockoutWhist>(*this);
     Hand unseenCards = m_unknownCards;
     for (auto p : m_players) {
         if (p == observer)
@@ -71,7 +72,7 @@ KnockoutWhist::Ptr KnockoutWhist::cloneAndRandomise(Player observer) const
         std::copy_n(u, hand.size(), hand.begin());
         u += hand.size();
     }
-    return Ptr(std::move(clone));
+    return clone;
 }
 
 KnockoutWhist::Player KnockoutWhist::currentPlayer() const

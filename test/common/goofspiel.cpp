@@ -59,7 +59,7 @@ void Goofspiel::shufflePrizes()
     std::shuffle(m_prizes.begin(), m_prizes.end(), prng);
 }
 
-Goofspiel::Ptr Goofspiel::cloneAndRandomise(Player observer) const
+Goofspiel::Clone Goofspiel::cloneAndRandomise(Player observer) const
 {
     auto clone = std::make_unique<Goofspiel>(*this);
 

@@ -21,7 +21,7 @@ class KnockoutWhist : public ISMCTS::POMGame<Card>
 {
 public:
     explicit KnockoutWhist(unsigned players = 4);
-    virtual Ptr cloneAndRandomise(Player observer) const override;
+    virtual Clone cloneAndRandomise(Player observer) const override;
     virtual Player currentPlayer() const override;
     virtual std::vector<Player> players() const override;
     virtual std::vector<Card> validMoves() const override;
