@@ -3,12 +3,12 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-
 #include "goofspiel.h"
 #include <ismcts/utility.h>
 
-#include <map>
 #include <algorithm>
+#include <cassert>
+#include <map>
 #include <memory>
 #include <random>
 
@@ -62,14 +62,18 @@ void Goofspiel::shufflePrizes()
 Goofspiel::Ptr Goofspiel::cloneAndRandomise(Player observer) const
 {
     auto clone = std::make_unique<Goofspiel>(*this);
+
+    // The order of the remaining prizes is unknown to both players
     if (observer != 2)
         clone->shufflePrizes();
-    if (observer == 1) {
-        // Randomly select a new move for the first player
-        auto &hand = clone->m_hands[0];
-        hand.emplace_back(clone->m_moves[0]);
-        clone->handleNormalTurn(0, ISMCTS::randomElement(hand));
-    }
+
+    // The solver always calls this function with observer == m_player and
+    // player 0 always goes first, so the only other bit of hidden information
+    // can be player 0's current move from player 1's point of view
+    assert(observer == m_player);
+    if (observer == 1)
+        clone->m_moves[0] = ISMCTS::randomElement(clone->m_hands[0]);
+
     return clone;
 }
 
@@ -85,31 +89,30 @@ Goofspiel::Player Goofspiel::currentPlayer() const
 
 void Goofspiel::doMove(Card const move)
 {
-    if (m_player != 2)
-        handleNormalTurn(m_player, move);
-    else
+    if (m_player != 2) {
+        m_moves[m_player] = move;
+        ++m_player;
+    } else {
         handleP2Turn(move);
-    ++m_player %= 3;
-}
-
-void Goofspiel::handleNormalTurn(Player player, Card const &move)
-{
-    auto &hand = m_hands[player];
-    hand.erase(std::find(hand.begin(), hand.end(), move));
-    m_moves[player] = move;
+    }
 }
 
 void Goofspiel::handleP2Turn(Card const &move)
 {
     if (m_drawPrize) {
         m_currentPrize = move;
+        assert(move == m_prizes.back());
         m_prizes.pop_back();
-    } else if (m_moves[0].rank != m_moves[1].rank) {
-        auto winner = std::max_element(m_moves.begin(), m_moves.end(), [](Card const &a, Card const &b){
-            return value(a) < value(b);
-        });
-        auto &score = winner == m_moves.begin() ? m_scores[0] : m_scores[1];
-        score += value(m_currentPrize);
+        m_player = 0;
+    } else {
+        if (m_moves[0].rank != m_moves[1].rank) {
+            auto &score = value(m_moves[0]) > value(m_moves[1]) ? m_scores[0] : m_scores[1];
+            score += value(m_currentPrize);
+        }
+        for (Player p : {0, 1}) {
+            auto &hand = m_hands[p];
+            hand.erase(std::find(hand.begin(), hand.end(), m_moves[p]));
+        }
     }
     m_drawPrize = !m_drawPrize;
 }
@@ -117,6 +120,8 @@ void Goofspiel::handleP2Turn(Card const &move)
 double Goofspiel::getResult(Player player) const
 {
     if (player == 2)
+        // Return no score so that the environment player's nodes in the tree
+        // will be selected uniformly at random by the EXP3 policy
         return 0;
     else if (m_scores[0] == m_scores[1])
         return 0.5;
@@ -134,7 +139,16 @@ std::vector<Card> Goofspiel::validMoves() const
 {
     if (m_player != 2)
         return m_hands[m_player];
-    if (m_drawPrize && !m_prizes.empty())
+    else if (!m_drawPrize)
+        // Return a constant dummy vector because the next turn is only used to
+        // "reveal" the bids and award points; it should not lead to different
+        // paths in the game tree
+        return {Card{}};
+    else if (!m_prizes.empty())
         return {m_prizes.back()};
-    return {Card{}};
+
+    assert(m_prizes.empty());
+    assert(m_hands[0].empty());
+    assert(m_hands[1].empty());
+    return {};
 }

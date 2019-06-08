@@ -3,7 +3,6 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-
 #ifndef GOOFSPIEL_H
 #define GOOFSPIEL_H
 
@@ -47,7 +46,6 @@ private:
     bool m_drawPrize {true};
 
     void shufflePrizes();
-    void handleNormalTurn(Player player, Card const &move);
     void handleP2Turn(Card const &move);
 };
 
