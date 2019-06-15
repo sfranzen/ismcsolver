@@ -24,16 +24,9 @@ class SolverBase : public _ExecutionPolicy
 public:
     using _ExecutionPolicy::_ExecutionPolicy;
     using RootPtr = typename Node<Move>::RootPtr;
-    using EXP3 = TreePolicy<EXPNode<Move>>;
-    using UCB1 = TreePolicy<UCBNode<Move>>;
     using DefaultPolicy = std::function<Move const &(std::vector<Move> const &)>;
 
-    void setEXPPolicy(EXP3 &&policy)
-    {
-        m_EXP3 = policy;
-    }
-
-    void setUCBPolicy(UCB1 &&policy)
+    void setUCBPolicy(UCB1<Move> &&policy)
     {
         m_UCB1 = policy;
     }
@@ -68,13 +61,10 @@ protected:
 
     Node<Move> *selectChild(Node<Move> const *node, Game<Move> const &state, std::vector<Move> const &moves) const
     {
-        if (state.currentMoveSimultaneous()) {
-            auto const children = node->template legalChildren<EXPNode<Move>>(moves);
-            return m_EXP3(children);
-        } else {
-            auto const children = node->template legalChildren<UCBNode<Move>>(moves);
-            return m_UCB1(children);
-        }
+        if (state.currentMoveSimultaneous())
+            return node->selectChild(moves, m_EXP3);
+        else
+            return node->selectChild(moves, m_UCB1);
     }
 
     RootPtr static newRoot(Game<Move> const &state)
@@ -94,8 +84,8 @@ protected:
     }
 
 private:
-    EXP3 m_EXP3 {};
-    UCB1 m_UCB1 {};
+    EXP3<Move> m_EXP3 {};
+    UCB1<Move> m_UCB1 {};
     DefaultPolicy m_defaultPolicy {randomElement<Move>};
 };
 

@@ -27,7 +27,7 @@ public:
     using typename SolverBase<Move,_ExecutionPolicy>::RootPtr;
     using TreeList = typename _ExecutionPolicy::template TreeList<Move>;
 
-    Move operator()(Game<Move> const &rootState) const
+    Move operator()(Game<Move> const &rootState)
     {
         auto treeGenerator = [&rootState]{ return SOSolver::newRoot(rootState); };
         auto treeSearch = [this](RootPtr &root, Game<Move> const &state){ search(root.get(), state); };
@@ -71,7 +71,7 @@ protected:
     }
 
 private:
-    mutable TreeList m_trees;
+    TreeList m_trees;
 };
 
 } // ISMCTS

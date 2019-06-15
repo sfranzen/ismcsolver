@@ -33,7 +33,7 @@ public:
     // The set of tree maps, one for each thread
     using TreeList = std::vector<TreeMap>;
 
-    Move operator()(POMGame<Move> const &rootState) const
+    Move operator()(POMGame<Move> const &rootState)
     {
         auto treeSearch = [this](TreeMap &map, Game<Move> const &state){ search(map, state); };
         auto treeGenerator = [&rootState]{ return newTree(rootState); };
@@ -101,7 +101,7 @@ protected:
     }
 
 private:
-    mutable TreeList m_trees;
+    TreeList m_trees;
 
     TreeMap static newTree(POMGame<Move> const &state)
     {

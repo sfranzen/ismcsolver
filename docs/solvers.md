@@ -28,8 +28,6 @@ The multiple observer solvers implement the MO-ISMCTS algorithm, which builds a 
 | Type          | Definition                                                |
 |:--------------|:----------------------------------------------------------|
 |`Duration`     |`std::chrono::duration<double>`                            |
-|`EXP3`         |`ISMCTS::TreePolicy<EXPNode<Move>>`                        |
-|`UCB1`         |`ISMCTS::TreePolicy<UCBNode<Move>>`                        |
 |`DefaultPolicy`|`std::function<Move const &(std::vector<Move> const &)>`   |
 |`RootPtr`      |`std::shared_ptr<Node<Move>>`                              |
 |*SOSolver:*    |                                                           |
@@ -55,8 +53,8 @@ Constructs a solver that will iterate for the given duration per search operatio
 
 ### Search
 ```cpp
-Move SOSolver::operator()(Game<Move> const &rootState) const;
-Move MOSolver::operator()(POMGame<Move> const &rootState) const;
+Move SOSolver::operator()(Game<Move> const &rootState);
+Move MOSolver::operator()(POMGame<Move> const &rootState);
 ```
 Returns the most promising move from the given game state.
 
@@ -74,13 +72,7 @@ Sets the execution policy to use a fixed length of time in future searches.
 
 ---
 ```cpp
-void setEXPPolicy(EXP3 &&policy);
-```
-Sets a new EXP3 tree policy, which is applied at nodes where the game has simultaneous moves.
-
----
-```cpp
-void setUCBPolicy(UCB1 &&policy);
+void setUCBPolicy(UCB1<Move> &&policy);
 ```
 Sets a new UCB1 tree policy, which is applied at nodes where the game uses sequential moves.
 
@@ -115,6 +107,6 @@ Returns the number of threads used for execution of the algorithm, which is 1 fo
 
 ---
 ```cpp
-TreeList &currentTrees() const;
+TreeList currentTrees() const;
 ```
 Returns the decision tree(s) resulting from the most recent call to operator(). The result is always a vector with one element per execution thread, but each solver uses a different element type as described under [Member types](#member-types).

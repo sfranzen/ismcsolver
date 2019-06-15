@@ -52,27 +52,30 @@ public:
     Node *findOrAddChild(Move const &move, Generator &&g)
     {
         Lock lock {m_mutex};
-        auto const pos = std::find_if(m_children.begin(), m_children.end(), [&](const auto &c){ return c->move() == move; });
+        auto const pos = std::find_if(m_children.begin(), m_children.end(), [&](auto const &c){ return c->m_move == move; });
         return pos < m_children.end() ? pos->get() : addChildLocked(g());
+    }
+
+    template<class Policy>
+    Node *selectChild(std::vector<Move> const &legalMoves, Policy &policy) const
+    {
+        using Type = typename Policy::Node;
+        std::vector<Type*> legalChildren;
+        legalChildren.reserve(legalMoves.size());
+        {
+            Lock lock {m_mutex};
+            for (auto &c : m_children) {
+                if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](Move const &move){ return c->m_move == move; }))
+                    legalChildren.emplace_back(static_cast<Type*>(c.get()));
+            }
+        }
+        return policy(legalChildren);
     }
 
     virtual void update(Game<Move> const &terminalState) final
     {
         ++m_visits;
         updateData(terminalState);
-    }
-
-    template<class Type>
-    std::vector<Type*> legalChildren(std::vector<Move> const &legalMoves) const
-    {
-        std::vector<Type*> legalChildren;
-        legalChildren.reserve(legalMoves.size());
-        Lock lock {m_mutex};
-        for(auto &c : m_children) {
-            if (std::any_of(legalMoves.begin(), legalMoves.end(), [&](auto const &move){ return c->move() == move; }))
-                legalChildren.emplace_back(static_cast<Type*>(c.get()));
-        }
-        return legalChildren;
     }
 
     std::vector<Move> untriedMoves(std::vector<Move> const &legalMoves) const
@@ -105,7 +108,7 @@ private:
     using Lock = std::lock_guard<std::mutex>;
 
     Node *m_parent = nullptr;
-    mutable std::mutex m_mutex;
+    std::mutex mutable m_mutex;
     std::vector<ChildPtr> m_children;
     Move const m_move;
     unsigned int const m_playerJustMoved;

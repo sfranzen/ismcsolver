@@ -2,25 +2,11 @@
 # Tree policies
 The tree policy is the part of the algorithm concerned with evaluating and selecting child nodes at fully expanded nodes, in a way that maximises the expected rewards. This is also known as a *multi-armed bandit* (MAB) problem, from the analogy with a gambler searching for an optimal strategy for playing multiple "one-armed bandit" (slot) machines. Several approaches exist, two of which are employed by this library. Following the suggestion of the authors of ISMCTS, the [UCB1](#UCB1) policy is used for game states with sequential moves, and the [EXP3](#EXP3) policy for simultaneous moves, as indicated by the game implementation.
 
-Each policy is associated with its own class of node and is implemented as a specialisation of `template<class Node> struct TreePolicy : public ITreePolicy<Node>`.
-
-## ITreePolicy
-Defined in `<ismcts/tree/policy.h>`
-```cpp
-template<class Node>
-struct ITreePolicy;
-```
-Abstract interface for tree policies, defining a single member function:
-```cpp
-virtual Node *operator()(std::vector<Node*> const &nodes) const = 0;
-```
-which should select a single `Node *` from the provided candidate `nodes`.
-
 ## UCB1
 Defined in `<ismcts/tree/policies.h>`
 ```cpp
 template<class Move>
-struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>;
+struct UCB1;
 ```
 UCB, meaning *Upper Confidence Bound*, chooses an action *a* from available actions *A* as follows:
 
@@ -32,7 +18,7 @@ where $$\overline x(a)$$ is the expected reward from selecting a particular acti
 
 ### Constructor
 ```cpp
-explicit TreePolicy(double exploration = 0.7);
+explicit UCB1(double exploration = 0.7);
 ```
 Default constructor. The `exploration` parameter sets the value of the exploration constant *c* of the UCB function.
 
@@ -40,7 +26,7 @@ Default constructor. The `exploration` parameter sets the value of the explorati
 Defined in `<ismcts/tree/policies.h>`
 ```cpp
 template<class Move>
-struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>;
+struct EXP3;
 ```
 EXP3 stands for *Exponential weight algorithm for Exploitation and Exploration*. It is aimed at the more general *adversarial bandit* problem, where the gambler has an adversary capable of influencing the rewards of the available actions. The approach is to choose actions randomly according to a non-uniform probability distribution, obtained by assigning a probability to each action *a* as follows:
 
@@ -65,6 +51,6 @@ $$
 
 ### Constructor
 ```cpp
-TreePolicy();
+EXP3();
 ```
-Default constructor. It is not currently possible to influence the parameters of the EXP3 policy.
+Default constructor. The policy parameters cannot be set directly as they are automatically tuned by the algorithm.

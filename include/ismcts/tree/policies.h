@@ -6,7 +6,6 @@
 #ifndef ISMCTS_TREEPOLICIES_H
 #define ISMCTS_TREEPOLICIES_H
 
-#include "policy.h"
 #include "nodetypes.h"
 
 #include <algorithm>
@@ -18,11 +17,11 @@ namespace ISMCTS
 {
 
 template<class Move>
-struct TreePolicy<EXPNode<Move>> : public ITreePolicy<EXPNode<Move>>
+struct EXP3
 {
     using Node = EXPNode<Move>;
 
-    Node *operator()(std::vector<Node*> const &nodes) const override
+    Node *operator()(std::vector<Node*> const &nodes) const
     {
         std::mt19937 static thread_local prng {std::random_device{}()};
         auto const weights = probabilities(nodes);
@@ -60,15 +59,15 @@ private:
 };
 
 template<class Move>
-struct TreePolicy<UCBNode<Move>> : public ITreePolicy<UCBNode<Move>>
+struct UCB1
 {
     using Node = UCBNode<Move>;
 
-    explicit TreePolicy(double exploration = 0.7)
+    explicit UCB1(double exploration = 0.7)
         : m_exploration{std::max(0., exploration)}
     {}
 
-    Node *operator()(std::vector<Node*> const &nodes) const override
+    Node *operator()(std::vector<Node*> const &nodes) const
     {
         for (auto &node : nodes)
             node->markAvailable();
