@@ -99,7 +99,7 @@ protected:
 
     // Works for both Sequential and TreeParallel
     template<class SearchOp, class TreeGenerator, class Game>
-    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
+    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState)
     {
         auto trees = makeTrees(g);
         std::vector<std::future<void>> futures(m_numThreads);
@@ -112,7 +112,7 @@ protected:
     }
 
     template<class Callable>
-    std::future<void> launch(Callable &&f) const
+    std::future<void> launch(Callable &&f)
     {
         if (m_iterCount > 0) {
             setCounter();
@@ -142,10 +142,10 @@ private:
     unsigned int const m_numThreads;
     unsigned int const m_numTrees;
     unsigned int m_chunkSize {1};
-    mutable std::atomic_size_t m_counter;
-    mutable std::atomic_bool m_isCounterSet {false};
+    std::atomic_size_t m_counter;
+    std::atomic_bool m_isCounterSet {false};
 
-    void setCounter() const
+    void setCounter()
     {
         if (m_isCounterSet)
             return;
@@ -191,7 +191,7 @@ public:
 
 protected:
     template<class SearchOp, class TreeGenerator, class Game>
-    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState) const
+    auto execute(SearchOp &&search, TreeGenerator &&g, Game const &rootState)
     {
         auto trees = makeTrees(g);
         std::vector<std::future<void>> futures(numThreads());

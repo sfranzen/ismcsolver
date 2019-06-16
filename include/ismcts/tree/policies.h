@@ -7,6 +7,7 @@
 #define ISMCTS_TREEPOLICIES_H
 
 #include "nodetypes.h"
+#include "../utility.h"
 
 #include <algorithm>
 #include <cmath>
@@ -23,10 +24,9 @@ struct EXP3
 
     Node *operator()(std::vector<Node*> const &nodes) const
     {
-        std::mt19937 static thread_local prng {std::random_device{}()};
         auto const weights = probabilities(nodes);
         std::discrete_distribution<std::size_t> dist {weights.begin(), weights.end()};
-        return nodes[dist(prng)];
+        return nodes[dist(prng())];
     }
 
 private:

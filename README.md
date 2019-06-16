@@ -18,7 +18,7 @@ This code was originally part of a Qt game I wrote to explore game AI. I eventua
 [codecov]: https://codecov.io/gh/sfranzen/ismcsolver
 
 ## Usage
-This section only gives a few short examples of using the library. For a full reference to the class templates, please visit the [GitHub Page][docs] of this repository.
+This section and the next only give a few short examples of using the library. For a full reference to the class templates, please visit the [GitHub Page][docs] of this repository.
 
 First and foremost, your game (or engine) class should implement the abstract interface [`ISMCTS::Game<Move>`][game], replacing the template parameter `Move` with the data type (or class) representing a player's move. The library provides two solver class templates, [`ISMCTS::SOSolver<Move>`][SO] and [`ISMCTS::MOSolver<Move>`][MO]. Their differences are explained [below](#features), but they should be instantiated with the same `Move` type to obtain an object that can select moves for the AI player(s), e.g.
 ```cpp
@@ -57,15 +57,17 @@ ISMCTS::SOSolver<int, ISMCTS::RootParallel> solver;
 Three policies are defined in [execution.h]:
 * `ISMCTS::Sequential`: no multithreading, the default;
 * `ISMCTS::RootParallel`: each system thread searches a separate tree structure. Statistics from the root of each tree are then combined to find the overall best move. This method is the fastest, as it avoids synchronisation issues and the overhead of combining results is minimal. The downside is that the individual trees are not searched as deeply, which negatively impacts the quality of the decision;
-* `ISMCTS::TreeParallel`: the threads share a single tree structure. This is not as fast as root parallelisation, because threads may compete for access to nodes. The impact depends on the characteristics of the game, though the tree will typically branch out quickly, mitigating the issue.
+* `ISMCTS::TreeParallel`: the threads share a single tree structure, combining the depth of a sequential search with improved speed. However, it is slower than root parallelisation, because threads will sometimes compete for access to the same node. The impact depends on the number of threads and characteristics of the game, though the tree will typically branch out quickly, mitigating the issue.
 
 [execution.h]: include/ismcts/execution.h
 [par]: https://www-users.cs.york.ac.uk/~nsephton/papers/wcci2014-ismcts-parallelization.pdf
 
 ### Time-limited execution
-Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other instead letting it search for a fixed length of time (a `std::chrono::duration<double>`). Both the mode of operation and the length of the search can be changed after instantiation. Durations can be conveniently created by including [`std::chrono`][chrono] and using the `std::chrono_literals`, e.g.:
+Each solver type has two constructors; one that sets the search operator to iterate a fixed number of times, the other instead letting it search for a fixed length of time (a `std::chrono::duration<double>`). Both the mode of operation and the length of the search can be changed after instantiation. Durations can be conveniently created by including [`<chrono>`][chrono] and using the `std::chrono_literals`, e.g.:
 
 ```cpp
+#include <chrono>
+// ...
 using namespace std::chrono_literals;
 ISMCTS::SOSolver<int> solver {5ms};
 ```
@@ -91,7 +93,7 @@ Due to the nature of header-only libraries, no installation is technically neces
     target_link_libraries(foo ismcsolver)
     ```
 
-Support for C++14 features is required to compile the library code, which is provided by most current compilers and development platforms. The following combinations are automatically tested and should be regarded as minimum versions:
+Support for C++14 features is required to compile the library code; most reasonably recent compilers and development platforms provide this. The following combinations are automatically tested and should be regarded as minimum versions:
 * Linux: GCC 7 and Clang 7;
 * Apple Xcode 10.2;
 * Microsoft Visual Studio 2017.
@@ -103,22 +105,31 @@ The type `Move` specified for the game and sequential solver templates must be a
 [EqualityComparable]: https://en.cppreference.com/w/cpp/named_req/EqualityComparable
 [LessThanComparable]: https://en.cppreference.com/w/cpp/named_req/LessThanComparable
 
-## About random numbers
-Game implementations will need a source of random numbers. Because `std::rand` does not guarantee a good quality sequence and may not be thread safe, modern code should use the `<random>` header. The objects representing generator engines are large, so the following is a good way of providing one to your class:
+## Notes on random numbers
+Game implementations will need a source of random numbers. Because `std::rand` does not guarantee a good quality sequence and may not be thread safe, modern code should use the [`<random>`][random] header. The objects representing generator engines are large (5000 bytes) and not practical as class members. A function like the following is the most convenient way to provide thread-safe random number generators:
+
 ```cpp
 #include <random>
-// definition as member of MyGame, could be const or static
-std::mt19937 &MyGame::prng()
+
+// Definition as a free function, could also be a class member
+std::mt19937 & prng()
 {
-    static thread_local std::mt19937 prng {std::random_device{}()};
+    std::mt19937 static thread_local prng {std::random_device{}()};
     return prng;
 }
 ```
-This sets up one pseudorandom Mersenne Twister engine per thread, seeded with random numbers from a non-deterministic source if available. It can be used for shuffling, e.g. `std::shuffle(cards.begin(), cards.end(), prng());`. Single numbers on (closed) intervals should be generated using one of the available distributions:
+This sets up one pseudorandom Mersenne Twister engine per thread, each seeded with a different random number from a non-deterministic system source if available. The object itself simply generates random unsigned 32 bit values and is more useful as a parameter to other algorithms and function objects:
+
 ```cpp
+// Randomly shuffle elements in a range:
+std::shuffle(cards.begin(), cards.end(), prng());
+
+// Generate a single random number on an interval:
 std::uniform_int_distribution<> singleDie {1, 6};
 auto result = singleDie(prng());
 ```
+
+[random]: https://en.cppreference.com/w/cpp/header/random
 
 ## License
 This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
