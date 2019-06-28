@@ -10,6 +10,7 @@
 #include <cmath>
 #include <chrono>
 #include <cstdint>
+#include <numeric>
 #include <random>
 #include <utility>
 #include <vector>
@@ -20,7 +21,7 @@ namespace ISMCTS
 // Decrement the count by either the given chunk or count itself, whichever is
 // lower, returning the decrement.
 template<typename T>
-inline T decrement(std::atomic<T> &count, T chunk)
+T decrement(std::atomic<T> &count, T chunk)
 {
     T old {count};
     do {
@@ -29,7 +30,7 @@ inline T decrement(std::atomic<T> &count, T chunk)
     return chunk;
 }
 
-inline double operator+=(std::atomic<double> &d, double other)
+double inline operator+=(std::atomic<double> &d, double other)
 {
     double old {d};
     double newValue;
@@ -40,7 +41,7 @@ inline double operator+=(std::atomic<double> &d, double other)
 }
 
 template<class Callable, class... Args>
-inline void executeFor(std::atomic_size_t &count, std::size_t chunk, Callable&& f, Args&&... args)
+void executeFor(std::atomic_size_t &count, std::size_t chunk, Callable&& f, Args&&... args)
 {
     while (count > 0)
         for (auto i = decrement(count, chunk); i > 0; --i)
@@ -48,7 +49,7 @@ inline void executeFor(std::atomic_size_t &count, std::size_t chunk, Callable&& 
 }
 
 template<class Callable, class... Args>
-inline void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&... args)
+void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&... args)
 {
     using clock = std::chrono::high_resolution_clock;
     while (time.count() > 0) {
@@ -58,17 +59,27 @@ inline void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&.
     }
 }
 
-inline std::mt19937 &prng()
+std::mt19937 inline &prng()
 {
     std::mt19937 thread_local static prng {std::random_device{}()};
     return prng;
 }
 
 template<class T>
-inline T const &randomElement(std::vector<T> const &v)
+T const &randomElement(std::vector<T> const &v)
 {
     std::uniform_int_distribution<std::size_t> randIdx {0, v.size() - 1};
     return v[randIdx(prng())];
+}
+
+// Sum the results of operator op applied to each element of container c.
+template<typename T, template<typename...> class C, class Op>
+auto sum(C<T> const &c, Op op)
+{
+    using Ret = decltype(op(T{}));
+    return std::accumulate(std::begin(c), std::end(c), Ret{0}, [=](Ret sum, T const &t){
+        return sum + op(t);
+    });
 }
 
 } // ISMCTS

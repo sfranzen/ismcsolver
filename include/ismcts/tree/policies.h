@@ -30,31 +30,36 @@ struct EXP3
     }
 
 private:
+    /*
+     * The probability calculation used here is a modified version of the
+     * original, given as Algorithm 1 in "Evaluation and Analysis of the
+     * Performance of the EXP3 Algorithm in Stochastic Environments" by Seldin
+     * et al. (2012). This function uses the combined number of visits of the
+     * given nodes as the trial counter variable t, because the number of trials
+     * varies with the set of nodes.
+     */
     std::vector<double> static probabilities(std::vector<Node*> const &nodes)
     {
         auto const K = nodes.size();
+        auto const t = sum(nodes, [](Node const *node){ return node->visits(); });
+        auto const e_t = epsilon(K, t);
+        auto const e_tm1 = epsilon(K, t - 1);
+        auto const expSum = sum(nodes, [=](Node const *node){ return std::exp(e_tm1 * node->score()); });
+
         std::vector<double> probabilities(K);
-        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [&](Node *node){
-            auto const gamma = std::min(1., coefficient(K, node->visits()));
-            auto const eta = gamma / K;
-            auto const p = eta + (1 - gamma) / sumDifferences(nodes, node->score(), eta);
+        std::transform(nodes.begin(), nodes.end(), probabilities.begin(), [=](Node *node){
+            auto const p = e_t + (1 - K * e_t) * std::exp(e_tm1 * node->score()) / expSum;
             node->setProbability(p);
             return p;
         });
+
         return probabilities;
     }
 
-    double static coefficient(std::size_t K, double maxReward)
+    // The epsilon factor or exploration rate
+    double static epsilon(std::size_t K, std::size_t t)
     {
-        auto static const factor = std::expm1(1);
-        return std::sqrt(K * std::log(K) / factor / maxReward);
-    }
-
-    double static sumDifferences(std::vector<Node*> const &nodes, double score, double eta)
-    {
-        return std::accumulate(nodes.begin(), nodes.end(), 0., [=](double sum, Node const *node){
-            return sum + std::exp(eta * (node->score() - score));
-        });
+        return std::min(1./K, std::sqrt(std::log(K) / K / t));
     }
 };
 
