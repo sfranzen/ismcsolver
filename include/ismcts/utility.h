@@ -73,9 +73,10 @@ T const &randomElement(std::vector<T> const &v)
 }
 
 // Sum the results of operator op applied to each element of container c.
-template<typename T, template<typename...> class C, class Op>
-auto sum(C<T> const &c, Op op)
+template<class C, class Op>
+auto sum(C const &c, Op op)
 {
+    using T = typename C::value_type;
     using Ret = decltype(op(T{}));
     return std::accumulate(std::begin(c), std::end(c), Ret{0}, [=](Ret sum, T const &t){
         return sum + op(t);
