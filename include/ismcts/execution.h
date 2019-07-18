@@ -67,10 +67,7 @@ public:
     }
 
 protected:
-    auto static hwThreadCount() { return std::thread::hardware_concurrency(); }
-
-    template<typename T>
-    T static validateCount(T count) { return std::max(count, T{1}); }
+    unsigned int static hwThreadCount() { return std::thread::hardware_concurrency(); }
 
     ExecutionPolicy(unsigned int numThreads, unsigned int numTrees)
         : m_numThreads{validateCount(numThreads)}
@@ -145,6 +142,8 @@ private:
     std::atomic_size_t m_counter;
     std::atomic_bool m_isCounterSet {false};
 
+    unsigned int static validateCount(unsigned int count) { return std::max(count, 1u); }
+
     void setCounter()
     {
         if (m_isCounterSet)
@@ -169,24 +168,24 @@ public:
 class TreeParallel : public ExecutionPolicy
 {
 public:
-    explicit TreeParallel(std::size_t iterationCount = 1000)
-        : ExecutionPolicy{iterationCount, hwThreadCount(), 1}
+    explicit TreeParallel(std::size_t iterationCount = 1000, unsigned int numThreads = hwThreadCount())
+        : ExecutionPolicy{iterationCount, numThreads, 1}
     {}
 
-    explicit TreeParallel(Duration iterationTime)
-        : ExecutionPolicy{iterationTime, hwThreadCount(), 1}
+    explicit TreeParallel(Duration iterationTime, unsigned int numThreads = hwThreadCount())
+        : ExecutionPolicy{iterationTime, numThreads, 1}
     {}
 };
 
 class RootParallel : public ExecutionPolicy
 {
 public:
-    explicit RootParallel(std::size_t iterationCount = 1000)
-        : ExecutionPolicy{iterationCount, hwThreadCount(), hwThreadCount()}
+    explicit RootParallel(std::size_t iterationCount = 1000, unsigned int numThreads = hwThreadCount())
+        : ExecutionPolicy{iterationCount, numThreads, numThreads}
     {}
 
-    explicit RootParallel(Duration iterationTime)
-        : ExecutionPolicy{iterationTime, hwThreadCount(), hwThreadCount()}
+    explicit RootParallel(Duration iterationTime, unsigned int numThreads = hwThreadCount())
+        : ExecutionPolicy{iterationTime, numThreads, numThreads}
     {}
 
 protected:
