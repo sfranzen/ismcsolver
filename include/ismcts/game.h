@@ -17,6 +17,7 @@ struct Game
 {
     using Clone = std::unique_ptr<Game>;
     using Player = unsigned int;
+    using MoveType = Move;
 
     virtual ~Game() = default;
 
@@ -43,6 +44,9 @@ struct POMGame : public Game<Move>
 
     virtual std::vector<Player> players() const = 0;
 };
+
+template<class Game>
+using MoveType = typename Game::MoveType;
 
 } // ISMCTS
 
