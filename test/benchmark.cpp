@@ -58,8 +58,21 @@ private:
     std::array<unsigned, 2> m_numCalls;
     std::array<Duration, 2> m_times;
 
+
+    template<class Game, class G1>
+    auto getMove(Game const &game, G1 &&g1)
+    {
+        return g1(game);
+    }
+
     template<class Game, class G1, class G2>
-    double playGame(Game &&game, G1 &&generator1, G2 &&generator2)
+    auto getMove(Game const &game, G1 &&g1, G2 &&g2)
+    {
+        return game.currentPlayer() == 0 ? g1(game) : g2(game);
+    }
+
+    template<class Game, class... Generators>
+    double playGame(Game &&game, Generators &&... gs)
     {
         auto newGame = game;
 
@@ -70,7 +83,7 @@ private:
                 continue;
             }
             auto const t0 = Clock::now();
-            auto move = player == 0 ? generator1(newGame) : generator2(newGame);
+            auto const move = getMove(newGame, std::forward<Generators>(gs)...);
             m_times[player] += Clock::now() - t0;
             ++m_numCalls[player];
             newGame.doMove(move);
@@ -110,35 +123,50 @@ private:
     }
 };
 
+template<class... Args>
+void singleTest(SolverTester &tester, Args &&... args)
+{
+    WARN(tester.run(std::forward<Args>(args)...));
+}
+
+template<template<class...> class Solver, template<class...> class... Opponent, class Game>
+void testAllPolicies(SolverTester &tester, Game &&game)
+{
+    using Move = MoveType<Game>;
+    auto &&gameRef = std::forward<Game>(game);
+
+    SECTION("Sequential")
+        singleTest(tester, gameRef, Solver<Move>{iterationCount}, Opponent<Move>{}...);
+    SECTION("RootParallel")
+        singleTest(tester, gameRef, Solver<Move, RootParallel>{iterationCount}, Opponent<Move>{}...);
+    SECTION("TreeParallel")
+        singleTest(tester, gameRef, Solver<Move, TreeParallel>{iterationCount}, Opponent<Move>{}...);
+}
+
+template<template<class...> class Solver>
+void solverVsRandom(unsigned games = numGames)
+{
+    SolverTester tester {games};
+    SECTION("Knockout Whist")
+        testAllPolicies<Solver, RandomPlayer>(tester, KnockoutWhist{2});
+    SECTION("Goofspiel")
+        testAllPolicies<Solver, RandomPlayer>(tester, Goofspiel{});
+}
+
 } // namespace
 
-TEMPLATE_PRODUCT_TEST_CASE("Solver versus random player", "[SOSolver][MOSolver]", (SOSolver, MOSolver),
-                           (Card, (Card, RootParallel), (Card, TreeParallel)))
+TEST_CASE("SOSolver versus random player", "[SOSolver]")
 {
-    TestType solver {iterationCount};
-    SolverTester tester {numGames};
+    solverVsRandom<SOSolver>(numGames);
+}
 
-    SECTION("Knockout Whist")
-        WARN(tester.run(KnockoutWhist{2}, solver, randomMove<Card>));
-    SECTION("Goofspiel")
-        WARN(tester.run(Goofspiel{}, solver, randomMove<Card>));
+TEST_CASE("MOSolver versus random player", "[MOSolver]")
+{
+    solverVsRandom<MOSolver>(numGames);
 }
 
 TEST_CASE("Speed", "[SOSolver]")
 {
     SolverTester tester {numGames};
-    KnockoutWhist game {2};
-
-    SECTION("Sequential") {
-        SOSolver<Card> solver {iterationCount};
-        WARN(tester.run(game, solver, solver));
-    }
-    SECTION("RootParallel") {
-        SOSolver<Card, RootParallel> solver {iterationCount};
-        WARN(tester.run(game, solver, solver));
-    }
-    SECTION("TreeParallel") {
-        SOSolver<Card, TreeParallel> solver {iterationCount};
-        WARN(tester.run(game, solver, solver));
-    }
+    testAllPolicies<SOSolver>(tester, KnockoutWhist{2});
 }

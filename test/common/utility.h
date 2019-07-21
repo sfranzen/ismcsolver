@@ -11,13 +11,22 @@
 #include <ismcts/utility.h>
 
 template<class Move>
-inline Move randomMove(ISMCTS::Game<Move> const &game)
+auto randomMove(ISMCTS::Game<Move> const &game)
 {
     return ISMCTS::randomElement(game.validMoves());
 }
 
+template<class Move>
+struct RandomPlayer
+{
+    auto operator()(ISMCTS::Game<Move> const &game) const
+    {
+        return randomMove(game);
+    }
+};
+
 template<class Game>
-inline void doValidMove(Game &game)
+void doValidMove(Game &game)
 {
     game.doMove(randomMove(game));
 }
