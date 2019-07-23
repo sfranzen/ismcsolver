@@ -37,14 +37,14 @@ public:
         : m_numGames{games}
     {}
 
-    template<class... Args>
-    std::string run(Args &&... args)
+    template<class Game, class... Args>
+    std::string run(Game const &game, Args &&... args)
     {
         m_p0Scores.resize(m_numGames);
         m_numCalls.fill(0);
         m_times.fill(Duration::zero());
         std::generate(m_p0Scores.begin(), m_p0Scores.end(), [&]{
-            return playGame(std::forward<Args>(args)...);
+            return playGame(game, std::forward<Args>(args)...);
         });
         return report();
     }
@@ -60,35 +60,33 @@ private:
 
 
     template<class Game, class G1>
-    auto getMove(Game const &game, G1 &&g1)
+    auto static getMove(Game const &game, G1 &&g1)
     {
         return g1(game);
     }
 
     template<class Game, class G1, class G2>
-    auto getMove(Game const &game, G1 &&g1, G2 &&g2)
+    auto static getMove(Game const &game, G1 &&g1, G2 &&g2)
     {
         return game.currentPlayer() == 0 ? g1(game) : g2(game);
     }
 
     template<class Game, class... Generators>
-    double playGame(Game &&game, Generators &&... gs)
+    double playGame(Game game, Generators &&... gs)
     {
-        auto newGame = game;
-
-        while (!newGame.validMoves().empty()) {
-            auto const player = newGame.currentPlayer();
+        while (!game.validMoves().empty()) {
+            auto const player = game.currentPlayer();
             if (player > 1) {
-                doValidMove(newGame);
+                doValidMove(game);
                 continue;
             }
             auto const t0 = Clock::now();
-            auto const move = getMove(newGame, std::forward<Generators>(gs)...);
+            auto const move = getMove(game, std::forward<Generators>(gs)...);
             m_times[player] += Clock::now() - t0;
             ++m_numCalls[player];
-            newGame.doMove(move);
+            game.doMove(move);
         }
-        return newGame.getResult(0);
+        return game.getResult(0);
     }
 
     std::string report() const
@@ -129,10 +127,11 @@ void singleTest(SolverTester &tester, Args &&... args)
     WARN(tester.run(std::forward<Args>(args)...));
 }
 
-template<template<class...> class Solver, template<class...> class... Opponent, class Game>
-void testAllPolicies(SolverTester &tester, Game &&game)
+template<template<class...> class Solver, template<class> class... Opponent, class Game>
+void testAllPolicies(Game &&game, unsigned games)
 {
     using Move = MoveType<Game>;
+    SolverTester tester {games};
     auto &&gameRef = std::forward<Game>(game);
 
     SECTION("Sequential")
@@ -144,29 +143,37 @@ void testAllPolicies(SolverTester &tester, Game &&game)
 }
 
 template<template<class...> class Solver>
-void solverVsRandom(unsigned games = numGames)
+void vsRandom(unsigned games)
 {
-    SolverTester tester {games};
     SECTION("Knockout Whist")
-        testAllPolicies<Solver, RandomPlayer>(tester, KnockoutWhist{2});
+        testAllPolicies<Solver, RandomPlayer>(KnockoutWhist{2}, games);
     SECTION("Goofspiel")
-        testAllPolicies<Solver, RandomPlayer>(tester, Goofspiel{});
+        testAllPolicies<Solver, RandomPlayer>(Goofspiel{}, games);
+}
+
+template<template<class...> class Solver>
+void vsSelf(unsigned games)
+{
+    SECTION("Knockout Whist")
+        testAllPolicies<Solver>(KnockoutWhist{2}, games);
+    SECTION("Goofspiel")
+        testAllPolicies<Solver>(Goofspiel{}, games);
 }
 
 } // namespace
 
-TEST_CASE("SOSolver versus random player", "[SOSolver]")
+TEST_CASE("Versus random player", "[SOSolver][MOSolver]")
 {
-    solverVsRandom<SOSolver>(numGames);
+    SECTION("SOSolver")
+        vsRandom<SOSolver>(numGames);
+    SECTION("MOSolver")
+        vsRandom<MOSolver>(numGames);
 }
 
-TEST_CASE("MOSolver versus random player", "[MOSolver]")
+TEST_CASE("Versus self", "[SOSolver][MOSolver]")
 {
-    solverVsRandom<MOSolver>(numGames);
-}
-
-TEST_CASE("Speed", "[SOSolver]")
-{
-    SolverTester tester {numGames};
-    testAllPolicies<SOSolver>(tester, KnockoutWhist{2});
+    SECTION("SOSolver")
+        vsSelf<SOSolver>(numGames);
+    SECTION("MOSolver")
+        vsSelf<MOSolver>(numGames);
 }
