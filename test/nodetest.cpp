@@ -4,7 +4,7 @@
  * the root directory of this distribution.
  */
 
-#include <ismcts/tree/nodetypes.h>
+#include <ismcts/tree/policies.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"

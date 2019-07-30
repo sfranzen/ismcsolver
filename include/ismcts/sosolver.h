@@ -6,11 +6,10 @@
 #ifndef ISMCTS_SOSOLVER_H
 #define ISMCTS_SOSOLVER_H
 
-#include "solverbase.h"
-#include "game.h"
-#include "tree/nodetypes.h"
-#include "tree/policies.h"
+#include "config.h"
 #include "execution.h"
+#include "game.h"
+#include "solverbase.h"
 #include "utility.h"
 
 #include <memory>
@@ -19,18 +18,18 @@
 namespace ISMCTS
 {
 
-template<class Move, class _ExecutionPolicy = Sequential>
-class SOSolver : public SolverBase<Move, _ExecutionPolicy>
+template<class Move, class _ExecutionPolicy = Sequential, class Config = Config<Move>>
+class SOSolver : public _ExecutionPolicy, public SolverBase<Move, Config>
 {
 public:
-    using SolverBase<Move,_ExecutionPolicy>::SolverBase;
-    using typename SolverBase<Move,_ExecutionPolicy>::RootPtr;
-    using TreeList = typename _ExecutionPolicy::template TreeList<Move>;
+    using _ExecutionPolicy::_ExecutionPolicy;
+    using typename SolverBase<Move, Config>::RootNode;
+    using TreeList = typename Config::TreeList;
 
     Move operator()(Game<Move> const &rootState)
     {
         auto treeGenerator = [&rootState]{ return SOSolver::newRoot(rootState); };
-        auto treeSearch = [this](RootPtr &root, Game<Move> const &state){ search(root.get(), state); };
+        auto treeSearch = [this](RootNode &root, Game<Move> const &state){ search(root.get(), state); };
         m_trees = SOSolver::execute(treeSearch, treeGenerator, rootState);
         return SOSolver::template bestMove<Move>(m_trees);
     }

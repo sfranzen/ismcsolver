@@ -3,8 +3,8 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#ifndef ISMCTS_UCBNODE_H
-#define ISMCTS_UCBNODE_H
+#ifndef ISMCTS_UCB1_H
+#define ISMCTS_UCB1_H
 
 #include "node.h"
 #include "../game.h"
@@ -25,6 +25,8 @@ class UCBNode : public Node<Move>
 {
 public:
     using Node<Move>::Node;
+
+    unsigned int available() const { return m_available; }
 
     void markAvailable()
     {
@@ -55,6 +57,28 @@ private:
     }
 };
 
+template<class Move>
+struct UCB1
+{
+    using Node = UCBNode<Move>;
+
+    explicit UCB1(double exploration = 0.7)
+    : m_exploration{std::max(0., exploration)}
+    {}
+
+    Node *operator()(std::vector<Node*> const &nodes) const
+    {
+        for (auto &node : nodes)
+            node->markAvailable();
+        return *std::max_element(nodes.begin(), nodes.end(), [&](Node const *a, Node const *b){
+            return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
+        });
+    }
+
+private:
+    double m_exploration;
+};
+
 } // ISMCTS
 
-#endif // ISMCTS_UCBNODE_H
+#endif // ISMCTS_UCB1_H
