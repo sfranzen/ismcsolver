@@ -76,7 +76,7 @@ public:
             N += discount;
             X += discount * *r;
         }
-        return {N,X};
+        return std::make_tuple(N, X);
     }
 
 private:
@@ -123,7 +123,7 @@ struct D_UCB
         std::transform(results.begin(), results.end(), ucbScores.begin(), [=](Result const &r){
             double N, X;
             std::tie(N, X) = r;
-            return X / N + 2 * m_exploration * std::sqrt(std::log(n) / N);
+            return ucb(X / N, 2 * m_exploration, n, N);
         });
 
         auto const max = std::max_element(ucbScores.begin(), ucbScores.end()) - ucbScores.begin();

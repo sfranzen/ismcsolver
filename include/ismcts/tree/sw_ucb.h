@@ -6,7 +6,7 @@
 #ifndef ISMCTS_SW_UCB_H
 #define ISMCTS_SW_UCB_H
 
-#include "d_ucb.h"
+#include "ucb1.h"
 #include "../utility.h"
 
 #include <algorithm>
@@ -38,7 +38,7 @@ public:
             N += *s;
             X += *r;
         }
-        return {N,X};
+        return std::make_tuple(N, X);
     }
 
 private:
@@ -57,13 +57,14 @@ private:
 };
 
 template<class Move>
-struct SW_UCB
+class SW_UCB
 {
+public:
     using Node = SW_UCBNode<Move>;
 
     explicit SW_UCB(unsigned window = 1000, double exploration = 0.7)
-    : m_window{window}
-    , m_exploration{exploration}
+        : m_window{window}
+        , m_exploration{exploration}
     {}
 
     Node *operator()(std::vector<Node*> const &nodes) const
@@ -82,7 +83,7 @@ struct SW_UCB
             unsigned N;
             double X;
             std::tie(N, X) = r;
-            return X / N + m_exploration * std::sqrt(std::log(n) / N);
+            return ucb(X / N, 2 * m_exploration, n, N);
         });
 
         auto const max = std::max_element(ucbScores.begin(), ucbScores.end()) - ucbScores.begin();

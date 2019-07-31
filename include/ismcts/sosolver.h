@@ -23,7 +23,7 @@ class SOSolver : public _ExecutionPolicy, public SolverBase<Move, Config>
 {
 public:
     using _ExecutionPolicy::_ExecutionPolicy;
-    using typename SolverBase<Move, Config>::RootNode;
+    using RootNode = typename Config::RootNode;
     using TreeList = typename Config::TreeList;
 
     Move operator()(Game<Move> const &rootState)

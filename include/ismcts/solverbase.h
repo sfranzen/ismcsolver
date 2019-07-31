@@ -22,9 +22,9 @@ template<class Move, class Config>
 class SolverBase
 {
 public:
-    void setConfig(Config const &p)
+    void setConfig(Config const &config)
     {
-        m_config = p;
+        m_config = config;
     }
 
 protected:

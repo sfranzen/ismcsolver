@@ -12,7 +12,6 @@
 
 #include <atomic>
 #include <cmath>
-#include <numeric>
 #include <iomanip>
 #include <random>
 #include <sstream>
@@ -50,8 +49,9 @@ private:
 };
 
 template<class Move>
-struct EXP3
+class EXP3
 {
+public:
     using Node = EXPNode<Move>;
 
     Node *operator()(std::vector<Node*> const &nodes) const

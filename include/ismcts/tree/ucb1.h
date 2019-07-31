@@ -35,7 +35,7 @@ public:
 
     double ucbScore(double exploration) const
     {
-        return m_score / this->visits() + exploration * std::sqrt(std::log(m_available.load()) / this->visits());
+        return ucb(m_score / this->visits(), exploration, m_available, this->visits());
     }
 
     operator std::string() const override
@@ -58,12 +58,13 @@ private:
 };
 
 template<class Move>
-struct UCB1
+class UCB1
 {
+public:
     using Node = UCBNode<Move>;
 
     explicit UCB1(double exploration = 0.7)
-    : m_exploration{std::max(0., exploration)}
+        : m_exploration{std::max(0., exploration)}
     {}
 
     Node *operator()(std::vector<Node*> const &nodes) const

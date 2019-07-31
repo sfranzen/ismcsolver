@@ -24,8 +24,7 @@ class MOSolver : public _ExecutionPolicy, public SolverBase<Move, Config>
 {
 public:
     using _ExecutionPolicy::_ExecutionPolicy;
-    using typename SolverBase<Move, Config>::Base;
-    using typename Base::RootNode;
+    using RootNode = typename Config::RootNode;
 
     // The search trees for the current observer, one per player
     using TreeMap = std::map<unsigned int, RootNode>;
@@ -97,7 +96,7 @@ protected:
     void static backPropagate(NodePtrMap &nodes, Game<Move> const &state)
     {
         for (auto node : nodes)
-            Base::backPropagate(node.second, state);
+            SolverBase<Move,Config>::backPropagate(node.second, state);
     }
 
 private:

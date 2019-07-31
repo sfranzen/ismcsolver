@@ -13,8 +13,8 @@ namespace ISMCTS
 {
 
 template<class> class Node;
-template<class> struct EXP3;
-template<class> struct UCB1;
+template<class> class EXP3;
+template<class> class UCB1;
 template<class> struct RandomElement;
 
 template<
@@ -36,7 +36,22 @@ struct Config
     DefaultPolicy defaultPolicy;
     SeqTreePolicy seqTreePolicy;
     SimTreePolicy simTreePolicy;
+
+    Config(SeqTreePolicy const &seq = SeqTreePolicy{},
+           SimTreePolicy const &sim = SimTreePolicy{},
+           DefaultPolicy const &d = DefaultPolicy{}
+    )
+        : defaultPolicy{d}
+        , seqTreePolicy{seq}
+        , simTreePolicy{sim}
+    {}
 };
+
+template<class Move, template<class> class... Policies>
+auto makeConfig(Policies<Move> const &... policies)
+{
+    return Config<Move, Policies...>{policies...};
+}
 
 } // ISMCTS
 
