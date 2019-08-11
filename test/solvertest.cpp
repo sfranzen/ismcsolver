@@ -22,11 +22,18 @@ using namespace std::chrono_literals;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
-template<class... Ts>
-using SODefault = SOSolver<Ts...>;
+template<template<class,class,template<class>class...> class S>
+struct Default
+{
+    template<class... Ts>
+    using Type = S<Ts...>;
+};
 
 template<class... Ts>
-using MODefault = MOSolver<Ts...>;
+using SODefault = Default<SOSolver>::Type<Ts...>;
+
+template<class... Ts>
+using MODefault = Default<MOSolver>::Type<Ts...>;
 
 unsigned int constexpr numPlayers {2};
 unsigned int constexpr iterationCount {10};
@@ -125,9 +132,4 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers select the most rewarding final move", "[SOS
     TestType solver {16};
     auto const move = solver(game);
     REQUIRE(move == 2);
-}
-
-TEST_CASE("Composer")
-{
-//     Composer<SOSolver, int> c;
 }
