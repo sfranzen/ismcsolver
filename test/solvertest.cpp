@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
-template<template<class,class,template<class>class...> class S>
+template<template<class, class = Sequential, template<class>class...> class S>
 struct Default
 {
     template<class... Ts>
