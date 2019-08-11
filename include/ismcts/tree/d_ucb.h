@@ -99,13 +99,13 @@ template<class Move>
 PositiveIntegerPowers<double> D_UCBNode<Move>::s_powers {2000};
 
 template<class Move>
-struct D_UCB
+struct D_UCB : public UCB1<Move>
 {
     using Node = D_UCBNode<Move>;
 
-    explicit D_UCB(double gamma = 0.7, double exploration = 0.7)
-        : m_gamma{gamma}
-        , m_exploration{exploration}
+    explicit D_UCB(double exploration = 0.7, double gamma = 0.8)
+        : UCB1<Move>{exploration}
+        , m_gamma{gamma}
     {}
 
     Node *operator()(std::vector<Node*> const &nodes) const
@@ -123,7 +123,7 @@ struct D_UCB
         std::transform(results.begin(), results.end(), ucbScores.begin(), [=](Result const &r){
             double N, X;
             std::tie(N, X) = r;
-            return ucb(X / N, 2 * m_exploration, n, N);
+            return ucb(X / N, 2 * this->explorationConstant(), n, N);
         });
 
         auto const max = std::max_element(ucbScores.begin(), ucbScores.end()) - ucbScores.begin();
@@ -132,7 +132,6 @@ struct D_UCB
 
 private:
     double m_gamma;
-    double m_exploration;
 };
 
 } // ISMCTS

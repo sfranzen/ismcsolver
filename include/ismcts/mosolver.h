@@ -19,10 +19,11 @@
 namespace ISMCTS
 {
 
-template<class Move, class _ExecutionPolicy = Sequential, class Config = Config<Move>>
-class MOSolver : public _ExecutionPolicy, public SolverBase<Move, Config>
+template<class Move, class _ExecutionPolicy = Sequential, template<class> class... Ps>
+class MOSolver : public _ExecutionPolicy, public SolverBase<Move, Ps...>
 {
 public:
+    using Config = Config<Move, Ps...>;
     using _ExecutionPolicy::_ExecutionPolicy;
     using RootNode = typename Config::RootNode;
 
@@ -96,7 +97,7 @@ protected:
     void static backPropagate(NodePtrMap &nodes, Game<Move> const &state)
     {
         for (auto node : nodes)
-            SolverBase<Move,Config>::backPropagate(node.second, state);
+            SolverBase<Move,Ps...>::backPropagate(node.second, state);
     }
 
 private:

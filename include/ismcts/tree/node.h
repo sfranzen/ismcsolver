@@ -73,8 +73,10 @@ public:
 
     virtual void update(Game<Move> const &terminalState) final
     {
-        ++m_visits;
-        updateData(terminalState);
+        if (this->parent()) {
+            ++m_visits;
+            updateData(terminalState);
+        }
     }
 
     std::vector<Move> untriedMoves(std::vector<Move> const &legalMoves) const

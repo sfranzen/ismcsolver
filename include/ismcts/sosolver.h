@@ -18,10 +18,11 @@
 namespace ISMCTS
 {
 
-template<class Move, class _ExecutionPolicy = Sequential, class Config = Config<Move>>
-class SOSolver : public _ExecutionPolicy, public SolverBase<Move, Config>
+template<class Move, class _ExecutionPolicy = Sequential, template<class> class... Ps>
+class SOSolver : public _ExecutionPolicy, public SolverBase<Move, Ps...>
 {
 public:
+    using Config = Config<Move, Ps...>;
     using _ExecutionPolicy::_ExecutionPolicy;
     using RootNode = typename Config::RootNode;
     using TreeList = typename Config::TreeList;

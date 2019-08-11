@@ -10,8 +10,8 @@
 #include <ismcts/game.h>
 #include <ismcts/utility.h>
 
-template<class Move>
-auto randomMove(ISMCTS::Game<Move> const &game)
+template<class Game>
+auto randomMove(Game const &game)
 {
     return ISMCTS::randomElement(game.validMoves());
 }

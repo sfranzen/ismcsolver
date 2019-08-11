@@ -21,9 +21,12 @@
 #include <array>
 #include <map>
 #include <vector>
+#include <ismcts/tree/d_ucb.h>
 
 namespace
 {
+
+#define SOLVER_SIG template<class, class = Sequential, template<class> class...>
 
 using namespace ISMCTS;
 unsigned int constexpr numGames {100};
@@ -57,7 +60,6 @@ private:
     std::vector<double> m_p0Scores;
     std::array<unsigned, 2> m_numCalls;
     std::array<Duration, 2> m_times;
-
 
     template<class Game, class G1>
     auto static getMove(Game const &game, G1 &&g1)
@@ -127,7 +129,7 @@ void singleTest(SolverTester &tester, Args &&... args)
     WARN(tester.run(std::forward<Args>(args)...));
 }
 
-template<template<class...> class Solver, template<class> class... Opponent, class Game>
+template<SOLVER_SIG class Solver, template<class> class... Opponent, class Game>
 void testAllPolicies(Game &&game, unsigned games)
 {
     using Move = MoveType<Game>;
@@ -142,7 +144,7 @@ void testAllPolicies(Game &&game, unsigned games)
         singleTest(tester, gameRef, Solver<Move, TreeParallel>{iterationCount}, Opponent<Move>{}...);
 }
 
-template<template<class...> class Solver>
+template<SOLVER_SIG class Solver>
 void vsRandom(unsigned games)
 {
     SECTION("Knockout Whist")
@@ -151,7 +153,7 @@ void vsRandom(unsigned games)
         testAllPolicies<Solver, RandomPlayer>(Goofspiel{}, games);
 }
 
-template<template<class...> class Solver>
+template<SOLVER_SIG class Solver>
 void vsSelf(unsigned games)
 {
     SECTION("Knockout Whist")

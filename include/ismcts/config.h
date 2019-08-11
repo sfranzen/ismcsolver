@@ -6,22 +6,22 @@
 #ifndef ISMCTS_CONFIG_H
 #define ISMCTS_CONFIG_H
 
+#include "tree/node.h"
+#include "tree/exp3.h"
+#include "tree/ucb1.h"
+#include "utility.h"
+
 #include <memory>
 #include <vector>
 
 namespace ISMCTS
 {
 
-template<class> class Node;
-template<class> class EXP3;
-template<class> class UCB1;
-template<class> struct RandomElement;
-
 template<
     class Move,
-    template<class> class SeqTree = UCB1, // Tree policies are functors of the form
-    template<class> class SimTree = EXP3, // Node*(std::vector<Node*> const&)
-    template<class> class Default = RandomElement // A functor of the form T&(std::vector<T> const&)
+    template<class> class SeqTree = UCB1,
+    template<class> class SimTree = EXP3,
+    template<class> class Default = RandomElement
 >
 struct Config
 {
@@ -37,21 +37,15 @@ struct Config
     SeqTreePolicy seqTreePolicy;
     SimTreePolicy simTreePolicy;
 
-    Config(SeqTreePolicy const &seq = SeqTreePolicy{},
-           SimTreePolicy const &sim = SimTreePolicy{},
-           DefaultPolicy const &d = DefaultPolicy{}
+    Config(SeqTreePolicy seq = SeqTreePolicy{},
+           SimTreePolicy sim = SimTreePolicy{},
+           DefaultPolicy d = DefaultPolicy{}
     )
         : defaultPolicy{d}
         , seqTreePolicy{seq}
         , simTreePolicy{sim}
     {}
 };
-
-template<class Move, template<class> class... Policies>
-auto makeConfig(Policies<Move> const &... policies)
-{
-    return Config<Move, Policies...>{policies...};
-}
 
 } // ISMCTS
 

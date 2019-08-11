@@ -6,11 +6,9 @@
 #ifndef ISMCTS_SOLVERBASE_H
 #define ISMCTS_SOLVERBASE_H
 
+#include "config.h"
 #include "game.h"
 #include "tree/node.h"
-#include "tree/exp3.h"
-#include "tree/ucb1.h"
-#include "utility.h"
 
 #include <memory>
 #include <vector>
@@ -18,19 +16,21 @@
 namespace ISMCTS
 {
 
-template<class Move, class Config>
+template<class Move, template<class> class... Ps>
 class SolverBase
 {
 public:
-    void setConfig(Config const &config)
+    using Config = Config<Move, Ps...>;
+
+    void setConfig(Ps<Move>... policies)
     {
-        m_config = config;
+        m_config = Config(policies...);
     }
 
 protected:
     using Base = SolverBase;
-    using RootNode = typename Config::RootNode;
-    using ChildNode = typename Config::ChildNode;
+    using RootNode = std::shared_ptr<Node<Move>>;
+    using ChildNode = typename Node<Move>::ChildPtr;
     using SeqNode = typename Config::SeqTreePolicy::Node;
     using SimNode = typename Config::SimTreePolicy::Node;
 

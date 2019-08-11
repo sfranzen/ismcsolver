@@ -57,14 +57,14 @@ private:
 };
 
 template<class Move>
-class SW_UCB
+class SW_UCB : public UCB1<Move>
 {
 public:
     using Node = SW_UCBNode<Move>;
 
-    explicit SW_UCB(unsigned window = 1000, double exploration = 0.7)
-        : m_window{window}
-        , m_exploration{exploration}
+    explicit SW_UCB(double exploration = 0.7, unsigned window = 500)
+        : UCB1<Move>{exploration}
+        , m_window{window}
     {}
 
     Node *operator()(std::vector<Node*> const &nodes) const
@@ -83,7 +83,7 @@ public:
             unsigned N;
             double X;
             std::tie(N, X) = r;
-            return ucb(X / N, 2 * m_exploration, n, N);
+            return ucb(X / N, 2 * this->explorationConstant(), n, N);
         });
 
         auto const max = std::max_element(ucbScores.begin(), ucbScores.end()) - ucbScores.begin();
@@ -92,10 +92,8 @@ public:
 
 private:
     unsigned m_window;
-    double m_exploration;
 };
 
 } // ISMCTS
 
 #endif // ISMCTS_SW_UCB_H
-

@@ -18,13 +18,19 @@
 namespace
 {
 
-using namespace std::chrono;
+using namespace std::chrono_literals;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
+template<class... Ts>
+using SODefault = SOSolver<Ts...>;
+
+template<class... Ts>
+using MODefault = MOSolver<Ts...>;
+
 unsigned int constexpr numPlayers {2};
 unsigned int constexpr iterationCount {10};
-auto constexpr iterationTime {milliseconds(5)};
+auto constexpr iterationTime {5ms};
 
 // In this state, player 1 has to choose between move 2, ending in a draw, and
 // move 0, ending in a loss
@@ -46,7 +52,7 @@ struct P1DrawOrLose : public MnkGame
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers construct properly", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
+    (SODefault, MODefault), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     SECTION("By iteration count") {
         TestType solver {iterationCount};
@@ -62,7 +68,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers construct properly", "[SOSolver][MOSolver]",
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
+    (SODefault, MODefault), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     TestType solver {iterationCount};
 
@@ -83,7 +89,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Solver settings can be modified", "[SOSolver][MOSolv
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (Card, (Card, RootParallel), (Card, TreeParallel)))
+    (SODefault, MODefault), (Card, (Card, RootParallel), (Card, TreeParallel)))
 {
     auto solver = GENERATE(std::make_shared<TestType>(iterationCount), std::make_shared<TestType>(iterationTime));
     Card move;
@@ -96,14 +102,14 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolve
         }
     };
 
-    // Test UCB1 policy using Whist, which has sequential moves
-    SECTION("UCB1 policy") {
+    // Test sequential tree policy using Whist
+    SECTION("Sequential tree policy") {
         KnockoutWhist game {numPlayers};
         testSection(game);
     }
 
-    // Test EXP3 policy using Goofspiel, which has simultaneous moves
-    SECTION("EXP3 policy") {
+    // Test simultaneous move policy using Goofspiel
+    SECTION("Simultaneous tree policy") {
         Goofspiel game;
 
         // Advance to regular player before testing
@@ -113,10 +119,15 @@ TEMPLATE_PRODUCT_TEST_CASE("Solvers' operator() returns a valid move", "[SOSolve
 }
 
 TEMPLATE_PRODUCT_TEST_CASE("Solvers select the most rewarding final move", "[SOSolver][MOSolver]",
-    (SOSolver, MOSolver), (int, (int, RootParallel), (int, TreeParallel)))
+    (SODefault, MODefault), (int, (int, RootParallel), (int, TreeParallel)))
 {
     P1DrawOrLose game;
     TestType solver {16};
     auto const move = solver(game);
     REQUIRE(move == 2);
+}
+
+TEST_CASE("Composer")
+{
+//     Composer<SOSolver, int> c;
 }

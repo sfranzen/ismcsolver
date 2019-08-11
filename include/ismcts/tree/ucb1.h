@@ -52,8 +52,7 @@ private:
 
     void updateData(Game<Move> const &terminalState) override
     {
-        if (this->parent())
-            m_score += terminalState.getResult(this->player());
+        m_score += terminalState.getResult(this->player());
     }
 };
 
@@ -75,6 +74,8 @@ public:
             return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
         });
     }
+
+    double explorationConstant() const { return m_exploration; }
 
 private:
     double m_exploration;

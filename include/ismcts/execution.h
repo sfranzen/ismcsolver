@@ -75,13 +75,13 @@ protected:
         , m_numTrees{validateCount(numTrees)}
     {}
 
-    ExecutionPolicy(std::size_t iterationCount, unsigned int numThreads, unsigned int numTrees)
+    ExecutionPolicy(std::size_t iterationCount, unsigned int numThreads = 1, unsigned int numTrees = 1)
         : ExecutionPolicy{numThreads, numTrees}
     {
         setIterationCount(iterationCount);
     }
 
-    ExecutionPolicy(Duration iterationTime, unsigned int numThreads, unsigned int numTrees)
+    ExecutionPolicy(Duration iterationTime, unsigned int numThreads = 1, unsigned int numTrees = 1)
         : ExecutionPolicy{numThreads, numTrees}
     {
         setIterationTime(iterationTime);
@@ -158,11 +158,11 @@ class Sequential : public ExecutionPolicy
 {
 public:
     explicit Sequential(std::size_t iterationCount = 1000)
-        : ExecutionPolicy{iterationCount, 1, 1}
+        : ExecutionPolicy{iterationCount}
     {}
 
     explicit Sequential(Duration iterationTime)
-        : ExecutionPolicy{iterationTime, 1, 1}
+        : ExecutionPolicy{iterationTime}
     {}
 };
 
@@ -170,11 +170,11 @@ class TreeParallel : public ExecutionPolicy
 {
 public:
     explicit TreeParallel(std::size_t iterationCount = 1000, unsigned int numThreads = hwThreadCount())
-        : ExecutionPolicy{iterationCount, numThreads, 1}
+        : ExecutionPolicy{iterationCount, numThreads}
     {}
 
     explicit TreeParallel(Duration iterationTime, unsigned int numThreads = hwThreadCount())
-        : ExecutionPolicy{iterationTime, numThreads, 1}
+        : ExecutionPolicy{iterationTime, numThreads}
     {}
 };
 

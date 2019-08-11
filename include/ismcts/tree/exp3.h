@@ -16,6 +16,7 @@
 #include <random>
 #include <sstream>
 #include <vector>
+#include <iostream>
 
 namespace ISMCTS
 {
@@ -43,8 +44,7 @@ private:
 
     void updateData(Game<Move> const &terminalState) override
     {
-        if (this->parent())
-            m_score += terminalState.getResult(this->player()) / m_probability;
+        m_score += terminalState.getResult(this->player()) / m_probability;
     }
 };
 
