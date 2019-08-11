@@ -137,7 +137,7 @@ void testAllPolicies(Game &&game, unsigned games)
     auto &&gameRef = std::forward<Game>(game);
 
     SECTION("Sequential")
-        singleTest(tester, gameRef, Solver<Move>{iterationCount}, Opponent<Move>{}...);
+        singleTest(tester, gameRef, Solver<Move, Sequential>{iterationCount}, Opponent<Move>{}...);
     SECTION("RootParallel")
         singleTest(tester, gameRef, Solver<Move, RootParallel>{iterationCount}, Opponent<Move>{}...);
     SECTION("TreeParallel")
