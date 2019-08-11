@@ -93,7 +93,7 @@ auto sum(C const &c, Op op)
     });
 }
 
-double inline ucb(double X, double C, std::size_t n, std::size_t N)
+double inline ucb(double X, double C, double n, std::size_t N)
 {
     return X + C * std::sqrt(std::log(n) / N);
 }
