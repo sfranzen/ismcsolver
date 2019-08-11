@@ -26,7 +26,10 @@ template<template<class,class,template<class>class...> class S>
 struct Default
 {
     template<class... Ts>
-    using Type = S<Ts...>;
+    struct Type : public S<Ts...>
+    {
+        using S<Ts...>::S;
+    };
 };
 
 template<class... Ts>
