@@ -32,7 +32,7 @@ public:
         double X {0};
         auto const min = window > this->available() ? 0 : this->available() - window + 1;
 
-        Lock lock {m_mutex};
+        Lock lock {this->mutex()};
         auto s = std::find_if(m_trials.begin(), m_trials.end(), [=](unsigned t){ return t >= min; });
         for (auto r = m_results.begin() + (s - m_trials.begin()); r != m_results.end(); ++s, ++r) {
             N += *s;
@@ -44,13 +44,12 @@ public:
 private:
     using typename UCBNode<Move>::Lock;
 
-    std::mutex mutable m_mutex;
     std::vector<double> m_results;
     std::vector<unsigned> m_trials;
 
     void updateData(Game<Move> const &terminalState) override
     {
-        Lock lock {m_mutex};
+        Lock lock {this->mutex()};
         m_trials.emplace_back(this->available());
         m_results.emplace_back(terminalState.getResult(this->player()));
     }

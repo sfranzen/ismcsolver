@@ -21,12 +21,9 @@
 #include <array>
 #include <map>
 #include <vector>
-#include <ismcts/tree/d_ucb.h>
 
 namespace
 {
-
-#define SOLVER_SIG template<class, class = Sequential, template<class> class...>
 
 using namespace ISMCTS;
 unsigned int constexpr numGames {100};

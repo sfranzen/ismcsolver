@@ -68,7 +68,7 @@ public:
     ResultType discountSums(double gamma) const
     {
         double N {0}, X {0};
-        Lock lock {m_mutex};
+        Lock lock {this->mutex()};
         auto const t = this->available();
         auto r = m_results.begin();
         for (auto s = m_trials.begin(); s != m_trials.end(); ++s, ++r) {
@@ -83,13 +83,12 @@ private:
     using typename UCBNode<Move>::Lock;
 
     PositiveIntegerPowers<double> static s_powers;
-    std::mutex mutable m_mutex;
     std::vector<double> m_results;
     std::vector<unsigned> m_trials;
 
     void updateData(Game<Move> const &terminalState) override
     {
-        Lock lock {m_mutex};
+        Lock lock {this->mutex()};
         m_trials.emplace_back(this->available());
         m_results.emplace_back(terminalState.getResult(this->player()));
     }

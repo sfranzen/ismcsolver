@@ -107,6 +107,7 @@ public:
 
 protected:
     using Lock = std::lock_guard<std::mutex>;
+    std::mutex &mutex() const { return m_mutex; }
 
 private:
     Node *m_parent = nullptr;

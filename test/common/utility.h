@@ -10,6 +10,8 @@
 #include <ismcts/game.h>
 #include <ismcts/utility.h>
 
+#define SOLVER_SIG template<class, class, template<class> class...>
+
 template<class Game>
 auto randomMove(Game const &game)
 {

@@ -22,7 +22,11 @@ using namespace std::chrono_literals;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
-template<template<class, class, template<class> class...> class S>
+unsigned int constexpr numPlayers {2};
+unsigned int constexpr iterationCount {10};
+auto constexpr iterationTime {5ms};
+
+template<SOLVER_SIG class S>
 struct Default
 {
     template<class M, class E = Sequential>
@@ -37,10 +41,6 @@ using SODefault = Default<SOSolver>::Type<Ts...>;
 
 template<class... Ts>
 using MODefault = Default<MOSolver>::Type<Ts...>;
-
-unsigned int constexpr numPlayers {2};
-unsigned int constexpr iterationCount {10};
-auto constexpr iterationTime {5ms};
 
 // In this state, player 1 has to choose between move 2, ending in a draw, and
 // move 0, ending in a loss
