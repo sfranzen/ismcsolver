@@ -22,13 +22,13 @@ using namespace std::chrono_literals;
 using namespace ISMCTS;
 using Duration = ::ExecutionPolicy::Duration;
 
-template<template<class, class = Sequential, template<class>class...> class S>
+template<template<class, class, template<class> class...> class S>
 struct Default
 {
-    template<class... Ts>
-    struct Type : public S<Ts...>
+    template<class M, class E = Sequential>
+    struct Type : public S<M,E>
     {
-        using S<Ts...>::S;
+        using S<M,E>::S;
     };
 };
 
