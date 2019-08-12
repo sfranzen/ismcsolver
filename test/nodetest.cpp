@@ -4,7 +4,7 @@
  * the root directory of this distribution.
  */
 
-#include <ismcts/tree/nodetypes.h>
+#include <ismcts/tree/policies.h>
 #include "common/catch.hpp"
 #include "common/knockoutwhist.h"
 #include "common/card.h"
@@ -50,11 +50,13 @@ TEMPLATE_TEST_CASE("Node::addChild works", "[node]", UCBNode<Card>, EXPNode<Card
 
 TEMPLATE_TEST_CASE("Node::update works", "[node]", UCBNode<Card>, EXPNode<Card>)
 {
-    TestType node {testMove, testPlayer};
+    TestType root;
+    root.addChild(std::make_unique<TestType>(testMove, testPlayer));
+    auto &node = root.children().front();
     KnockoutWhist game;
 
-    CHECK_NOTHROW(node.update(game));
-    REQUIRE(node.visits() == 1);
+    CHECK_NOTHROW(node->update(game));
+    REQUIRE(node->visits() == 1);
 }
 
 TEMPLATE_TEST_CASE("Node::untriedMoves returns expected values", "[node]", UCBNode<int>, EXPNode<int>)

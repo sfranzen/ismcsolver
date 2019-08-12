@@ -31,3 +31,6 @@ catch_discover_tests(nodetest)
 add_executable(solvertest solvertest.cpp ${game_src})
 target_link_libraries(solvertest ${testlibs})
 catch_discover_tests(solvertest)
+
+add_executable(policytest policytest.cpp)
+target_link_libraries(policytest ${testlibs})

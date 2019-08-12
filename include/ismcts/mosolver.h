@@ -6,11 +6,10 @@
 #ifndef ISMCTS_MOSOLVER_H
 #define ISMCTS_MOSOLVER_H
 
-#include "solverbase.h"
-#include "game.h"
-#include "tree/nodetypes.h"
-#include "tree/policies.h"
+#include "config.h"
 #include "execution.h"
+#include "game.h"
+#include "solverbase.h"
 #include "utility.h"
 
 #include <memory>
@@ -20,15 +19,16 @@
 namespace ISMCTS
 {
 
-template<class Move, class _ExecutionPolicy = Sequential>
-class MOSolver : public SolverBase<Move,_ExecutionPolicy>
+template<class Move, class _ExecutionPolicy = Sequential, template<class> class... Ps>
+class MOSolver : public _ExecutionPolicy, public SolverBase<Move, Ps...>
 {
 public:
-    using SolverBase<Move,_ExecutionPolicy>::SolverBase;
-    using typename SolverBase<Move,_ExecutionPolicy>::RootPtr;
+    using _ExecutionPolicy::_ExecutionPolicy;
+    using typename SolverBase<Move, Ps...>::Config;
+    using RootNode = typename Config::RootNode;
 
     // The search trees for the current observer, one per player
-    using TreeMap = std::map<unsigned int, RootPtr>;
+    using TreeMap = std::map<unsigned int, RootNode>;
 
     // The set of tree maps, one for each thread
     using TreeList = std::vector<TreeMap>;
@@ -39,7 +39,7 @@ public:
         auto treeGenerator = [&rootState]{ return newTree(rootState); };
         m_trees = MOSolver::execute(treeSearch, treeGenerator, rootState);
 
-        std::vector<RootPtr> currentPlayerTrees(m_trees.size());
+        std::vector<RootNode> currentPlayerTrees(m_trees.size());
         std::transform(m_trees.begin(), m_trees.end(), currentPlayerTrees.begin(), [&](auto &map){
             return map[rootState.currentPlayer()];
         });
@@ -97,7 +97,7 @@ protected:
     void static backPropagate(NodePtrMap &nodes, Game<Move> const &state)
     {
         for (auto node : nodes)
-            SolverBase<Move,_ExecutionPolicy>::backPropagate(node.second, state);
+            SolverBase<Move,Ps...>::backPropagate(node.second, state);
     }
 
 private:

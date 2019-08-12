@@ -6,6 +6,7 @@
 #ifndef ISMCTS_EXECUTION_H
 #define ISMCTS_EXECUTION_H
 
+#include "config.h"
 #include "tree/node.h"
 #include "utility.h"
 
@@ -28,7 +29,7 @@ public:
     using Duration = std::chrono::duration<double>;
 
     template<class Move>
-    using TreeList = std::vector<typename Node<Move>::RootPtr>;
+    using TreeList = typename Config<Move>::TreeList;
 
     ExecutionPolicy(ExecutionPolicy const &) = delete;
     ExecutionPolicy &operator=(ExecutionPolicy const &) = delete;

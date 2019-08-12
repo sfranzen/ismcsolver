@@ -10,8 +10,10 @@
 #include <ismcts/game.h>
 #include <ismcts/utility.h>
 
-template<class Move>
-auto randomMove(ISMCTS::Game<Move> const &game)
+#define SOLVER_SIG template<class, class, template<class> class...>
+
+template<class Game>
+auto randomMove(Game const &game)
 {
     return ISMCTS::randomElement(game.validMoves());
 }

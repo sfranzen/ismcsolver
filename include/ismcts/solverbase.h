@@ -6,42 +6,38 @@
 #ifndef ISMCTS_SOLVERBASE_H
 #define ISMCTS_SOLVERBASE_H
 
+#include "config.h"
 #include "game.h"
-#include "tree/nodetypes.h"
-#include "tree/policies.h"
-#include "utility.h"
+#include "tree/node.h"
 
-#include <functional>
 #include <memory>
 #include <vector>
 
 namespace ISMCTS
 {
 
-template<class Move, class _ExecutionPolicy>
-class SolverBase : public _ExecutionPolicy
+template<class Move, template<class> class... Ps>
+class SolverBase
 {
 public:
-    using _ExecutionPolicy::_ExecutionPolicy;
-    using RootPtr = typename Node<Move>::RootPtr;
-    using DefaultPolicy = std::function<Move const &(std::vector<Move> const &)>;
-
-    void setUCBPolicy(UCB1<Move> &&policy)
+    void setConfig(Ps<Move>... policies)
     {
-        m_UCB1 = policy;
-    }
-
-    void setDefaultPolicy(DefaultPolicy &&policy)
-    {
-        m_defaultPolicy = policy;
+        m_config = Config(policies...);
     }
 
 protected:
+    using Base = SolverBase;
+    using Config = ISMCTS::Config<Move, Ps...>;
+    using RootNode = std::shared_ptr<Node<Move>>;
+    using ChildNode = typename Node<Move>::ChildPtr;
+    using SeqNode = typename Config::SeqTreePolicy::Node;
+    using SimNode = typename Config::SimTreePolicy::Node;
+
     void simulate(Game<Move> &state) const
     {
         auto const moves = state.validMoves();
         if (!moves.empty()) {
-            state.doMove(m_defaultPolicy(moves));
+            state.doMove(m_config.defaultPolicy(moves));
             simulate(state);
         }
     }
@@ -62,31 +58,29 @@ protected:
     Node<Move> *selectChild(Node<Move> const *node, Game<Move> const &state, std::vector<Move> const &moves) const
     {
         if (state.currentMoveSimultaneous())
-            return node->selectChild(moves, m_EXP3);
+            return node->selectChild(moves, m_config.simTreePolicy);
         else
-            return node->selectChild(moves, m_UCB1);
+            return node->selectChild(moves, m_config.seqTreePolicy);
     }
 
-    RootPtr static newRoot(Game<Move> const &state)
+    RootNode static newRoot(Game<Move> const &state)
     {
         if (state.currentMoveSimultaneous())
-            return std::make_shared<EXPNode<Move>>();
+            return std::make_shared<SimNode>();
         else
-            return std::make_shared<UCBNode<Move>>();
+            return std::make_shared<SeqNode>();
     }
 
-    std::unique_ptr<Node<Move>> static newChild(Move const &move, Game<Move> const &state)
+    ChildNode static newChild(Move const &move, Game<Move> const &state)
     {
         if (state.currentMoveSimultaneous())
-            return std::make_unique<EXPNode<Move>>(move, state.currentPlayer());
+            return std::make_unique<SimNode>(move, state.currentPlayer());
         else
-            return std::make_unique<UCBNode<Move>>(move, state.currentPlayer());
+            return std::make_unique<SeqNode>(move, state.currentPlayer());
     }
 
 private:
-    EXP3<Move> m_EXP3 {};
-    UCB1<Move> m_UCB1 {};
-    DefaultPolicy m_defaultPolicy {randomElement<Move>};
+    Config m_config;
 };
 
 } // ISMCTS

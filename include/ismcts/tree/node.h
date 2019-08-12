@@ -24,7 +24,6 @@ template<class Move>
 class Node
 {
 public:
-    using RootPtr = std::shared_ptr<Node>;
     using ChildPtr = std::unique_ptr<Node>;
 
     explicit Node(Move const &move = {}, unsigned int player = 0)
@@ -74,8 +73,10 @@ public:
 
     virtual void update(Game<Move> const &terminalState) final
     {
-        ++m_visits;
-        updateData(terminalState);
+        if (this->parent()) {
+            ++m_visits;
+            updateData(terminalState);
+        }
     }
 
     std::vector<Move> untriedMoves(std::vector<Move> const &legalMoves) const
@@ -104,9 +105,11 @@ public:
         return out << std::string(node);
     }
 
-private:
+protected:
     using Lock = std::lock_guard<std::mutex>;
+    std::mutex &mutex() const { return m_mutex; }
 
+private:
     Node *m_parent = nullptr;
     std::mutex mutable m_mutex;
     std::vector<ChildPtr> m_children;

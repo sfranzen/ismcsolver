@@ -59,7 +59,8 @@ void executeFor(std::chrono::duration<double> time, Callable&& f, Args&&... args
     }
 }
 
-std::mt19937 inline &prng()
+template<class RNG = std::mt19937>
+RNG &prng()
 {
     std::mt19937 thread_local static prng {std::random_device{}()};
     return prng;
@@ -72,6 +73,15 @@ T const &randomElement(std::vector<T> const &v)
     return v[randIdx(prng())];
 }
 
+template<class T>
+struct RandomElement
+{
+    T const &operator()(std::vector<T> const &v) const
+    {
+        return randomElement(v);
+    }
+};
+
 // Sum the results of operator op applied to each element of container c.
 template<class C, class Op>
 auto sum(C const &c, Op op)
@@ -81,6 +91,11 @@ auto sum(C const &c, Op op)
     return std::accumulate(std::begin(c), std::end(c), Ret{0}, [=](Ret sum, T const &t){
         return sum + op(t);
     });
+}
+
+double inline ucb(double X, double C, double n, double N)
+{
+    return X + C * std::sqrt(std::log(n) / N);
 }
 
 } // ISMCTS

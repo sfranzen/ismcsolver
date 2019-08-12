@@ -3,8 +3,8 @@
  * This file is subject to the terms of the MIT License; see the LICENSE file in
  * the root directory of this distribution.
  */
-#ifndef ISMCTS_UCBNODE_H
-#define ISMCTS_UCBNODE_H
+#ifndef ISMCTS_UCB1_H
+#define ISMCTS_UCB1_H
 
 #include "node.h"
 #include "../game.h"
@@ -26,6 +26,8 @@ class UCBNode : public Node<Move>
 public:
     using Node<Move>::Node;
 
+    unsigned int available() const { return m_available; }
+
     void markAvailable()
     {
         ++m_available;
@@ -33,7 +35,7 @@ public:
 
     double ucbScore(double exploration) const
     {
-        return m_score / this->visits() + exploration * std::sqrt(std::log(m_available.load()) / this->visits());
+        return ucb(m_score / this->visits(), exploration, m_available, this->visits());
     }
 
     operator std::string() const override
@@ -50,11 +52,35 @@ private:
 
     void updateData(Game<Move> const &terminalState) override
     {
-        if (this->parent())
-            m_score += terminalState.getResult(this->player());
+        m_score += terminalState.getResult(this->player());
     }
+};
+
+template<class Move>
+class UCB1
+{
+public:
+    using Node = UCBNode<Move>;
+
+    explicit UCB1(double exploration = 0.7)
+        : m_exploration{std::max(0., exploration)}
+    {}
+
+    Node *operator()(std::vector<Node*> const &nodes) const
+    {
+        for (auto &node : nodes)
+            node->markAvailable();
+        return *std::max_element(nodes.begin(), nodes.end(), [&](Node const *a, Node const *b){
+            return a->ucbScore(m_exploration) < b->ucbScore(m_exploration);
+        });
+    }
+
+    double explorationConstant() const { return m_exploration; }
+
+private:
+    double m_exploration;
 };
 
 } // ISMCTS
 
-#endif // ISMCTS_UCBNODE_H
+#endif // ISMCTS_UCB1_H
