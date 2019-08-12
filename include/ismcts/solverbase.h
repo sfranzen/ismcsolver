@@ -20,8 +20,6 @@ template<class Move, template<class> class... Ps>
 class SolverBase
 {
 public:
-    using Config = Config<Move, Ps...>;
-
     void setConfig(Ps<Move>... policies)
     {
         m_config = Config(policies...);
@@ -29,6 +27,7 @@ public:
 
 protected:
     using Base = SolverBase;
+    using Config = ISMCTS::Config<Move, Ps...>;
     using RootNode = std::shared_ptr<Node<Move>>;
     using ChildNode = typename Node<Move>::ChildPtr;
     using SeqNode = typename Config::SeqTreePolicy::Node;

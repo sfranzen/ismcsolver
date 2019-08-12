@@ -23,8 +23,8 @@ template<class Move, class _ExecutionPolicy = Sequential, template<class> class.
 class MOSolver : public _ExecutionPolicy, public SolverBase<Move, Ps...>
 {
 public:
-    using Config = Config<Move, Ps...>;
     using _ExecutionPolicy::_ExecutionPolicy;
+    using typename SolverBase<Move, Ps...>::Config;
     using RootNode = typename Config::RootNode;
 
     // The search trees for the current observer, one per player

@@ -22,8 +22,8 @@ template<class Move, class _ExecutionPolicy = Sequential, template<class> class.
 class SOSolver : public _ExecutionPolicy, public SolverBase<Move, Ps...>
 {
 public:
-    using Config = Config<Move, Ps...>;
     using _ExecutionPolicy::_ExecutionPolicy;
+    using typename SolverBase<Move, Ps...>::Config;
     using RootNode = typename Config::RootNode;
     using TreeList = typename Config::TreeList;
 
